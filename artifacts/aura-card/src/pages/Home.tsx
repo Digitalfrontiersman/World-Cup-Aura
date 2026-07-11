@@ -1190,6 +1190,14 @@ export default function Home() {
       />
       <div className="absolute inset-0 bg-black/20 z-0" />
 
+      {/* Persistent wallet connect - always accessible, top-right */}
+      <div
+        className="absolute right-3 z-40"
+        style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
+      >
+        <WalletConnect compact />
+      </div>
+
       <main className={`relative z-10 mx-auto w-full min-h-[100dvh] flex flex-col pt-8 pb-12 px-4 transition-[max-width] duration-500 ease-in-out ${step === 'result' ? 'max-w-4xl' : step === 'landing' ? 'max-w-md md:max-w-6xl' : 'max-w-md'}`} style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
         
         <AnimatePresence mode="wait">
@@ -1321,7 +1329,7 @@ export default function Home() {
                 transition={{ delay: 0.7, type: "spring", bounce: 0.3 }}
               >
                 <p className="text-xs text-gray-400 text-center md:text-left uppercase tracking-widest">Unlock Your World Cup Aura Fan Card Now</p>
-                <Button onClick={handleStart} className="w-full h-14 text-lg font-bold uppercase tracking-wider bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl">
+                <Button onClick={handleStart} className="w-full h-14 text-lg font-black uppercase tracking-wider rounded-xl text-black bg-gradient-to-br from-amber-300 via-primary to-amber-500 border-0 shadow-[0_10px_40px_-8px_hsl(var(--primary)/0.7)] hover:brightness-110">
                   <Camera className="mr-2" /> Take Selfie
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
@@ -2123,7 +2131,7 @@ export default function Home() {
                     <Button
                       onClick={handleMint}
                       disabled={mintMutation.isPending || !mintReady || !recipient}
-                      className="w-full h-14 bg-accent text-accent-foreground hover:bg-accent/90 font-bold uppercase tracking-wider rounded-xl"
+                      className="w-full h-14 text-white font-black uppercase tracking-wider rounded-xl border-0 bg-gradient-to-br from-accent via-rose-500 to-orange-500 shadow-[0_10px_40px_-8px_hsl(var(--accent)/0.7)] hover:brightness-110"
                       data-testid="button-mint"
                     >
                       {mintMutation.isPending ? (

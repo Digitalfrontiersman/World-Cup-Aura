@@ -6,17 +6,40 @@ function shortAddress(addr: string): string {
   return `${addr.slice(0, 4)}...${addr.slice(-4)}`;
 }
 
+interface WalletConnectProps {
+  /** Compact pill styling for the persistent header; full-width otherwise. */
+  compact?: boolean;
+}
+
 /**
- * On-brand wallet connect control for the mint flow. When disconnected it opens
- * the wallet-adapter modal; when connected it shows the wallet name + a
- * truncated address with a disconnect action. Styled to match the app's dark
- * theme instead of the default adapter button.
+ * On-brand wallet connect control. When disconnected it opens the wallet-adapter
+ * modal; when connected it shows the wallet + a truncated address with a
+ * disconnect action. `compact` renders a header pill; otherwise a full-width
+ * block for the mint flow. Styled to match the app's dark/gold theme.
  */
-export function WalletConnect() {
+export function WalletConnect({ compact = false }: WalletConnectProps) {
   const { publicKey, connected, connecting, disconnect, wallet } = useWallet();
   const { setVisible } = useWalletModal();
 
   if (connected && publicKey) {
+    if (compact) {
+      return (
+        <div className="flex items-center gap-2 rounded-full border border-primary/40 bg-black/60 backdrop-blur px-3 h-9 shadow-lg">
+          <span className="h-2 w-2 rounded-full bg-green-400 shadow-[0_0_6px_rgba(74,222,128,0.9)]" />
+          <span className="font-mono text-xs text-white">
+            {shortAddress(publicKey.toBase58())}
+          </span>
+          <button
+            onClick={() => disconnect()}
+            className="text-gray-400 hover:text-white transition-colors"
+            aria-label="Disconnect wallet"
+            title="Disconnect"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      );
+    }
     return (
       <div className="flex items-center gap-2 rounded-xl border border-primary/40 bg-primary/10 px-3 h-11">
         <Check className="h-4 w-4 text-green-400 shrink-0" />
@@ -40,11 +63,25 @@ export function WalletConnect() {
     );
   }
 
+  if (compact) {
+    return (
+      <button
+        onClick={() => setVisible(true)}
+        disabled={connecting}
+        className="flex items-center gap-1.5 rounded-full border border-primary/50 bg-black/60 backdrop-blur px-3.5 h-9 text-xs font-bold uppercase tracking-wider text-white shadow-lg transition-all duration-200 hover:bg-primary/15 hover:border-primary active:scale-95 disabled:opacity-60"
+        data-testid="button-connect-wallet"
+      >
+        <Wallet className="h-3.5 w-3.5 text-primary" />
+        {connecting ? "..." : "Connect"}
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={() => setVisible(true)}
       disabled={connecting}
-      className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/50 bg-black/60 h-11 text-sm font-bold uppercase tracking-wider text-white hover:bg-primary/10 hover:border-primary transition-colors disabled:opacity-60"
+      className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/50 bg-black/60 h-11 text-sm font-bold uppercase tracking-wider text-white transition-all duration-200 hover:bg-primary/10 hover:border-primary active:scale-[0.98] disabled:opacity-60"
       data-testid="button-connect-wallet"
     >
       <Wallet className="h-4 w-4 text-primary" />
