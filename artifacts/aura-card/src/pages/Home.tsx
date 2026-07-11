@@ -103,6 +103,9 @@ function getAuraTier(aura: number): string {
 export default function Home() {
   const [step, setStep] = useState<Step>("landing");
   const [photo, setPhoto] = useState<string | null>(null);
+  // When the landing "Upload" button routes into the photo step, remember to
+  // auto-open the file picker so the button does what it says.
+  const [photoIntent, setPhotoIntent] = useState<"upload" | null>(null);
   const [gender, setGender] = useState<Gender | null>(() => {
     try {
       const stored = localStorage.getItem("aura:gender");
@@ -609,6 +612,16 @@ export default function Home() {
       if (photo && photo.startsWith("blob:")) URL.revokeObjectURL(photo);
     };
   }, [photo]);
+
+  // Best-effort: if the user chose "Upload" on the landing screen, open the file
+  // picker once the photo step mounts. If the browser blocks the programmatic
+  // click (lost user-activation), they simply see the Upload button — no regression.
+  useEffect(() => {
+    if (step === "photo" && photoIntent === "upload") {
+      fileInputRef.current?.click();
+      setPhotoIntent(null);
+    }
+  }, [step, photoIntent]);
 
   const useSampleAvatar = (num: number) => {
     setPhoto(`/avatar-${num}.png`);
@@ -1259,7 +1272,7 @@ export default function Home() {
                   <Camera className="mr-2" /> Take Selfie
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
-                  <Button onClick={handleStart} variant="outline" className="h-14 bg-black/60 border-gray-700 text-white hover:bg-black/80 hover:border-primary/50">
+                  <Button onClick={() => { setPhotoIntent("upload"); handleStart(); }} variant="outline" className="h-14 bg-black/60 border-gray-700 text-white hover:bg-black/80 hover:border-primary/50">
                     <Upload className="mr-2 h-5 w-5" /> Upload
                   </Button>
                   <Button onClick={handleStart} variant="outline" className="h-14 bg-black/60 border-gray-700 text-white hover:bg-black/80 hover:border-primary/50">
@@ -2305,7 +2318,7 @@ export default function Home() {
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
                   aria-label="Cancel"
                 >
-                  ✕
+                  <X className="h-4 w-4" />
                 </button>
               </div>
 
