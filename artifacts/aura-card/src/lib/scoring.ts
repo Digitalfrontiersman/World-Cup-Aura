@@ -1,4 +1,14 @@
-export function calculateAuraScore(answers: any) {
+export interface AuraAnswers {
+  name?: string;
+  nation?: string;
+  energy?: string;
+  weapon?: string;
+  flaw?: string;
+  confidence?: number;
+  walkout?: string;
+}
+
+export function calculateAuraScore(answers: AuraAnswers) {
   let aura = 50;
   let power = 500;
   let stats = {
@@ -40,10 +50,11 @@ export function calculateAuraScore(answers: any) {
     case "Chaos": stats.chaos += 25; break;
   }
 
-  // Flaw
-  if (answers.flaw.includes("referee")) stats.banter += 10;
-  if (answers.flaw.includes("unbearable")) { stats.banter += 15; aura += 2; }
-  if (answers.flaw.includes("this is our year")) { stats.loyalty += 15; stats.chaos += 5; }
+  // Flaw (guard against an unset flaw so scoring never throws)
+  const flaw = answers.flaw ?? "";
+  if (flaw.includes("referee")) stats.banter += 10;
+  if (flaw.includes("unbearable")) { stats.banter += 15; aura += 2; }
+  if (flaw.includes("this is our year")) { stats.loyalty += 15; stats.chaos += 5; }
 
   // Clamp stats — no random noise here; server overwrites with VRF-derived deltas
   const clamp = (v: number) => Math.max(1, Math.min(99, Math.floor(v)));
@@ -84,7 +95,7 @@ export function calculateAuraScore(answers: any) {
     "Spiritual Supporter":  "National Icon",
     "Delusional Champion":  "Delusion King",
   };
-  const archetype = ENERGY_ARCHETYPE[answers.energy] ?? "Aura Midfielder";
+  const archetype = ENERGY_ARCHETYPE[answers.energy ?? ""] ?? "Aura Midfielder";
 
   // Preview prophecy — deterministic from confidence level.
   // Server overwrites this with the VRF-derived prophecy at save time.
