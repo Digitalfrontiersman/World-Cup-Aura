@@ -297,6 +297,9 @@ export default function Home() {
   const cardY = useMotionValue(0);
   const rotateX = useTransform(cardY, [-100, 100], [10, -10]);
   const rotateY = useTransform(cardX, [-100, 100], [-10, 10]);
+  // Holographic foil highlight position, following the pointer/gyro across the card.
+  const holoX = useTransform(cardX, [-150, 150], ["0%", "100%"]);
+  const holoY = useTransform(cardY, [-150, 150], ["0%", "100%"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -310,6 +313,22 @@ export default function Home() {
     cardX.set(0);
     cardY.set(0);
   };
+
+  // Best-effort gyroscope tilt on the result card (mostly Android mobile). No iOS
+  // permission prompt is triggered; if orientation is unavailable the card simply
+  // stays put and pointer tilt still works on desktop.
+  useEffect(() => {
+    if (step !== "result") return;
+    const handle = (e: DeviceOrientationEvent) => {
+      if (e.gamma == null || e.beta == null) return;
+      const gx = Math.max(-30, Math.min(30, e.gamma)); // left-right
+      const gy = Math.max(-30, Math.min(30, e.beta - 45)); // front-back, centred
+      cardX.set((gx / 30) * 60);
+      cardY.set((gy / 30) * 60);
+    };
+    window.addEventListener("deviceorientation", handle);
+    return () => window.removeEventListener("deviceorientation", handle);
+  }, [step, cardX, cardY]);
 
   const scanMessages = [
     "Scanning fan aura...",
@@ -1706,6 +1725,12 @@ export default function Home() {
                     boxShadow: getRarityEffect(result.rarity).glowShadow,
                   }}
                 >
+                  {/* Pointer/gyro-driven holographic foil sheen (all rarities) */}
+                  <motion.div
+                    aria-hidden
+                    className="holo-foil absolute inset-0 z-30 pointer-events-none"
+                    style={{ ["--holo-x"]: holoX, ["--holo-y"]: holoY } as unknown as React.CSSProperties}
+                  />
                   {/* Holo foil overlay (for Icon, Legendary, Mythic) */}
                   {getRarityEffect(effectiveRarity).holoFoil && (
                     <div
