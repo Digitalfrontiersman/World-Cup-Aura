@@ -1,9 +1,12 @@
 import { useParams, Link } from "wouter";
 import { useGetAuraCard } from "@workspace/api-client-react";
-import { motion } from "framer-motion";
-import { Loader2, Zap, Star } from "lucide-react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { Loader2, Zap, Star, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ParticleSparks, HaloRing, getRarityEffect } from "@/components/RarityEffects";
+import { AuroraBackground } from "@/components/AuroraBackground";
+import { PlayerMatch } from "@/components/PlayerMatch";
+import { rarityColor } from "@/lib/rarity";
 
 const RARITY_STYLES: Record<string, { color: string; border: string; glow: string; bg: string }> = {
   Core:      { color: "#cbd5e1", border: "rgba(203,213,225,0.55)", glow: "rgba(203,213,225,0.12)", bg: "rgba(203,213,225,0.1)" },
@@ -25,6 +28,23 @@ function getRarityStyle(rarity: string) {
 export default function CardPreview() {
   const { slug } = useParams<{ slug: string }>();
   const { data, isLoading, isError } = useGetAuraCard(slug ?? "");
+
+  // Pointer tilt + holographic foil for the shared card.
+  const cardX = useMotionValue(0);
+  const cardY = useMotionValue(0);
+  const rotateX = useTransform(cardY, [-120, 120], [8, -8]);
+  const rotateY = useTransform(cardX, [-120, 120], [-8, 8]);
+  const holoX = useTransform(cardX, [-160, 160], ["0%", "100%"]);
+  const holoY = useTransform(cardY, [-160, 160], ["0%", "100%"]);
+  const handleCardMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    cardX.set(e.clientX - r.left - r.width / 2);
+    cardY.set(e.clientY - r.top - r.height / 2);
+  };
+  const handleCardLeave = () => {
+    cardX.set(0);
+    cardY.set(0);
+  };
 
   const rarity = data?.card.rarity ?? "Core";
   const style = getRarityStyle(rarity);
@@ -59,18 +79,9 @@ export default function CardPreview() {
 
   return (
     <div className="min-h-dvh w-full bg-[#050816] relative overflow-hidden flex flex-col items-center pb-12">
-      {/* Background glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] blur-[150px] rounded-full"
-          style={{ backgroundColor: style.glow }}
-        />
-        <div
-          className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] blur-[150px] rounded-full"
-          style={{ backgroundColor: style.glow, opacity: 0.6 }}
-        />
-        <div className="absolute inset-0 bg-black/50" />
-      </div>
+      {/* Living aurora, tinted by the card's rarity */}
+      <AuroraBackground color={rarityColor(rarity)} />
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-sm px-5 pt-10 flex flex-col items-center gap-6">
         {/* Header */}
@@ -106,6 +117,9 @@ export default function CardPreview() {
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
+          onMouseMove={handleCardMove}
+          onMouseLeave={handleCardLeave}
+          style={{ rotateX, rotateY, transformPerspective: 900 }}
           className="w-full relative"
         >
           {/* Flames for Legendary / Mythic */}
@@ -134,7 +148,7 @@ export default function CardPreview() {
           )}
 
           <div
-            className={`w-full rounded-2xl overflow-hidden shadow-2xl border-[3px] rarity-glow-${rarity} rarity-border-${rarity}`}
+            className={`relative w-full rounded-2xl overflow-hidden shadow-2xl border-[3px] rarity-glow-${rarity} rarity-border-${rarity}`}
             style={{
               boxShadow: fx.glowShadow !== "none"
                 ? fx.glowShadow
@@ -145,6 +159,11 @@ export default function CardPreview() {
               src={imageDataUrl}
               alt={`${card.name}'s Aura Card`}
               className="w-full h-auto block"
+            />
+            <motion.div
+              aria-hidden
+              className="holo-foil absolute inset-0 z-20 pointer-events-none"
+              style={{ ["--holo-x"]: holoX, ["--holo-y"]: holoY } as unknown as React.CSSProperties}
             />
           </div>
         </motion.div>
@@ -182,6 +201,17 @@ export default function CardPreview() {
           ))}
         </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.42 }}
+          className="w-full"
+        >
+          <PlayerMatch
+            card={{ stats: card.stats, nation: card.nation, archetype: card.archetype }}
+          />
+        </motion.div>
+
         {vrfTxSig && (
           <motion.a
             href={`https://explorer.solana.com/tx/${vrfTxSig}?cluster=devnet`}
@@ -192,8 +222,9 @@ export default function CardPreview() {
             transition={{ delay: 0.45 }}
             className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-emerald-500/80 hover:text-emerald-400 transition-colors"
           >
-            ✓ Verified on Solana
-            <span className="text-[10px] opacity-60">↗</span>
+            <Check className="h-3.5 w-3.5" />
+            Verified on Solana
+            <ExternalLink className="h-3 w-3 opacity-60" />
           </motion.a>
         )}
 
