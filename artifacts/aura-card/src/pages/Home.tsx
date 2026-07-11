@@ -601,6 +601,15 @@ export default function Home() {
     }
   };
 
+  // Revoke the previous blob: URL whenever the photo changes or the component
+  // unmounts, so uploaded selfies don't leak object URLs across retakes.
+  // (data:/path photos from the camera and sample avatars are no-ops here.)
+  useEffect(() => {
+    return () => {
+      if (photo && photo.startsWith("blob:")) URL.revokeObjectURL(photo);
+    };
+  }, [photo]);
+
   const useSampleAvatar = (num: number) => {
     setPhoto(`/avatar-${num}.png`);
   };
