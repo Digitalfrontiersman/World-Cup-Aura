@@ -12,6 +12,7 @@ import { VerifyOnChain } from "@/components/VerifyOnChain";
 import { PlayerMatch } from "@/components/PlayerMatch";
 import { WalletConnect } from "@/components/WalletConnect";
 import { AuroraBackground } from "@/components/AuroraBackground";
+import { MintingCinematic } from "@/components/MintingCinematic";
 import { rarityColor } from "@/lib/rarity";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
@@ -2077,6 +2078,8 @@ export default function Home() {
                       <ExternalLink className="h-4 w-4" /> View on Explorer
                     </a>
                   </div>
+                ) : mintMutation.isPending ? (
+                  <MintingCinematic />
                 ) : (
                   <>
                     <div className="bg-black/40 p-3 rounded-lg border border-gray-800 space-y-2.5" data-testid="mint-recipient-option">
