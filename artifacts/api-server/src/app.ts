@@ -77,7 +77,7 @@ app.use(express.urlencoded({ extended: true, limit: "64kb" }));
 
 app.use("/api", router);
 
-// Global error handler — one consistent JSON envelope + structured logging.
+// Global error handler - one consistent JSON envelope + structured logging.
 // Must be registered last and declare four parameters so Express treats it as
 // an error handler.
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {

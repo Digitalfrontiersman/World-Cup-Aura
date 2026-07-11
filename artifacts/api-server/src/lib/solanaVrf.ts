@@ -38,7 +38,7 @@ const PROPHECIES = [
 
 const STAT_KEYS = ["speed", "clutch", "iq", "chaos", "loyalty", "banter"] as const;
 
-// Pull rates (%) matching RARITY_TIERS in aura.ts — ordered most-common → rarest
+// Pull rates (%) matching RARITY_TIERS in aura.ts - ordered most-common → rarest
 const RARITY_PULL_RATES = [55.0, 25.0, 12.0, 5.5, 2.0, 0.5] as const;
 const RARITY_TIERS_ORDERED = ["Core", "Rising", "Elite", "Icon", "Legendary", "Mythic"] as const;
 
@@ -52,9 +52,9 @@ export interface VrfValues {
 
 /**
  * Derive a 32-byte deterministic seed from:
- *   blockhash  — produced by Solana validators, unpredictable before the request
- *   slug       — unique card slug, generated server-side before portrait generation
- *   ts         — millisecond timestamp locked at request start
+ *   blockhash  - produced by Solana validators, unpredictable before the request
+ *   slug       - unique card slug, generated server-side before portrait generation
+ *   ts         - millisecond timestamp locked at request start
  *
  * Seed = SHA-256("${blockhash}:${slug}:${ts}")
  *
@@ -101,7 +101,7 @@ export function pickRarity(seed: Buffer): string {
  *   [6]   → chaos delta
  *   [7]   → loyalty delta
  *   [8]   → banter delta
- *   (each delta byte maps 0–255 → −5..+5 via round((byte/255)*10−5))
+ *   (each delta byte maps 0-255 → −5..+5 via round((byte/255)*10−5))
  */
 export function deriveVrfValues(seed: Buffer, slot: number): VrfValues {
   const mapDelta = (byte: number) => Math.round((byte / 255) * 10 - 5);

@@ -33,7 +33,7 @@ function CardTile({ card, onClick }: CardTileProps) {
         borderColor: (isLegendary || isMythic) ? cardRarityColor : "rgba(255,255,255,0.12)",
         boxShadow,
       }}
-      aria-label={`${card.name} — ${card.rarity}`}
+      aria-label={`${card.name} - ${card.rarity}`}
     >
       {card.imageUrl ? (
         <img

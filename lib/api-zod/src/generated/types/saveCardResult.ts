@@ -11,7 +11,7 @@ export interface SaveCardResult {
   slug: string;
   /** Server-assigned rarity tier from the weighted print-run draw. */
   rarity: string;
-  /** Global sequential edition number (1–100,000). */
+  /** Global sequential edition number (1-100,000). */
   editionNumber: number;
   /**
      * Solana transaction signature for the on-chain VRF commitment Memo, or null when VRF data was not provided or the treasury is unconfigured.

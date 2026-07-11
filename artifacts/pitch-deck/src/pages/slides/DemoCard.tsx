@@ -4,13 +4,13 @@ export default function DemoCard() {
       {/* Thin gold top bar */}
       <div className="absolute top-0 left-0 w-full" style={{ height: "0.5vh", background: "#F5A623" }} />
 
-      {/* Header — top left */}
+      {/* Header - top left */}
       <div className="absolute" style={{ top: "8vh", left: "8vw" }}>
         <div
           className="font-body uppercase tracking-widest mb-[1.5vh]"
           style={{ fontSize: "2.2vw", color: "#F5A623", fontWeight: 700, letterSpacing: "0.22em" }}
         >
-          Demo — Step 3
+          Demo - Step 3
         </div>
         <div
           className="font-display leading-none tracking-tight"
@@ -58,7 +58,7 @@ export default function DemoCard() {
             className="font-body text-center mt-[1.5vh]"
             style={{ fontSize: "2.8vw", color: "rgba(139,149,176,0.5)", textWrap: "balance", maxWidth: "50vw" }}
           >
-            The generated Aura Card result — AI portrait, stats, rarity badge, and prophecy
+            The generated Aura Card result - AI portrait, stats, rarity badge, and prophecy
           </div>
         </div>
       </div>
@@ -69,15 +69,15 @@ export default function DemoCard() {
         style={{ left: "8vw", right: "8vw", bottom: "4vh" }}
       >
         <div className="font-body text-center" style={{ fontSize: "2.6vw", color: "#8B95B0" }}>
-          <span className="font-display" style={{ color: "#F5A623", fontWeight: 900 }}>SAVE</span> — download as image
+          <span className="font-display" style={{ color: "#F5A623", fontWeight: 900 }}>SAVE</span> - download as image
         </div>
         <div style={{ width: "0.15vw", height: "4vh", background: "rgba(245,166,35,0.2)" }} />
         <div className="font-body text-center" style={{ fontSize: "2.6vw", color: "#8B95B0" }}>
-          <span className="font-display" style={{ color: "#F5A623", fontWeight: 900 }}>SHARE</span> — social link
+          <span className="font-display" style={{ color: "#F5A623", fontWeight: 900 }}>SHARE</span> - social link
         </div>
         <div style={{ width: "0.15vw", height: "4vh", background: "rgba(245,166,35,0.2)" }} />
         <div className="font-body text-center" style={{ fontSize: "2.6vw", color: "#8B95B0" }}>
-          <span className="font-display" style={{ color: "#DC2626", fontWeight: 900 }}>OWN IT</span> — stored on Solana
+          <span className="font-display" style={{ color: "#DC2626", fontWeight: 900 }}>OWN IT</span> - stored on Solana
         </div>
       </div>
     </div>

@@ -49,7 +49,7 @@ export const NATION_FLAGS: Record<string, string> = {
   Uzbekistan: "uz",
 };
 
-// Sorted list of nations that have a flag — used to populate pickers.
+// Sorted list of nations that have a flag - used to populate pickers.
 export const FLAG_NATIONS = Object.keys(NATION_FLAGS).sort();
 
 export function flagCode(nation: string): string | undefined {

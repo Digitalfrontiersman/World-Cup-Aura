@@ -96,7 +96,7 @@ export default function WhatNext() {
               Card Gallery
             </div>
             <div className="font-body" style={{ fontSize: "2.8vw", color: "#8B95B0" }}>
-              A public wall of every minted Aura Card — shareable, filterable by rarity.
+              A public wall of every minted Aura Card - shareable, filterable by rarity.
             </div>
           </div>
         </div>

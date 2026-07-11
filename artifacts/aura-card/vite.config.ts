@@ -7,7 +7,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // PORT and BASE_PATH are injected by Replit's artifact runner in production
 // (see .replit-artifact/artifact.toml). Locally they're usually unset, so we
-// default them instead of throwing — this keeps `pnpm dev`/`build` working
+// default them instead of throwing - this keeps `pnpm dev`/`build` working
 // off-Replit and avoids Git Bash mangling a bare `BASE_PATH=/` on Windows.
 // Replit always overrides these, so production behaviour is unchanged.
 const port = Number(process.env.PORT) || 5173;

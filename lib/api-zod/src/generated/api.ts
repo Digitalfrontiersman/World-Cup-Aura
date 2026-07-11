@@ -49,7 +49,7 @@ export const SaveAuraCardBody = zod.object({
 export const SaveAuraCardResponse = zod.object({
   "slug": zod.string().describe('UUID slug for the shareable card URL.'),
   "rarity": zod.string().describe('Server-assigned rarity tier from the weighted print-run draw.'),
-  "editionNumber": zod.number().describe('Global sequential edition number (1–100,000).'),
+  "editionNumber": zod.number().describe('Global sequential edition number (1-100,000).'),
   "vrfTxSig": zod.string().nullable().describe('Solana transaction signature for the on-chain VRF commitment Memo, or null when VRF data was not provided or the treasury is unconfigured.\n')
 })
 
@@ -117,7 +117,7 @@ export const ListAuraCardsResponse = zod.object({
   "rarity": zod.string(),
   "archetype": zod.string(),
   "imageUrl": zod.string().nullable().describe('URL path to the card image (e.g. \/api\/aura\/card\/{slug}\/image). Null when no portrait has been stored for this card.\n'),
-  "editionNumber": zod.number().describe('Global sequential edition number (1–100,000).'),
+  "editionNumber": zod.number().describe('Global sequential edition number (1-100,000).'),
   "voteScore": zod.number().describe('Net vote score (upvotes minus downvotes).'),
   "commentCount": zod.number().describe('Total number of comments on this card.'),
   "vrfTxSig": zod.string().nullable().describe('Solana transaction signature for the on-chain VRF commitment Memo, or null when VRF data is not available for this card.\n')
@@ -127,7 +127,7 @@ export const ListAuraCardsResponse = zod.object({
 
 
 /**
- * Upserts a +1 or -1 vote for the given session. Returns the updated net vote score. One vote per session per card — submitting again replaces the previous vote.
+ * Upserts a +1 or -1 vote for the given session. Returns the updated net vote score. One vote per session per card - submitting again replaces the previous vote.
 
  * @summary Cast or change a vote on a community card
  */

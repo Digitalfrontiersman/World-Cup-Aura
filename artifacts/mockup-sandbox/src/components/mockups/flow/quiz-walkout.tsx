@@ -56,7 +56,7 @@ export default function QuizWalkoutScreen() {
         </div>
 
         <p style={{ color: "rgba(251,191,36,0.6)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", margin: 0 }}>
-          7 / 7 — Walkout Vibe
+          7 / 7 - Walkout Vibe
         </p>
 
         <h2 style={{ color: "#fff", fontSize: 30, fontWeight: 700, margin: 0, lineHeight: 1.2 }}>

@@ -6,7 +6,7 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { mockupPreviewPlugin } from "./mockupPreviewPlugin";
 
 // PORT and BASE_PATH are injected by Replit's artifact runner in production.
-// Locally they're usually unset, so we default them instead of throwing — this
+// Locally they're usually unset, so we default them instead of throwing - this
 // keeps `pnpm dev`/`build` working off-Replit and avoids Git Bash mangling a
 // bare `BASE_PATH=/` on Windows. Replit always overrides these, so production
 // behaviour is unchanged.

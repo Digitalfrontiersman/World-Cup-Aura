@@ -56,7 +56,7 @@ export function calculateAuraScore(answers: AuraAnswers) {
   if (flaw.includes("unbearable")) { stats.banter += 15; aura += 2; }
   if (flaw.includes("this is our year")) { stats.loyalty += 15; stats.chaos += 5; }
 
-  // Clamp stats — no random noise here; server overwrites with VRF-derived deltas
+  // Clamp stats - no random noise here; server overwrites with VRF-derived deltas
   const clamp = (v: number) => Math.max(1, Math.min(99, Math.floor(v)));
 
   aura = clamp(aura);
@@ -85,7 +85,7 @@ export function calculateAuraScore(answers: AuraAnswers) {
   const rarityIndex = Math.min(5, Math.floor(aura / 17));
   const rarity = rarities[rarityIndex];
 
-  // Preview archetype — deterministic from energy answer.
+  // Preview archetype - deterministic from energy answer.
   // Server overwrites this with the VRF-derived archetype at save time.
   const ENERGY_ARCHETYPE: Record<string, string> = {
     "Calm Assassin":        "Clutch Warrior",
@@ -97,7 +97,7 @@ export function calculateAuraScore(answers: AuraAnswers) {
   };
   const archetype = ENERGY_ARCHETYPE[answers.energy ?? ""] ?? "Aura Midfielder";
 
-  // Preview prophecy — deterministic from confidence level.
+  // Preview prophecy - deterministic from confidence level.
   // Server overwrites this with the VRF-derived prophecy at save time.
   const prophecies = [
     "You were born for late winners and emotional chaos.",

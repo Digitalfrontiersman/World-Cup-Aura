@@ -78,7 +78,7 @@ function playRevealSound(rarity: string): void {
       });
     }
   } catch {
-    // Web Audio API may be blocked in some environments — silently skip
+    // Web Audio API may be blocked in some environments - silently skip
   }
 }
 
@@ -119,7 +119,7 @@ export function RarityReveal({ rarity, predictedRarity, editionNumber, vrfTxSig,
           : ["#fbbf24", "#f59e0b", "#ffffff", "#fff7ed"]
         : isUpgrade
           ? ["#c084fc", "#a855f7", "#ffffff"]
-          : ["#94a3b8", "#64748b", "#ffffff"]; // downgrade — muted silver burst
+          : ["#94a3b8", "#64748b", "#ffffff"]; // downgrade - muted silver burst
 
       const burst = (origin: { x: number; y: number }) =>
         confetti({
@@ -250,7 +250,7 @@ export function RarityReveal({ rarity, predictedRarity, editionNumber, vrfTxSig,
           </motion.p>
         )}
 
-        {/* Mismatch banner — shows for any deviation from the predicted tier */}
+        {/* Mismatch banner - shows for any deviation from the predicted tier */}
         {isMismatch && (
           <motion.div
             className="mt-1 px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase"

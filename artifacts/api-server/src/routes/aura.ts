@@ -100,7 +100,7 @@ const MAX_MINT_CONCURRENT = 2;
 let mintInFlight = 0;
 
 // ---------------------------------------------------------------------------
-// Rarity Framework — 100k Edition Print Run
+// Rarity Framework - 100k Edition Print Run
 // ---------------------------------------------------------------------------
 
 export const RARITY_TIERS = [
@@ -132,12 +132,12 @@ let quotasInitialized = false;
  * Migrations run inside a single transaction guarded by a PostgreSQL advisory
  * lock so concurrent cold-start requests cannot race on the same migration.
  *
- *   000 — DDL: adds edition_number + rarity columns, creates rarity_quotas
- *   001 — data: backfills rarity for pre-framework cards
- *   002 — data: guarantees every card has a sequential edition number
+ *   000 - DDL: adds edition_number + rarity columns, creates rarity_quotas
+ *   001 - data: backfills rarity for pre-framework cards
+ *   002 - data: guarantees every card has a sequential edition number
  */
 async function runSchemaMigrations(): Promise<void> {
-  // Create the tracking table first — outside the advisory lock because this
+  // Create the tracking table first - outside the advisory lock because this
   // DDL is truly idempotent and needed before we can acquire the lock.
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS _schema_migrations (
@@ -314,7 +314,7 @@ async function ensureQuotasSeeded(): Promise<void> {
   // Run tracked schema migrations first (idempotent)
   await runSchemaMigrations();
 
-  // Upsert quota definitions (idempotent — safe to run on every cold start)
+  // Upsert quota definitions (idempotent - safe to run on every cold start)
   for (const { tier, quota } of RARITY_TIERS) {
     await db
       .insert(rarityQuotasTable)
@@ -323,7 +323,7 @@ async function ensureQuotasSeeded(): Promise<void> {
   }
 
   // Sync issued counts from actual card rows so quota stats are always
-  // accurate — fixes drift from pre-framework inserts or mid-transaction
+  // accurate - fixes drift from pre-framework inserts or mid-transaction
   // restarts. Runs after the backfill migration so counts reflect the
   // newly-assigned rarities.
   await db.execute(sql`
@@ -354,17 +354,17 @@ type TransformBody = {
 
 const STYLE_SUFFIXES: Record<NonNullable<TransformBody["styleVariant"]>, string> = {
   realistic: [
-    `Art direction: hyper-realistic photographic render — cinematic IMAX-quality lighting, subsurface skin scattering, physically accurate fabric textures, ultra-sharp 8K detail.`,
+    `Art direction: hyper-realistic photographic render - cinematic IMAX-quality lighting, subsurface skin scattering, physically accurate fabric textures, ultra-sharp 8K detail.`,
     `Dramatic stadium floodlights with volumetric god-rays, lens flare, shallow depth-of-field bokeh background. Photorealistic glowing aura energy around the figure.`,
     `Style: premium sports photography meets concept-art realism. No text or words in the image.`,
   ].join(" "),
   comic: [
-    `Art direction: bold dramatic comic-book / graphic-novel illustration — thick confident ink outlines, cel-shaded colour fills, halftone dot textures, high-contrast shadow slabs.`,
+    `Art direction: bold dramatic comic-book / graphic-novel illustration - thick confident ink outlines, cel-shaded colour fills, halftone dot textures, high-contrast shadow slabs.`,
     `Dynamic action pose with motion-blur speed lines radiating outward. Explosive aura bursts rendered as comic panel energy effects in vibrant orange and electric blue.`,
     `Style: Marvel / DC collectible variant-cover art meets manga sports drama. No text or words in the image.`,
   ].join(" "),
   fantasy: [
-    `Art direction: rich painterly fantasy-epic oil painting — lush impasto brushwork, luminous glazed highlights, classical portrait grandeur elevated to mythic scale.`,
+    `Art direction: rich painterly fantasy-epic oil painting - lush impasto brushwork, luminous glazed highlights, classical portrait grandeur elevated to mythic scale.`,
     `Surrounded by swirling arcane aura fire, golden magical particles, and a dramatic twilight-stadium sky with storm clouds parting. Regal, timeless, masterwork quality.`,
     `Style: Renaissance heroic portraiture fused with high-fantasy concept art and World Cup fever. No text or words in the image.`,
   ].join(" "),
@@ -372,12 +372,12 @@ const STYLE_SUFFIXES: Record<NonNullable<TransformBody["styleVariant"]>, string>
 
 
 const TIER_ATMOSPHERE: Record<string, string> = {
-  "Street Warrior": `Atmosphere: raw determined energy — chalk dust rising under stadium floodlights, underdog hunger, neon arena shadows, eyes blazing with the drive to prove themselves.`,
-  "Rising Star": `Atmosphere: raw determined energy — chalk dust rising under stadium floodlights, underdog hunger, neon arena shadows, eyes blazing with the drive to prove themselves.`,
-  "Club Legend": `Atmosphere: stadium floodlights blazing, crowd bokeh stretching behind them, commanding authority — a proven winner radiating medal glow and local-legend status.`,
-  "National Hero": `Atmosphere: stadium floodlights blazing, crowd bokeh stretching behind them, commanding authority — a proven winner radiating medal glow and national pride.`,
-  "World Class": `Atmosphere: divine golden light rays cutting through smoke, swirling particle storm of pure aura, once-in-a-generation gravitas — a living legend who elevates everyone around them.`,
-  "Mythic Champion": `Atmosphere: divine golden light rays cutting through smoke, swirling particle storm of pure aura, god-tier energy, once-in-a-generation gravitas — a mythic figure who transcends the game itself.`,
+  "Street Warrior": `Atmosphere: raw determined energy - chalk dust rising under stadium floodlights, underdog hunger, neon arena shadows, eyes blazing with the drive to prove themselves.`,
+  "Rising Star": `Atmosphere: raw determined energy - chalk dust rising under stadium floodlights, underdog hunger, neon arena shadows, eyes blazing with the drive to prove themselves.`,
+  "Club Legend": `Atmosphere: stadium floodlights blazing, crowd bokeh stretching behind them, commanding authority - a proven winner radiating medal glow and local-legend status.`,
+  "National Hero": `Atmosphere: stadium floodlights blazing, crowd bokeh stretching behind them, commanding authority - a proven winner radiating medal glow and national pride.`,
+  "World Class": `Atmosphere: divine golden light rays cutting through smoke, swirling particle storm of pure aura, once-in-a-generation gravitas - a living legend who elevates everyone around them.`,
+  "Mythic Champion": `Atmosphere: divine golden light rays cutting through smoke, swirling particle storm of pure aura, god-tier energy, once-in-a-generation gravitas - a mythic figure who transcends the game itself.`,
 };
 
 function buildPrompt(b: TransformBody): string {
@@ -391,7 +391,7 @@ function buildPrompt(b: TransformBody): string {
 
   const base = [
     `Transform the person in this photo into an epic football (soccer) hero character for a collectible trading card.`,
-    `Keep their recognizable likeness — same face shape, hairstyle, skin tone and key features.`,
+    `Keep their recognizable likeness - same face shape, hairstyle, skin tone and key features.`,
     `They are a "${archetype}" with "${energy}" matchday energy and a "${walkout}" walkout vibe, whose signature strength is ${weapon}.`,
     `Dress them in a sleek, fictional football kit inspired by the colors of ${nation} (do NOT use any real team crests, logos, sponsor names or official badges).`,
     `Heroic head-and-shoulders / upper-body portrait, looking powerful and confident, centered composition, dark dramatic background. High detail, vibrant, screenshot-worthy.`,
@@ -425,7 +425,7 @@ function buildBasePrompt(b: TransformBody): string {
 
   const base = [
     `Transform the person in this photo into an epic football (soccer) hero character for a collectible trading card.`,
-    `Keep their recognizable likeness — same face shape, hairstyle, skin tone and key features.`,
+    `Keep their recognizable likeness - same face shape, hairstyle, skin tone and key features.`,
     `They are a "${archetype}" with "${energy}" matchday energy and a "${walkout}" walkout vibe, whose signature strength is ${weapon}.`,
     `Dress them in a sleek, fictional football kit inspired by the colors of ${nation} (do NOT use any real team crests, logos, sponsor names or official badges).`,
     `Heroic head-and-shoulders / upper-body portrait, looking powerful and confident, centered composition, dark dramatic background. High detail, vibrant, screenshot-worthy.`,
@@ -590,7 +590,7 @@ router.post("/aura/card", cardRateLimiter, jsonLarge, async (req, res): Promise<
       // Cascade fallback: two-pass search so issuance never fails prematurely.
       //
       // Pass 1 (primary): step from drawnIdx toward Core (more-common). This is
-      // the normal fallback path — a drawn Mythic that's exhausted falls to
+      // the normal fallback path - a drawn Mythic that's exhausted falls to
       // Legendary, then Icon, etc.
       //
       // Pass 2 (recovery): if the primary pass exhausts without finding a slot
@@ -629,13 +629,13 @@ router.post("/aura/card", cardRateLimiter, jsonLarge, async (req, res): Promise<
         .where(eq(rarityQuotasTable.tier, selectedTier));
 
       // Merge server-assigned rarity into card JSONB so card.rarity and the
-      // authoritative rarity column always agree — no matter which path reads it.
+      // authoritative rarity column always agree - no matter which path reads it.
       const cardWithRarity = {
         ...enrichedCard,
         rarity: selectedTier,
       };
 
-      // Insert card within the same transaction — atomic with quota increment
+      // Insert card within the same transaction - atomic with quota increment
       const inserted = await tx
         .insert(auraCardsTable)
         .values({ slug, card: cardWithRarity, imageDataUrl, rarity: selectedTier })
@@ -658,7 +658,7 @@ router.post("/aura/card", cardRateLimiter, jsonLarge, async (req, res): Promise<
   }
 
   // Resolve the Memo promise that was fired non-blocking at portrait-generation time.
-  // Allow up to 5 s — the portrait generation + rarity reveal gives ample headroom.
+  // Allow up to 5 s - the portrait generation + rarity reveal gives ample headroom.
   let vrfTxSig: string | null = null;
   if (vrfEntry) {
     vrfTxSig = await Promise.race([
@@ -675,7 +675,7 @@ router.post("/aura/card", cardRateLimiter, jsonLarge, async (req, res): Promise<
   res.json(SaveAuraCardResponse.parse({ slug, rarity, editionNumber, vrfTxSig }));
 });
 
-// NOTE: this route has no ownership check — there is no user/session model yet,
+// NOTE: this route has no ownership check - there is no user/session model yet,
 // so anyone who knows a (publicly-listed) slug can replace its image. It is
 // rate-limited to blunt abuse; real fix is per-owner auth (tracked for later).
 router.patch(
@@ -787,7 +787,7 @@ router.get("/aura/rarity-stats", async (_req, res): Promise<void> => {
 });
 
 // Cap every free-text field that gets interpolated into the AI prompt. This
-// bounds prompt-cost abuse and limits prompt-injection surface — these values
+// bounds prompt-cost abuse and limits prompt-injection surface - these values
 // are attacker-controlled and flow straight into buildPrompt().
 const MAX_PROMPT_FIELD = 120;
 function capField(v: unknown): string | undefined {
@@ -879,7 +879,7 @@ router.post("/aura/transform", transformRateLimiter, jsonLarge, async (req, res)
   inFlight += 1;
   const vrfTs = startMs;
 
-  // Generate card slug and kick off the full VRF pipeline immediately — runs in
+  // Generate card slug and kick off the full VRF pipeline immediately - runs in
   // parallel with the ~60 s portrait generation.
   //
   // Seed = SHA-256("${blockhash}:${cardSlug}:${ts}") so the slug is part of the
@@ -898,7 +898,7 @@ router.post("/aura/transform", transformRateLimiter, jsonLarge, async (req, res)
       if (!blockData) return null;
       const seedBuf = deriveVrfSeed(blockData.blockhash, vrfCardSlug, vrfTs);
       const vrfVals = deriveVrfValues(seedBuf, blockData.slot);
-      // Fire memo non-blocking — will be awaited (up to 5 s) in the save route
+      // Fire memo non-blocking - will be awaited (up to 5 s) in the save route
       const memoPromise: Promise<string | null> = commitVrfMemo(
         vrfCardSlug,
         blockData.blockhash,
@@ -924,7 +924,7 @@ router.post("/aura/transform", transformRateLimiter, jsonLarge, async (req, res)
       if (isContentPolicyError(firstErr)) {
         req.log.warn(
           { event: "transform_content_policy_fallback", attempt: 1 },
-          "Portrait prompt rejected by content policy — retrying with base prompt",
+          "Portrait prompt rejected by content policy - retrying with base prompt",
         );
         const fallbackPrompt = buildBasePrompt(body);
         imageBuffer = await withTimeout(
@@ -935,7 +935,7 @@ router.post("/aura/transform", transformRateLimiter, jsonLarge, async (req, res)
         throw firstErr;
       }
     }
-    // VRF pipeline completed long before portrait — register in store and return full payload
+    // VRF pipeline completed long before portrait - register in store and return full payload
     const vrfPipeline = await vrfPipelinePromise;
     if (vrfPipeline) {
       const now = Date.now();

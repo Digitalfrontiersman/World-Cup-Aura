@@ -151,7 +151,7 @@ export default function Home() {
   const [shareAssets, setShareAssets] = useState<{ just: string | null; prophecy: string | null; story: string | null }>({ just: null, prophecy: null, story: null });
   const [shareGenerating, setShareGenerating] = useState(false);
 
-  // Rarity reveal — true only on a fresh card generation, never on revisit/share
+  // Rarity reveal - true only on a fresh card generation, never on revisit/share
   const [isFirstReveal, setIsFirstReveal] = useState(false);
   const handleRevealComplete = useCallback(() => setIsFirstReveal(false), []);
 
@@ -406,19 +406,19 @@ export default function Home() {
           let body: Record<string, unknown> = {};
           try { body = await res.json(); } catch { /* ignore */ }
           if (body.reason === "capacity_rejected") {
-            // Server at capacity — retryable; keep allCapacity = true.
+            // Server at capacity - retryable; keep allCapacity = true.
             lastError = new Error(`Transform rejected (capacity)`);
           } else {
-            // Other rate-limit (e.g. per-IP limiter) — not a capacity issue.
+            // Other rate-limit (e.g. per-IP limiter) - not a capacity issue.
             allCapacity = false;
             lastError = new Error(`Transform rejected (429)`);
           }
         } else if (res.status >= 500) {
-          // Transient upstream failure — retryable but not a capacity issue.
+          // Transient upstream failure - retryable but not a capacity issue.
           allCapacity = false;
           lastError = new Error(`Transform failed (${res.status})`);
         } else {
-          // Client error (400/413/etc.) — retrying won't help.
+          // Client error (400/413/etc.) - retrying won't help.
           allCapacity = false;
           throw new TransformError("ai_error", `Transform rejected (${res.status})`);
         }
@@ -461,7 +461,7 @@ export default function Home() {
 
   // Auto-retry once with a visible countdown when the server is at capacity.
   // The one-shot guard (capacityRetryUsedRef) prevents this from looping if
-  // the retry itself also hits capacity — in that case the permanent error UI shows.
+  // the retry itself also hits capacity - in that case the permanent error UI shows.
   useEffect(() => {
     if (transformStatus !== "error" || transformErrorKind !== "capacity") {
       setCapacityCountdown(null);
@@ -627,7 +627,7 @@ export default function Home() {
 
   // Best-effort: if the user chose "Upload" on the landing screen, open the file
   // picker once the photo step mounts. If the browser blocks the programmatic
-  // click (lost user-activation), they simply see the Upload button — no regression.
+  // click (lost user-activation), they simply see the Upload button - no regression.
   useEffect(() => {
     if (step === "photo" && photoIntent === "upload") {
       fileInputRef.current?.click();
@@ -736,7 +736,7 @@ export default function Home() {
         "aura:revealedSlugs",
         JSON.stringify([...revealedSlugsRef.current].slice(-200))
       );
-    } catch { /* quota — ignore */ }
+    } catch { /* quota - ignore */ }
 
     setShowRarityReveal(true);
   }, [serverRarity, cardSlug]);
@@ -783,10 +783,10 @@ export default function Home() {
               data: { imageDataUrl: base.toDataURL("image/png") },
             });
           } catch {
-            // Non-critical — community wall will show the pre-stamp version
+            // Non-critical - community wall will show the pre-stamp version
           }
         } catch {
-          // Save failed — share assets will be built without server rarity/edition stamp,
+          // Save failed - share assets will be built without server rarity/edition stamp,
           // slug/rarity will fall back to client-side values
         }
 
@@ -1164,7 +1164,7 @@ export default function Home() {
               exit={{ opacity: 0, y: -20 }}
               className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 md:content-center py-4"
             >
-              {/* Copy block — mobile: 1st; desktop: col-1 row-1 */}
+              {/* Copy block - mobile: 1st; desktop: col-1 row-1 */}
               <motion.div
                 className="space-y-4 relative px-8 pt-4 pb-5 rounded-2xl overflow-hidden text-center md:text-left md:col-start-1 md:row-start-1"
                 initial={{ opacity: 0, y: -20 }}
@@ -1204,7 +1204,7 @@ export default function Home() {
                 </p>
               </motion.div>
 
-              {/* Card stack — mobile: 2nd; desktop: col-2 spanning both rows */}
+              {/* Card stack - mobile: 2nd; desktop: col-2 spanning both rows */}
               <div className="relative w-full flex items-center justify-center h-[300px] md:h-[460px] overflow-hidden md:col-start-2 md:row-start-1 md:row-span-2">
                 {/* Aura glow behind the stack */}
                 <motion.div
@@ -1275,7 +1275,7 @@ export default function Home() {
                 </motion.div>
               </div>
 
-              {/* CTA buttons — mobile: 3rd; desktop: col-1 row-2 */}
+              {/* CTA buttons - mobile: 3rd; desktop: col-1 row-2 */}
               <motion.div
                 className="w-full space-y-3 md:col-start-1 md:row-start-2"
                 initial={{ opacity: 0, y: 30 }}
@@ -1450,7 +1450,7 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Step label — animates with each step */}
+              {/* Step label - animates with each step */}
               <AnimatePresence mode="wait" custom={quizDirection}>
                 <motion.p
                   key={quizStep}
@@ -1462,11 +1462,11 @@ export default function Home() {
                   transition={{ duration: 0.28, ease: "easeInOut" }}
                   className="text-xs font-bold uppercase tracking-widest text-primary/60 mb-6"
                 >
-                  {quizStep + 1} / 7 — {QUIZ_STEP_NAMES[quizStep]}
+                  {quizStep + 1} / 7 - {QUIZ_STEP_NAMES[quizStep]}
                 </motion.p>
               </AnimatePresence>
 
-              {/* Question content — animated per step */}
+              {/* Question content - animated per step */}
               <div className="flex-1 flex flex-col justify-center">
                 <AnimatePresence mode="wait" custom={quizDirection}>
                   <motion.div
@@ -1486,7 +1486,7 @@ export default function Home() {
 
               {/* Bottom actions */}
               <div className="mt-8 pt-6 space-y-3">
-                {/* Explicit-confirm button — only for name (0), nation (1), confidence (5) */}
+                {/* Explicit-confirm button - only for name (0), nation (1), confidence (5) */}
                 {[0, 1, 5].includes(quizStep) && (
                   <Button 
                     onClick={nextQuizStep}
@@ -1523,7 +1523,7 @@ export default function Home() {
                 <img src="/scanner-hud.png" alt="" className="w-full max-w-[400px] animate-spin-slow" style={{ animationDuration: '30s' }} />
               </div>
 
-              {/* Main scanning content — centred vertically in the upper portion */}
+              {/* Main scanning content - centred vertically in the upper portion */}
               <div className="flex flex-col items-center justify-center flex-1 space-y-8 pt-8 pb-4 w-full z-10">
                 <div className="relative w-56 h-72 rounded-xl overflow-hidden border-2 border-primary/30 shadow-[0_0_50px_rgba(255,215,0,0.2)]">
                   {photo && <img src={photo} alt="" className="w-full h-full object-cover filter contrast-125 grayscale-[0.5]" />}
@@ -1578,7 +1578,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Community carousel — hidden on very short viewports so the HUD always fits,
+              {/* Community carousel - hidden on very short viewports so the HUD always fits,
                   and force-closed when the result arrives via active=false */}
               <div className="[@media(max-height:639px)]:hidden w-full">
                 <CommunityCarousel
@@ -1598,7 +1598,7 @@ export default function Home() {
               transition={{ type: "spring", bounce: 0.5, duration: 1 }}
               className="flex-1 flex flex-col items-center pb-12 w-full pt-4 perspective-1000 overflow-y-auto"
             >
-              {/* Rarity reveal overlay — plays once on fresh card generation */}
+              {/* Rarity reveal overlay - plays once on fresh card generation */}
               {isFirstReveal && result && (
                 <RarityRevealOverlay
                   rarity={result.rarity}
@@ -1672,7 +1672,7 @@ export default function Home() {
                   );
                 })()}
 
-                {/* Actual Card — flip-in on first reveal */}
+                {/* Actual Card - flip-in on first reveal */}
                 <motion.div
                   initial={isFirstReveal ? { rotateY: 80 } : false}
                   animate={{ rotateY: 0 }}
@@ -1755,7 +1755,7 @@ export default function Home() {
                             <>
                               <Loader2 className="h-7 w-7 animate-spin text-primary" />
                               <p className="text-xs font-bold uppercase tracking-wide text-white/90 leading-snug">
-                                Studio is busy — retrying in {capacityCountdown}s…
+                                Studio is busy - retrying in {capacityCountdown}s…
                               </p>
                             </>
                           ) : (
@@ -1763,8 +1763,8 @@ export default function Home() {
                               <Sparkles className="h-7 w-7 text-primary" />
                               <p className="text-xs font-bold uppercase tracking-wide text-white/90 leading-snug">
                                 {transformErrorKind === "capacity"
-                                  ? "Studio is full — please try again in a moment."
-                                  : "Portrait couldn't be generated — your card stats are saved."}
+                                  ? "Studio is full - please try again in a moment."
+                                  : "Portrait couldn't be generated - your card stats are saved."}
                               </p>
                               <Button
                                 onClick={() => { capacityRetryUsedRef.current = false; retryTransform(); }}
@@ -1802,7 +1802,7 @@ export default function Home() {
                     <div className="px-3 py-1.5 rounded border border-white/20 text-sm font-black uppercase text-white shadow-xl flex items-center gap-2 bg-black/60 backdrop-blur-md max-w-[120px] truncate">
                       {result.nation}
                     </div>
-                    {/* Rarity badge — always visible, prominently styled per tier.
+                    {/* Rarity badge - always visible, prominently styled per tier.
                         Pulses large when the reveal overlay's tier name settles here. */}
                     <motion.div
                       className="px-2.5 py-1 rounded text-[11px] font-black uppercase tracking-widest shadow-xl border-2 backdrop-blur-md"
@@ -1917,7 +1917,7 @@ export default function Home() {
                   )}
                   Share
                 </Button>
-                {/* Remix button — up to MAX_REMIXES uses */}
+                {/* Remix button - up to MAX_REMIXES uses */}
                 <Button
                   onClick={handleRemix}
                   disabled={remixCount >= MAX_REMIXES || transformStatus === "loading" || remixForging}
@@ -2058,10 +2058,10 @@ export default function Home() {
                           className="accent-primary h-3.5 w-3.5"
                           data-testid="checkbox-temp-wallet"
                         />
-                        I don't have a wallet — use a temporary in-app one
+                        I don't have a wallet - use a temporary in-app one
                       </label>
                       <p className="text-[10px] text-gray-500 leading-relaxed">
-                        Minting is free — the app's sponsor wallet covers all devnet fees.
+                        Minting is free - the app's sponsor wallet covers all devnet fees.
                       </p>
                     </div>
 
@@ -2091,7 +2091,7 @@ export default function Home() {
                 )}
               </motion.div>
 
-              {/* Scroll hint — draws the eye down to the community wall */}
+              {/* Scroll hint - draws the eye down to the community wall */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -2119,14 +2119,14 @@ export default function Home() {
         </AnimatePresence>
       </main>
 
-      {/* Community Wall — visible below the result screen */}
+      {/* Community Wall - visible below the result screen */}
       {step === "result" && result && (
         <div ref={communityWallRef} className="w-full pt-8 border-t border-white/5">
           <CommunityWall baseUrl={`${import.meta.env.BASE_URL}`} />
         </div>
       )}
 
-      {/* Remix Forge Overlay — shown while 3 portraits are generating */}
+      {/* Remix Forge Overlay - shown while 3 portraits are generating */}
       <AnimatePresence>
         {remixForging && step === "result" && (
           <motion.div
@@ -2171,7 +2171,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Hidden off-screen capture container — fixed 400×600px, no backdrop-blur, no 3D transforms.
+      {/* Hidden off-screen capture container - fixed 400×600px, no backdrop-blur, no 3D transforms.
           html2canvas reads this div; the live card is never captured. */}
       {step === "result" && result && (
         <div
@@ -2179,7 +2179,7 @@ export default function Home() {
           style={{ position: "fixed", left: -9999, top: 0, width: 400, pointerEvents: "none", zIndex: -1 }}
         >
           {/*
-            Capture clone — html2canvas-pro reads this div.
+            Capture clone - html2canvas-pro reads this div.
             Layout rules:
             - NO flexbox (gap/flex-direction:column/justify-content:flex-end all collapse in html2canvas)
             - NO -webkit-background-clip:text (renders doubled)
@@ -2201,7 +2201,7 @@ export default function Home() {
               boxShadow: getRarityEffect(effectiveRarity).glowShadow,
             }}
           >
-            {/* Portrait image — top 55% = 330px */}
+            {/* Portrait image - top 55% = 330px */}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 330, overflow: "hidden", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
               {transformStatus === "success" && transformedImage ? (
                 <img
@@ -2220,14 +2220,14 @@ export default function Home() {
               ) : null}
               {/* Gradient overlay */}
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #0A0D10 0%, rgba(10,13,16,0.2) 50%, rgba(0,0,0,0.4) 100%)" }} />
-              {/* Power Level — block layout, no flex */}
+              {/* Power Level - block layout, no flex */}
               <div style={{ position: "absolute", bottom: 8, right: 12, textAlign: "right" }}>
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.8)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Power Level</div>
                 <div style={{ fontSize: 30, fontWeight: 900, color: "white", lineHeight: 1 }}>{result.power}</div>
               </div>
             </div>
 
-            {/* Score Badge (Top Left) — solid gold, no gradient clip */}
+            {/* Score Badge (Top Left) - solid gold, no gradient clip */}
             <div style={{ position: "absolute", top: 16, left: 12, zIndex: 30, textAlign: "center" }}>
               <div style={{ fontSize: 60, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.02em", color: "#FFD700" }}>
                 {result.aura}
@@ -2237,7 +2237,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Nation + Rarity Badges (Top Right) — block stacking, no flex column */}
+            {/* Nation + Rarity Badges (Top Right) - block stacking, no flex column */}
             <div style={{ position: "absolute", top: 16, right: 12, zIndex: 30 }}>
               <div style={{ display: "block", textAlign: "center", marginBottom: 6, padding: "6px 12px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.2)", fontSize: 14, fontWeight: 900, textTransform: "uppercase", color: "white", background: "rgba(0,0,0,0.8)" }}>
                 {result.nation}
@@ -2247,9 +2247,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Bottom Half Content — fixed 270px, block layout, overflow:hidden prevents any bleed */}
+            {/* Bottom Half Content - fixed 270px, block layout, overflow:hidden prevents any bleed */}
             <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 270, padding: "12px 16px", overflow: "hidden", zIndex: 30 }}>
-              {/* Name + archetype — block stacking */}
+              {/* Name + archetype - block stacking */}
               <div style={{ textAlign: "center", marginBottom: 6 }}>
                 <div style={{ fontSize: 28, fontWeight: 900, color: "white", textTransform: "uppercase", letterSpacing: "0.05em", lineHeight: 1.2 }}>
                   {result.name}
@@ -2259,7 +2259,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Stats — inline-block cells, no CSS grid or flexbox */}
+              {/* Stats - inline-block cells, no CSS grid or flexbox */}
               <div style={{ marginBottom: 6, padding: "8px 4px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.7)", fontSize: 0 }}>
                 {[
                   { label: "PAC", value: result.stats.speed },
@@ -2281,7 +2281,7 @@ export default function Home() {
                 "{result.prophecy}"
               </div>
 
-              {/* Footer — inline-block row, no flex */}
+              {/* Footer - inline-block row, no flex */}
               <div style={{ paddingTop: 6, borderTop: "1px solid rgba(255,255,255,0.1)", fontSize: 0 }}>
                 <span style={{ display: "inline-block", width: "40%", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#34d399", verticalAlign: "middle", textAlign: "left" }}>
                   ▸ {result.rank}
@@ -2458,7 +2458,7 @@ export default function Home() {
         }
       />
 
-      {/* "The Collection" — Rarity Odds Modal */}
+      {/* "The Collection" - Rarity Odds Modal */}
       <AnimatePresence>
         {rarityOddsOpen && (
           <motion.div
@@ -2567,7 +2567,7 @@ export default function Home() {
                     <span className="text-white font-bold">The founding edition.</span> The 2026 World Cup Aura Card Collection marks the tournament that brought the world together. Every card is numbered and permanently tied to this moment.
                   </p>
                   <p className="text-[11px] text-gray-500 leading-relaxed">
-                    This edition holds up to 100,000 cards. Future collections may follow — new tournaments, new editions, new chapters — but the 2026 Edition will always be the original.
+                    This edition holds up to 100,000 cards. Future collections may follow - new tournaments, new editions, new chapters - but the 2026 Edition will always be the original.
                   </p>
                 </div>
                 <button
@@ -2582,7 +2582,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Rarity reveal overlay — fires once when the server assigns a tier */}
+      {/* Rarity reveal overlay - fires once when the server assigns a tier */}
       <AnimatePresence>
         {showRarityReveal && serverRarity && (
           <RarityReveal

@@ -143,7 +143,7 @@ paths:
       summary: Cast or change a vote on a community card
       description: >
         Upserts a +1 or -1 vote for the given session. Returns the updated net
-        vote score. One vote per session per card — submitting again replaces
+        vote score. One vote per session per card - submitting again replaces
         the previous vote.
       parameters:
         - in: path
@@ -419,7 +419,7 @@ components:
           description: Server-assigned rarity tier from the weighted print-run draw.
         editionNumber:
           type: integer
-          description: Global sequential edition number (1–100,000).
+          description: Global sequential edition number (1-100,000).
         vrfTxSig:
           type: ["string", "null"]
           description: >
@@ -467,7 +467,7 @@ components:
             Null when no portrait has been stored for this card.
         editionNumber:
           type: integer
-          description: Global sequential edition number (1–100,000).
+          description: Global sequential edition number (1-100,000).
         voteScore:
           type: integer
           description: Net vote score (upvotes minus downvotes).

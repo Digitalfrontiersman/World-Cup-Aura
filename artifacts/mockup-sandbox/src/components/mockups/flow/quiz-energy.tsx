@@ -56,7 +56,7 @@ export default function QuizEnergyScreen() {
         </div>
 
         <p style={{ color: "rgba(251,191,36,0.6)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", margin: 0 }}>
-          3 / 7 — Matchday Energy
+          3 / 7 - Matchday Energy
         </p>
 
         <h2 style={{ color: "#fff", fontSize: 30, fontWeight: 700, margin: 0, lineHeight: 1.2 }}>

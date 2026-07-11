@@ -5,7 +5,7 @@ import { getStoredString, setStoredString } from "./storage";
 const STORAGE_KEY = "aura-card:devnet-wallet";
 
 // A throwaway devnet keypair persisted in localStorage. It is only used as a
-// fallback recipient address for users who don't have their own wallet — the
+// fallback recipient address for users who don't have their own wallet - the
 // actual mint (and all fees) happen server-side via the sponsor treasury, so
 // this key never needs funding and never signs anything.
 let cachedKeypair: Keypair | null = null;

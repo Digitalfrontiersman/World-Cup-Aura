@@ -1,7 +1,7 @@
 // Client-side mirror of the server's VRF derivation (api-server/src/lib/solanaVrf.ts).
 // Given the 32-byte seed that was committed on-chain (Solana Memo tx), anyone can
 // re-derive the card's archetype / rarity / stat modifiers and confirm they match
-// the card they were shown — i.e. the card wasn't tampered with after the on-chain
+// the card they were shown - i.e. the card wasn't tampered with after the on-chain
 // commitment. Keep the arrays + byte layout in lockstep with the server.
 
 // Must match ARCHETYPES in api-server/src/lib/solanaVrf.ts (order matters).
@@ -64,7 +64,7 @@ export function deriveArchetypeFromSeed(seed: number[]): string {
   return VRF_ARCHETYPES[seed[1] % VRF_ARCHETYPES.length];
 }
 
-/** Bytes 3–8 → per-stat delta in −5..+5. */
+/** Bytes 3-8 → per-stat delta in −5..+5. */
 export function deriveStatDeltasFromSeed(seed: number[]): Record<string, number> {
   const mapDelta = (byte: number) => Math.round((byte / 255) * 10 - 5);
   const deltas: Record<string, number> = {};
@@ -86,7 +86,7 @@ export interface CardVerification {
  * Verify a card against the on-chain seed. The archetype is always
  * seed-deterministic and must match. The final displayed rarity CAN differ from
  * the seed-derived rarity because edition quotas cascade to the next available
- * tier — so we report the seed rarity separately rather than asserting equality.
+ * tier - so we report the seed rarity separately rather than asserting equality.
  */
 export function verifyCard(
   seedHex: string,

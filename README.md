@@ -1,7 +1,7 @@
 # World Cup Aura Card
 
 A fan-card generator: users take a selfie, answer a short quiz, and get a generated
-**Aura Card** with stats, rarity, and a prophecy — then **mint it as a Solana devnet
+**Aura Card** with stats, rarity, and a prophecy - then **mint it as a Solana devnet
 NFT** in-app (no external wallet; a throwaway devnet wallet is created in
 `localStorage` and the mint is sponsored by a server-side treasury).
 
@@ -54,9 +54,9 @@ cp artifacts/api-server/.env.example artifacts/api-server/.env
 | Var | Required? | Notes |
 |---|---|---|
 | `DATABASE_URL` | **Yes** | e.g. `postgres://user:password@localhost:5432/aura` |
-| `PORT` | for local run | Use `5000` — the frontend dev proxy targets this |
+| `PORT` | for local run | Use `5000` - the frontend dev proxy targets this |
 | `OPENAI_API_KEY` | For AI transform | Without it, `/api/aura/transform` returns a graceful 503 |
-| `SOLANA_TREASURY_SECRET_KEY` | For minting | base58 secret. **Prefer** the gitignored `artifacts/api-server/.solana-treasury.json` file (`{ "rpcUrl", "secretKey" }`) — never commit a key |
+| `SOLANA_TREASURY_SECRET_KEY` | For minting | base58 secret. **Prefer** the gitignored `artifacts/api-server/.solana-treasury.json` file (`{ "rpcUrl", "secretKey" }`) - never commit a key |
 | `SOLANA_DEVNET_RPC_URL` | Optional | Defaults to the public devnet RPC |
 | `RATE_LIMIT_*` | Optional | Prod-only tuning; see `.env.example` |
 
@@ -76,14 +76,14 @@ This creates the `aura_cards`, `rarity_quotas`, `card_votes`, and `card_comments
 
 ## 4. Run locally (two processes)
 
-**Terminal A — API server** (needs `DATABASE_URL` + `PORT`):
+**Terminal A - API server** (needs `DATABASE_URL` + `PORT`):
 
 ```bash
 cd artifacts/api-server
 PORT=5000 DATABASE_URL=postgres://user:password@localhost:5432/aura pnpm run dev
 ```
 
-**Terminal B — frontend**:
+**Terminal B - frontend**:
 
 ```bash
 cd artifacts/aura-card
@@ -94,7 +94,7 @@ Open **http://localhost:5173/**. The Vite dev server proxies `/api/*` to the API
 server on port 5000 (override with `VITE_API_PROXY_TARGET`).
 
 Optional frontend env (analytics, share URL, custom RPC) goes in
-`artifacts/aura-card/.env` — see the Analytics section of [`replit.md`](./replit.md).
+`artifacts/aura-card/.env` - see the Analytics section of [`replit.md`](./replit.md).
 
 ## Common commands
 

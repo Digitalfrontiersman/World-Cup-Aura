@@ -441,7 +441,7 @@ export const getVoteAuraCardUrl = (slug: string,) => {
 }
 
 /**
- * Upserts a +1 or -1 vote for the given session. Returns the updated net vote score. One vote per session per card — submitting again replaces the previous vote.
+ * Upserts a +1 or -1 vote for the given session. Returns the updated net vote score. One vote per session per card - submitting again replaces the previous vote.
 
  * @summary Cast or change a vote on a community card
  */

@@ -52,7 +52,7 @@ export default function WhySolana() {
             &lt;$0.01
           </div>
           <div className="font-body" style={{ fontSize: "3vw", color: "#8B95B0", paddingTop: "0.5vh", textWrap: "pretty" }}>
-            Per mint — makes per-fan NFTs economically viable at any scale.
+            Per mint - makes per-fan NFTs economically viable at any scale.
           </div>
         </div>
 
@@ -63,7 +63,7 @@ export default function WhySolana() {
             400ms
           </div>
           <div className="font-body" style={{ fontSize: "3vw", color: "#8B95B0", paddingTop: "0.5vh", textWrap: "pretty" }}>
-            Confirmation — mint completes before the fan even realises it happened.
+            Confirmation - mint completes before the fan even realises it happened.
           </div>
         </div>
 
@@ -74,7 +74,7 @@ export default function WhySolana() {
             0
           </div>
           <div className="font-body" style={{ fontSize: "3vw", color: "#8B95B0", paddingTop: "0.5vh", textWrap: "pretty" }}>
-            Friction for the fan — on-chain ownership works invisibly in the background.
+            Friction for the fan - on-chain ownership works invisibly in the background.
           </div>
         </div>
 
@@ -85,7 +85,7 @@ export default function WhySolana() {
             Metaplex
           </div>
           <div className="font-body" style={{ fontSize: "3vw", color: "#8B95B0", paddingTop: "0.5vh", textWrap: "pretty" }}>
-            Token Metadata standard — proven, widely supported, and well-documented.
+            Token Metadata standard - proven, widely supported, and well-documented.
           </div>
         </div>
       </div>

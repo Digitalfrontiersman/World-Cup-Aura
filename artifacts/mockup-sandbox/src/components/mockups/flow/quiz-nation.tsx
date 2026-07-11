@@ -63,14 +63,14 @@ export default function QuizNationScreen() {
         </div>
 
         <p style={{ color: "rgba(251,191,36,0.6)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", margin: 0 }}>
-          2 / 7 — Your Nation
+          2 / 7 - Your Nation
         </p>
 
         <h2 style={{ color: "#fff", fontSize: 30, fontWeight: 700, margin: 0, lineHeight: 1.2 }}>
           Which nation has your heart?
         </h2>
 
-        {/* Flag grid — tap any to advance */}
+        {/* Flag grid - tap any to advance */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, flex: 1, alignContent: "start" }}>
           {FLAGS.map(({ name, flag }) => (
             <div

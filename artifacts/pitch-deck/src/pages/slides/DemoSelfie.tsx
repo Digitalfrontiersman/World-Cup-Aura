@@ -13,7 +13,7 @@ export default function DemoSelfie() {
           className="font-body uppercase tracking-widest mb-[2vh]"
           style={{ fontSize: "2.2vw", color: "#DC2626", fontWeight: 700, letterSpacing: "0.22em" }}
         >
-          Demo — Step 2
+          Demo - Step 2
         </div>
         <div
           className="font-display leading-none tracking-tight mb-[3vh]"
@@ -26,7 +26,7 @@ export default function DemoSelfie() {
           className="font-body mb-[2.5vh]"
           style={{ fontSize: "3vw", color: "#8B95B0", textWrap: "pretty" }}
         >
-          Take a photo or upload one. Then answer 7 quick questions — your answers shape every stat on the card.
+          Take a photo or upload one. Then answer 7 quick questions - your answers shape every stat on the card.
         </div>
         <div className="flex flex-col" style={{ gap: "1.5vh" }}>
           <div className="font-body" style={{ fontSize: "2.8vw", color: "#F5F0E8" }}>
@@ -41,7 +41,7 @@ export default function DemoSelfie() {
         </div>
       </div>
 
-      {/* Left: screenshot placeholder — two panels side by side */}
+      {/* Left: screenshot placeholder - two panels side by side */}
       <div
         className="absolute flex"
         style={{ left: "6vw", top: "6vh", bottom: "6vh", width: "50vw", gap: "2vw" }}

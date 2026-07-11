@@ -13,7 +13,7 @@ if (Number.isNaN(port) || port <= 0) {
 // which throws a raw error at import time when DATABASE_URL is unset.
 if (!process.env.DATABASE_URL) {
   logger.error(
-    "DATABASE_URL is not set. The API cannot serve any data routes — refusing to start.",
+    "DATABASE_URL is not set. The API cannot serve any data routes - refusing to start.",
   );
   process.exit(1);
 }
@@ -24,7 +24,7 @@ process.on("unhandledRejection", (reason) => {
   logger.error({ reason }, "Unhandled promise rejection");
 });
 process.on("uncaughtException", (err) => {
-  logger.error({ err }, "Uncaught exception — exiting");
+  logger.error({ err }, "Uncaught exception - exiting");
   process.exit(1);
 });
 
@@ -40,7 +40,7 @@ async function start(): Promise<void> {
   } catch (err) {
     logger.error(
       { err },
-      "Cannot reach the database (check DATABASE_URL) — refusing to start.",
+      "Cannot reach the database (check DATABASE_URL) - refusing to start.",
     );
     process.exit(1);
   }
@@ -65,9 +65,9 @@ async function start(): Promise<void> {
   });
 
   // listen() failures (e.g. EADDRINUSE) surface as an 'error' EVENT, not via the
-  // callback — the previous `app.listen(port, err => …)` never caught them.
+  // callback - the previous `app.listen(port, err => …)` never caught them.
   server.on("error", (err) => {
-    logger.error({ err }, "HTTP server error (failed to bind port?) — exiting");
+    logger.error({ err }, "HTTP server error (failed to bind port?) - exiting");
     process.exit(1);
   });
 
@@ -80,7 +80,7 @@ async function start(): Promise<void> {
       process.exit(0);
     });
     setTimeout(() => {
-      logger.error("Could not close connections in time — forcing shutdown");
+      logger.error("Could not close connections in time - forcing shutdown");
       process.exit(1);
     }, 10_000).unref();
   };

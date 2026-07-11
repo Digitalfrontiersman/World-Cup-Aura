@@ -1,5 +1,5 @@
 /**
- * Platform contract file — do not restructure.
+ * Platform contract file - do not restructure.
  *
  * This file is part of the contract between the slides artifact and
  * the surrounding workspace tooling (preview, thumbnails, exports).
@@ -31,7 +31,7 @@ function SlideEditor() {
   // In the workspace, the slide iframe is nested inside another iframe,
   // so window.parent !== window.parent.parent. In the deployed SlideViewer,
   // the parent is the top-level window, so they're equal. Disable local
-  // navigation only in the workspace — the parent owns it there.
+  // navigation only in the workspace - the parent owns it there.
   const navigationDisabledRef = useRef(window.parent !== window.parent.parent);
   const touchHandledRefStable = useRef(false);
 
@@ -139,7 +139,7 @@ function SlideEditor() {
 }
 
 // Do not rewrite this component. Each slide must remain wrapped in
-// `<div className="slide">` sized 1920×1080 — the class name and
+// `<div className="slide">` sized 1920×1080 - the class name and
 // dimensions are part of the platform contract. See the file-level
 // banner above for context.
 function AllSlides() {

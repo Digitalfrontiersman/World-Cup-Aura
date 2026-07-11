@@ -40,7 +40,7 @@ channel = "stable-25_05"
 
 [userenv]
 
-# Treasury secrets are NOT stored here — a tracked file must never hold a private
+# Treasury secrets are NOT stored here - a tracked file must never hold a private
 # key. Set SOLANA_TREASURY_SECRET_KEY and SOLANA_DEVNET_RPC_URL in Replit Secrets
 # (encrypted) for production; locally they come from the gitignored
 # artifacts/api-server/.solana-treasury.json fallback (see solanaMint.ts).

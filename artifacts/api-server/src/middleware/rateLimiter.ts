@@ -7,7 +7,7 @@ function hashIp(ip: string): string {
 }
 
 // Fail CLOSED: rate limiting is ON unless explicitly disabled. Previously this
-// keyed off `NODE_ENV !== "production"`, which failed OPEN — a missing or
+// keyed off `NODE_ENV !== "production"`, which failed OPEN - a missing or
 // misspelled NODE_ENV in a real deployment silently turned ALL limits off. For
 // local development, set RATE_LIMIT_DISABLED=true (see .env.example).
 const rateLimitDisabled = process.env.RATE_LIMIT_DISABLED === "true";

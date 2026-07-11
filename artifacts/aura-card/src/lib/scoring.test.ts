@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { calculateAuraScore } from "./scoring";
 
 describe("calculateAuraScore", () => {
-  it("is deterministic — same input yields identical output", () => {
+  it("is deterministic - same input yields identical output", () => {
     const answers = {
       name: "Sam",
       nation: "Brazil",
@@ -34,7 +34,7 @@ describe("calculateAuraScore", () => {
   });
 
   it("does not throw when optional fields are missing", () => {
-    // flaw/energy/weapon all unset — previously answers.flaw.includes() threw.
+    // flaw/energy/weapon all unset - previously answers.flaw.includes() threw.
     expect(() => calculateAuraScore({})).not.toThrow();
     const r = calculateAuraScore({});
     expect(r.name).toBe("Unknown Fan");

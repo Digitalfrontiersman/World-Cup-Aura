@@ -6,5 +6,5 @@
 # Shell scripts must stay LF or they break when executed on Linux.
 *.sh text eol=lf
 
-# Lockfiles/generated — treat as text but never show in diffs by default.
+# Lockfiles/generated - treat as text but never show in diffs by default.
 pnpm-lock.yaml -diff

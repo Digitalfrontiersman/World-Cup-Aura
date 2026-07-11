@@ -64,7 +64,7 @@ export default function Title() {
           className="font-body"
           style={{ fontSize: "3.2vw", color: "#8B95B0", fontWeight: 400, maxWidth: "44vw", textWrap: "pretty" }}
         >
-          A fan-card generator built on Solana — selfie, quiz, AI art, and on-chain mint in 60 seconds.
+          A fan-card generator built on Solana - selfie, quiz, AI art, and on-chain mint in 60 seconds.
         </div>
       </div>
 

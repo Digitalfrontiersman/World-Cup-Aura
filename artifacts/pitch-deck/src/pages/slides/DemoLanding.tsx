@@ -13,7 +13,7 @@ export default function DemoLanding() {
           className="font-body uppercase tracking-widest mb-[2vh]"
           style={{ fontSize: "2.2vw", color: "#F5A623", fontWeight: 700, letterSpacing: "0.22em" }}
         >
-          Demo — Step 1
+          Demo - Step 1
         </div>
         <div
           className="font-display leading-none tracking-tight mb-[3vh]"
@@ -66,7 +66,7 @@ export default function DemoLanding() {
             className="font-body text-center mt-[1.5vh]"
             style={{ fontSize: "2.6vw", color: "rgba(139,149,176,0.5)" }}
           >
-            Landing page — hero card preview
+            Landing page - hero card preview
           </div>
         </div>
       </div>

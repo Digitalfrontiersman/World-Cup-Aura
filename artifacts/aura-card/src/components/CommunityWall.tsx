@@ -108,7 +108,7 @@ export function CommunityWall({ baseUrl }: CommunityWallProps) {
                   borderColor: (isLegendary || isMythic) ? cardRarityColor : "rgba(255,255,255,0.1)",
                   boxShadow,
                 }}
-                aria-label={`${card.name} — ${card.rarity} ${card.archetype}`}
+                aria-label={`${card.name} - ${card.rarity} ${card.archetype}`}
               >
                 <div className="aspect-[2/3] relative overflow-hidden">
                   {card.imageUrl ? (

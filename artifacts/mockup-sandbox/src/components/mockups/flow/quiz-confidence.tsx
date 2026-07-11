@@ -49,7 +49,7 @@ export default function QuizConfidenceScreen() {
         </div>
 
         <p style={{ color: "rgba(251,191,36,0.6)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", margin: 0 }}>
-          6 / 7 — Belief Level
+          6 / 7 - Belief Level
         </p>
 
         <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 40 }}>

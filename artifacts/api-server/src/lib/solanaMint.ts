@@ -18,7 +18,7 @@ import { irysUploader } from "@metaplex-foundation/umi-uploader-irys";
 
 // The server-side "treasury" sponsor wallet pays all mint fees so users need no
 // SOL of their own. Its secret key lives ONLY server-side (env var or this
-// gitignored file) — never in the client bundle — so it can't be
+// gitignored file) - never in the client bundle - so it can't be
 // extracted/drained by visitors.
 const CONFIG_FILE = "artifacts/api-server/.solana-treasury.json";
 
@@ -118,7 +118,7 @@ function loadConfig(): TreasuryConfig | null {
   const rpcUrl =
     process.env[ENV_RPC_URL]?.trim() || fileCfg.rpcUrl || DEFAULT_DEVNET_RPC;
 
-  // Only MEMOIZE a real config. Do NOT cache the unconfigured (null) state — a
+  // Only MEMOIZE a real config. Do NOT cache the unconfigured (null) state - a
   // secret may be injected after boot (secret managers, Replit Secrets), and
   // caching null would keep the treasury "not configured" until a full restart.
   if (secretKey) {
@@ -250,7 +250,7 @@ export async function mintCardToRecipient(
   const metadataUri = await umi.uploader.uploadJson({
     name: card.name,
     symbol: "AURA",
-    description: `World Cup Aura Card — ${card.archetype} from ${card.nation}. "${card.prophecy}"`,
+    description: `World Cup Aura Card - ${card.archetype} from ${card.nation}. "${card.prophecy}"`,
     image: imageUri,
     attributes: buildAttributes(card),
     properties: {

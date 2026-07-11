@@ -57,7 +57,7 @@ export default function QuizNameScreen() {
 
         {/* Step label */}
         <p style={{ color: "rgba(251,191,36,0.6)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", margin: 0 }}>
-          1 / 7 — Your Name
+          1 / 7 - Your Name
         </p>
 
         {/* Question */}

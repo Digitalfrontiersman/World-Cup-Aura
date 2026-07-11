@@ -38,7 +38,7 @@ export default function Solution() {
           className="font-body mt-[3vh]"
           style={{ fontSize: "3vw", color: "#8B95B0", maxWidth: "38vw", textWrap: "pretty" }}
         >
-          Take a selfie, answer 7 questions, and AI generates a personalised trading card — stats, rarity tier, and a World Cup prophecy. Mint it as an NFT with one tap.
+          Take a selfie, answer 7 questions, and AI generates a personalised trading card - stats, rarity tier, and a World Cup prophecy. Mint it as an NFT with one tap.
         </div>
       </div>
 
@@ -71,7 +71,7 @@ export default function Solution() {
           }}
         >
           <div className="font-display" style={{ fontSize: "3.8vw", fontWeight: 900, color: "#F5A623", marginBottom: "0.6vh" }}>AURA STATS</div>
-          <div className="font-body">Quiz answers drive unique attributes, rarity, and prophecy — no two cards alike.</div>
+          <div className="font-body">Quiz answers drive unique attributes, rarity, and prophecy - no two cards alike.</div>
         </div>
         <div
           style={{

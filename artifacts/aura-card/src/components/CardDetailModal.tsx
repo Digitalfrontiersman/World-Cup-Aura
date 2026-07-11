@@ -211,7 +211,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
             </button>
           </div>
 
-          {/* Scrollable body — stop pointer events from propagating to the drag layer */}
+          {/* Scrollable body - stop pointer events from propagating to the drag layer */}
           <div
             className="overflow-y-auto flex-1 px-4 pb-6"
             onPointerDown={(e) => e.stopPropagation()}

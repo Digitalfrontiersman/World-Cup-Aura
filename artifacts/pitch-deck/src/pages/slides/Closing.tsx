@@ -5,7 +5,7 @@ export default function Closing() {
       <div className="absolute top-0 left-0 w-full" style={{ height: "0.5vh", background: "#F5A623" }} />
       <div className="absolute bottom-0 left-0 w-full" style={{ height: "0.5vh", background: "#F5A623" }} />
 
-      {/* Diagonal gold accent — mirrored from title */}
+      {/* Diagonal gold accent - mirrored from title */}
       <div
         className="absolute"
         style={{

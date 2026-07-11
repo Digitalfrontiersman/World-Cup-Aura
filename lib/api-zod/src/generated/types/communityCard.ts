@@ -15,7 +15,7 @@ export interface CommunityCard {
   /** URL path to the card image (e.g. /api/aura/card/{slug}/image). Null when no portrait has been stored for this card.
    */
   imageUrl: string | null;
-  /** Global sequential edition number (1–100,000). */
+  /** Global sequential edition number (1-100,000). */
   editionNumber: number;
   /** Net vote score (upvotes minus downvotes). */
   voteScore: number;

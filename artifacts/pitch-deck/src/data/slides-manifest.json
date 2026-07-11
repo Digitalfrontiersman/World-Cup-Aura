@@ -4,7 +4,7 @@
     "position": 1,
     "filepath": "src/pages/slides/Title.tsx",
     "title": "Title",
-    "description": "World Cup Aura Card — Solana Mini Hackathon cover",
+    "description": "World Cup Aura Card - Solana Mini Hackathon cover",
     "speakerNotes": ""
   },
   {
@@ -36,7 +36,7 @@
     "position": 5,
     "filepath": "src/pages/slides/DemoLanding.tsx",
     "title": "Demo: Landing Page",
-    "description": "Screenshot placeholder — landing page hero",
+    "description": "Screenshot placeholder - landing page hero",
     "speakerNotes": ""
   },
   {
@@ -44,7 +44,7 @@
     "position": 6,
     "filepath": "src/pages/slides/DemoSelfie.tsx",
     "title": "Demo: Selfie + Quiz",
-    "description": "Screenshot placeholders — selfie and quiz screens",
+    "description": "Screenshot placeholders - selfie and quiz screens",
     "speakerNotes": ""
   },
   {
@@ -52,7 +52,7 @@
     "position": 7,
     "filepath": "src/pages/slides/DemoCard.tsx",
     "title": "Demo: Your Aura Card",
-    "description": "Large screenshot placeholder — generated card result",
+    "description": "Large screenshot placeholder - generated card result",
     "speakerNotes": ""
   },
   {
@@ -68,7 +68,7 @@
     "position": 9,
     "filepath": "src/pages/slides/WhySolana.tsx",
     "title": "Why Solana",
-    "description": "Fast, cheap, out of the way — technical rationale",
+    "description": "Fast, cheap, out of the way - technical rationale",
     "speakerNotes": ""
   },
   {
@@ -84,7 +84,7 @@
     "position": 11,
     "filepath": "src/pages/slides/Closing.tsx",
     "title": "Thank You",
-    "description": "Closing — links and Q&A",
+    "description": "Closing - links and Q&A",
     "speakerNotes": ""
   }
 ]

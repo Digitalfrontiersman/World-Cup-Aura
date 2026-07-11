@@ -45,7 +45,7 @@ export default function TechStack() {
             FRONTEND
           </div>
           <div className="font-body" style={{ fontSize: "2.8vw", color: "#8B95B0" }}>
-            React + Vite + Tailwind CSS — camera capture, quiz flow, card display, and mint UI.
+            React + Vite + Tailwind CSS - camera capture, quiz flow, card display, and mint UI.
           </div>
         </div>
 
@@ -79,7 +79,7 @@ export default function TechStack() {
             SOLANA
           </div>
           <div className="font-body" style={{ fontSize: "2.8vw", color: "#8B95B0" }}>
-            Metaplex + Helius RPC — on-chain card storage with fast, reliable transaction handling.
+            Metaplex + Helius RPC - on-chain card storage with fast, reliable transaction handling.
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export default function TechStack() {
             BACKEND
           </div>
           <div className="font-body" style={{ fontSize: "2.8vw", color: "#8B95B0" }}>
-            Node.js + Express API server — handles image generation, quiz scoring, and card assembly.
+            Node.js + Express API server - handles image generation, quiz scoring, and card assembly.
           </div>
         </div>
       </div>

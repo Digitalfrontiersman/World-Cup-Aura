@@ -22,7 +22,7 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
 
   const appUrl = getAppUrl() + window.location.pathname;
   const shareUrl = shareUrlProp || mintExplorerUrl || appUrl;
-  const shareMessage = `I just got my World Cup Aura Card — ${rarity} ${archetype} with ${rank} rank. Bet yours can't top it 👊 Get yours: ${shareUrl}`;
+  const shareMessage = `I just got my World Cup Aura Card - ${rarity} ${archetype} with ${rank} rank. Bet yours can't top it 👊 Get yours: ${shareUrl}`;
   const encodedMsg = encodeURIComponent(shareMessage);
   const encodedUrl = encodeURIComponent(shareUrl);
 

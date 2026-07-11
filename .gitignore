@@ -48,5 +48,5 @@ Thumbs.db
 .cache/
 .local/
 
-# Solana treasury (devnet sponsor secret key) — never commit
+# Solana treasury (devnet sponsor secret key) - never commit
 **/.solana-treasury.json

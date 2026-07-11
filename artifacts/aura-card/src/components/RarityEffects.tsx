@@ -224,7 +224,7 @@ export function HaloRing({ color }: HaloRingProps) {
   );
 }
 
-// Total reveal duration in ms — tied to the keyframe times below
+// Total reveal duration in ms - tied to the keyframe times below
 const REVEAL_DURATION_MS = 1900;
 
 interface RarityRevealOverlayProps {
@@ -235,14 +235,14 @@ interface RarityRevealOverlayProps {
 /**
  * Full-screen overlay that plays once on fresh card generation.
  * Sequence (1.9 s total):
- *   0 ms     — backdrop fades in, burst lines fire
- *  200 ms    — tier name scales up from small at centre (card is still flipping)
- *  700 ms    — tier name at full size, holds
- * 1100 ms    — badge on card pulses (handled externally via badgePulseAt prop)
- * 1100 ms    — tier name starts "settling": shrinks + translates toward the
+ *   0 ms     - backdrop fades in, burst lines fire
+ *  200 ms    - tier name scales up from small at centre (card is still flipping)
+ *  700 ms    - tier name at full size, holds
+ * 1100 ms    - badge on card pulses (handled externally via badgePulseAt prop)
+ * 1100 ms    - tier name starts "settling": shrinks + translates toward the
  *              top-right corner of the viewport (where the badge lives on card)
- * 1700 ms    — backdrop fades out
- * 1900 ms    — onComplete() called, overlay unmounts
+ * 1700 ms    - backdrop fades out
+ * 1900 ms    - onComplete() called, overlay unmounts
  */
 export function RarityRevealOverlay({ rarity, onComplete }: RarityRevealOverlayProps) {
   const color = rarityColor(rarity);
@@ -339,7 +339,7 @@ export function RarityRevealOverlay({ rarity, onComplete }: RarityRevealOverlayP
         </motion.div>
       )}
 
-      {/* Tier name — big centre reveal → settles to top-right badge location */}
+      {/* Tier name - big centre reveal → settles to top-right badge location */}
       <motion.div
         className="relative z-10 flex flex-col items-center gap-2 select-none"
         variants={tierNameVariants}
@@ -365,7 +365,7 @@ export function RarityRevealOverlay({ rarity, onComplete }: RarityRevealOverlayP
         >
           {rarity}
         </h2>
-        {/* Mini badge shape — matches the card badge so the "landing" looks intentional */}
+        {/* Mini badge shape - matches the card badge so the "landing" looks intentional */}
         <div
           className="px-3 py-1 rounded border-2 text-xs font-black uppercase tracking-widest"
           style={{

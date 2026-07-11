@@ -59,7 +59,7 @@ export default function QuizWeaponFlawScreen() {
         </div>
 
         <p style={{ color: "rgba(251,191,36,0.6)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", margin: 0 }}>
-          4 / 7 — Greatest Weapon
+          4 / 7 - Greatest Weapon
         </p>
 
         <h2 style={{ color: "#fff", fontSize: 28, fontWeight: 700, margin: 0, lineHeight: 1.2 }}>
@@ -89,7 +89,7 @@ export default function QuizWeaponFlawScreen() {
         <div style={{ margin: "8px 0", height: 1, background: "rgba(255,255,255,0.06)" }} />
 
         <p style={{ color: "rgba(251,191,36,0.4)", fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.15em", margin: 0 }}>
-          5 / 7 — Fan Flaw (next)
+          5 / 7 - Fan Flaw (next)
         </p>
         <h2 style={{ color: "rgba(255,255,255,0.3)", fontSize: 22, fontWeight: 700, margin: 0, lineHeight: 1.2 }}>
           What is your biggest fan flaw?

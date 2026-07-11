@@ -78,7 +78,7 @@ export interface SaveCardResult {
   slug: string;
   /** Server-assigned rarity tier from the weighted print-run draw. */
   rarity: string;
-  /** Global sequential edition number (1–100,000). */
+  /** Global sequential edition number (1-100,000). */
   editionNumber: number;
   /**
      * Solana transaction signature for the on-chain VRF commitment Memo, or null when VRF data was not provided or the treasury is unconfigured.
@@ -108,7 +108,7 @@ export interface CommunityCard {
   /** URL path to the card image (e.g. /api/aura/card/{slug}/image). Null when no portrait has been stored for this card.
    */
   imageUrl: string | null;
-  /** Global sequential edition number (1–100,000). */
+  /** Global sequential edition number (1-100,000). */
   editionNumber: number;
   /** Net vote score (upvotes minus downvotes). */
   voteScore: number;
