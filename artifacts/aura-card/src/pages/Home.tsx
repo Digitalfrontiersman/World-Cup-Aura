@@ -2248,12 +2248,12 @@ export default function Home() {
             - NO -webkit-background-clip:text (renders doubled)
             - Use block/inline-block with explicit margins for all stacking
             - Use inline-block with exact widths for row layouts (footer, stats)
-            - Apply Oswald font explicitly on all text; await document.fonts.ready before capture
+            - Apply the Archivo display font explicitly on all text; await document.fonts.ready before capture
           */}
           <div
             ref={captureRef}
             style={{
-              fontFamily: "'Oswald', sans-serif",
+              fontFamily: "'Archivo', system-ui, sans-serif",
               width: 400,
               height: 600,
               position: "relative",
