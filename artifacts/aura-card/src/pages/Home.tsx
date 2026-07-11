@@ -1160,23 +1160,17 @@ export default function Home() {
 
   return (
     <div className="min-h-[100dvh] w-full bg-background relative overflow-hidden font-sans select-none text-foreground">
-      {/* Background image applied via CSS or inline for pitch texture */}
-      <div 
+      {/* Deep base color so the app reads as a refined dark product, not a photo */}
+      <div className="absolute inset-0 z-0" style={{ background: "#07070c" }} />
+
+      {/* Subtle stadium texture, kept faint so it never competes with content */}
+      <div
         className={`absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-700${step === "landing" ? " landing-bg-pan" : ""}`}
         style={{
           backgroundImage: step === "landing"
             ? "url('/landing-action-bg.png')"
             : "url('/pitch-bg.png')",
-          opacity: step === "landing" ? 0.72 : 0.4,
-        }}
-      />
-      {/* Readability + drama overlay (stronger on landing) */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none transition-opacity duration-700"
-        style={{
-          background: step === "landing"
-            ? "radial-gradient(120% 80% at 50% 0%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.65) 100%)"
-            : "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4))",
+          opacity: step === "landing" ? 0.14 : 0.08,
         }}
       />
 
@@ -1188,7 +1182,15 @@ export default function Home() {
             : undefined
         }
       />
-      <div className="absolute inset-0 bg-black/20 z-0" />
+
+      {/* Vignette: darken edges + bottom so content floats and the palette stays deep */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(120% 90% at 50% 8%, rgba(7,7,12,0) 0%, rgba(7,7,12,0.55) 62%, rgba(7,7,12,0.92) 100%)",
+        }}
+      />
 
       {/* Persistent wallet connect - always accessible, top-right */}
       <div
@@ -1212,16 +1214,11 @@ export default function Home() {
             >
               {/* Copy block - mobile: 1st; desktop: col-1 row-1 */}
               <motion.div
-                className="space-y-4 relative px-8 pt-4 pb-5 rounded-2xl overflow-hidden text-center md:text-left md:col-start-1 md:row-start-1"
+                className="space-y-4 relative text-center md:text-left md:col-start-1 md:row-start-1"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, type: "spring", bounce: 0.4 }}
               >
-                {/* Dark scrim behind the copy for readability */}
-                <div
-                  className="absolute inset-[-16px] -z-10 pointer-events-none"
-                  style={{ background: "radial-gradient(80% 100% at 50% 48%, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.20) 80%, transparent 100%)" }}
-                />
                 <motion.div
                   className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 border border-primary/40 text-primary text-sm font-bold uppercase tracking-wider mb-1 shadow-[0_0_20px_rgba(251,191,36,0.25)]"
                   animate={{ scale: [1, 1.05, 1] }}
