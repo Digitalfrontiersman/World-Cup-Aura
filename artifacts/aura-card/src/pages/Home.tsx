@@ -8,6 +8,7 @@ import { ShareSheet } from "@/components/ShareSheet";
 import { CommunityWall } from "@/components/CommunityWall";
 import { CommunityCarousel } from "@/components/CommunityCarousel";
 import { RarityReveal } from "@/components/RarityReveal";
+import { VerifyOnChain } from "@/components/VerifyOnChain";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -187,6 +188,11 @@ export default function Home() {
   const communityWallRef = useRef<HTMLDivElement>(null);
   const vrfSlugRef = useRef<string | null>(null);
   const remixVrfSlugsRef = useRef<(string | null)[]>([null, null, null]);
+  // The VRF seed committed on-chain, tracked in parallel with the slug so the
+  // result screen can re-derive (and prove) the card's archetype from it.
+  const vrfSeedRef = useRef<string | null>(null);
+  const remixVrfSeedsRef = useRef<(string | null)[]>([null, null, null]);
+  const [vrfProof, setVrfProof] = useState<{ seedHex: string; archetype: string } | null>(null);
   const { toast } = useToast();
 
   // Camera capture state
@@ -443,6 +449,7 @@ export default function Home() {
       const transformResult = await requestTransform(result);
       setTransformedImage(transformResult.image);
       if (transformResult.vrfSlug) vrfSlugRef.current = transformResult.vrfSlug;
+      if (transformResult.vrfSeedHex) vrfSeedRef.current = transformResult.vrfSeedHex;
       setTransformStatus("success");
     } catch (err) {
       setTransformedImage(null);
@@ -503,6 +510,7 @@ export default function Home() {
         .then((tr) => {
           settled[i] = tr.image;
           remixVrfSlugsRef.current[i] = tr.vrfSlug ?? null;
+          remixVrfSeedsRef.current[i] = tr.vrfSeedHex ?? null;
           setRemixResolvedCount(c => c + 1);
           setRemixVariants([...settled]);
         })
@@ -552,6 +560,9 @@ export default function Home() {
       transformed = transformResult.image;
       if (transformResult.vrfSlug) {
         vrfSlugRef.current = transformResult.vrfSlug;
+      }
+      if (transformResult.vrfSeedHex) {
+        vrfSeedRef.current = transformResult.vrfSeedHex;
       }
     } catch (err) {
       errorKind = err instanceof TransformError ? err.kind : "ai_error";
@@ -757,6 +768,9 @@ export default function Home() {
             setServerRarity(res.rarity);
             setEditionNumber(res.editionNumber);
             if (res.vrfTxSig) setVrfTxSig(res.vrfTxSig);
+            if (vrfSeedRef.current) {
+              setVrfProof({ seedHex: vrfSeedRef.current, archetype: String((result as { archetype?: string }).archetype ?? "") });
+            }
           });
           // Re-capture with the server-assigned rarity and edition stamp now visible in the DOM
           base = await captureCard();
@@ -1924,7 +1938,7 @@ export default function Home() {
                     </>
                   )}
                 </Button>
-                <Button onClick={() => { setStep("landing"); setQuizStep(0); setPhoto(null); setTransformedImage(null); setTransformStatus("idle"); mintMutation.reset(); setRecipientInput(""); setUseTempWallet(false); setRemixCount(0); setRemixForging(false); setRemixPickerOpen(false); setRemixVariants([null, null, null]); setShareAssets({ just: null, prophecy: null, story: null }); setShareOpen(false); setServerRarity(null); setEditionNumber(null); setShowRarityReveal(false); setIsFirstReveal(false); setVrfTxSig(null); vrfSlugRef.current = null; remixVrfSlugsRef.current = [null, null, null]; }} variant="outline" className="h-12 bg-black/60 border-gray-700 text-white font-bold uppercase tracking-wider rounded-xl hover:bg-black/80 hover:border-primary/50">
+                <Button onClick={() => { setStep("landing"); setQuizStep(0); setPhoto(null); setTransformedImage(null); setTransformStatus("idle"); mintMutation.reset(); setRecipientInput(""); setUseTempWallet(false); setRemixCount(0); setRemixForging(false); setRemixPickerOpen(false); setRemixVariants([null, null, null]); setShareAssets({ just: null, prophecy: null, story: null }); setShareOpen(false); setServerRarity(null); setEditionNumber(null); setShowRarityReveal(false); setIsFirstReveal(false); setVrfTxSig(null); setVrfProof(null); vrfSlugRef.current = null; vrfSeedRef.current = null; remixVrfSlugsRef.current = [null, null, null]; remixVrfSeedsRef.current = [null, null, null]; }} variant="outline" className="h-12 bg-black/60 border-gray-700 text-white font-bold uppercase tracking-wider rounded-xl hover:bg-black/80 hover:border-primary/50">
                   <RotateCcw className="mr-2 h-4 w-4" /> Retry
                 </Button>
                 <Button onClick={() => setChallengeOpen(true)} variant="outline" className="col-span-2 h-12 bg-black/60 border-primary/40 text-primary font-bold uppercase tracking-wider rounded-xl hover:bg-black/80 hover:border-primary">
@@ -1972,20 +1986,8 @@ export default function Home() {
                   </div>
                 )}
 
-                {vrfTxSig && (
-                  <motion.a
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    href={`https://explorer.solana.com/tx/${vrfTxSig}?cluster=devnet`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 text-[10px] text-gray-500 hover:text-gray-400 transition-colors"
-                  >
-                    <Check className="h-3 w-3 text-green-500/70" />
-                    Verified on Solana
-                    <ExternalLink className="h-2.5 w-2.5 opacity-50" />
-                  </motion.a>
+                {(vrfTxSig || vrfProof) && (
+                  <VerifyOnChain vrfTxSig={vrfTxSig} proof={vrfProof} />
                 )}
 
                 {mintResult ? (
@@ -2332,7 +2334,7 @@ export default function Home() {
                     <button
                       key={variant}
                       disabled={!img}
-                      onClick={() => { if (img) { setRemixSelectedIndex(i); vrfSlugRef.current = remixVrfSlugsRef.current[i]; } }}
+                      onClick={() => { if (img) { setRemixSelectedIndex(i); vrfSlugRef.current = remixVrfSlugsRef.current[i]; vrfSeedRef.current = remixVrfSeedsRef.current[i]; } }}
                       className={`relative flex flex-col items-center gap-2 rounded-xl overflow-hidden border-2 transition-all duration-200 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed ${
                         isSelected && img
                           ? "border-orange-400 shadow-[0_0_16px_rgba(251,146,60,0.6)] scale-[1.03]"
