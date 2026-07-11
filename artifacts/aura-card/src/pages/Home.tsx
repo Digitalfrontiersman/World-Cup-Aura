@@ -10,6 +10,8 @@ import { CommunityCarousel } from "@/components/CommunityCarousel";
 import { RarityReveal } from "@/components/RarityReveal";
 import { VerifyOnChain } from "@/components/VerifyOnChain";
 import { PlayerMatch } from "@/components/PlayerMatch";
+import { WalletConnect } from "@/components/WalletConnect";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -138,6 +140,7 @@ export default function Home() {
 
   const [recipientInput, setRecipientInput] = useState("");
   const [useTempWallet, setUseTempWallet] = useState(false);
+  const { publicKey: connectedWalletKey, connected: walletConnected } = useWallet();
   const [copied, setCopied] = useState(false);
   const [remixCount, setRemixCount] = useState(0);
   const [remixForging, setRemixForging] = useState(false);
@@ -634,6 +637,14 @@ export default function Home() {
       setPhotoIntent(null);
     }
   }, [step, photoIntent]);
+
+  // When a real wallet connects, use it as the mint destination automatically.
+  useEffect(() => {
+    if (walletConnected && connectedWalletKey) {
+      setRecipientInput(connectedWalletKey.toBase58());
+      setUseTempWallet(false);
+    }
+  }, [walletConnected, connectedWalletKey]);
 
   const useSampleAvatar = (num: number) => {
     setPhoto(`/avatar-${num}.png`);
@@ -2036,12 +2047,21 @@ export default function Home() {
                   </div>
                 ) : (
                   <>
-                    <div className="bg-black/40 p-3 rounded-lg border border-gray-800 space-y-2" data-testid="mint-recipient-option">
+                    <div className="bg-black/40 p-3 rounded-lg border border-gray-800 space-y-2.5" data-testid="mint-recipient-option">
                       <span className="text-gray-500 text-[10px] uppercase tracking-wider">Send the NFT to</span>
+
+                      <WalletConnect />
+
+                      <div className="flex items-center gap-2">
+                        <div className="h-px flex-1 bg-white/10" />
+                        <span className="text-[9px] uppercase tracking-widest text-gray-600">or paste an address</span>
+                        <div className="h-px flex-1 bg-white/10" />
+                      </div>
+
                       <Input
                         value={useTempWallet ? getWalletAddress() : recipientInput}
                         onChange={(e) => setRecipientInput(e.target.value)}
-                        disabled={useTempWallet || mintMutation.isPending}
+                        disabled={useTempWallet || walletConnected || mintMutation.isPending}
                         placeholder="Paste your Solana wallet address"
                         spellCheck={false}
                         autoCapitalize="none"
@@ -2054,7 +2074,7 @@ export default function Home() {
                           type="checkbox"
                           checked={useTempWallet}
                           onChange={(e) => setUseTempWallet(e.target.checked)}
-                          disabled={mintMutation.isPending}
+                          disabled={walletConnected || mintMutation.isPending}
                           className="accent-primary h-3.5 w-3.5"
                           data-testid="checkbox-temp-wallet"
                         />

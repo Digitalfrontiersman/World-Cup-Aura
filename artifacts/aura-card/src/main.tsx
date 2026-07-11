@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { setBaseUrl } from "@workspace/api-client-react";
 import { initAnalytics } from "./lib/analytics";
+import { SolanaProviders } from "./components/SolanaProviders";
 import App from "./App";
 import "./index.css";
 
@@ -11,4 +12,8 @@ setBaseUrl(import.meta.env.BASE_URL.replace(/\/+$/, ""));
 // Inject GA4 + Facebook Pixel before first render (no-op when env vars are absent).
 initAnalytics();
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(
+  <SolanaProviders>
+    <App />
+  </SolanaProviders>,
+);
