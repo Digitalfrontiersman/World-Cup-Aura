@@ -11,6 +11,8 @@ import { RarityReveal } from "@/components/RarityReveal";
 import { VerifyOnChain } from "@/components/VerifyOnChain";
 import { PlayerMatch } from "@/components/PlayerMatch";
 import { WalletConnect } from "@/components/WalletConnect";
+import { AuroraBackground } from "@/components/AuroraBackground";
+import { rarityColor } from "@/lib/rarity";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1158,9 +1160,14 @@ export default function Home() {
         }}
       />
 
-      {/* Decorative gradient orbs */}
-      <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-primary/20 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-accent/20 blur-[150px] rounded-full pointer-events-none" />
+      {/* Living aurora field (tinted by the card's rarity on the result screen) */}
+      <AuroraBackground
+        color={
+          step === "result"
+            ? rarityColor(serverRarity ?? (result?.rarity as string) ?? "Core")
+            : undefined
+        }
+      />
       <div className="absolute inset-0 bg-black/20 z-0" />
 
       <main className={`relative z-10 mx-auto w-full min-h-[100dvh] flex flex-col pt-8 pb-12 px-4 transition-[max-width] duration-500 ease-in-out ${step === 'result' ? 'max-w-4xl' : step === 'landing' ? 'max-w-md md:max-w-6xl' : 'max-w-md'}`} style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
