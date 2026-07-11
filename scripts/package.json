@@ -1,0 +1,17 @@
+{
+  "name": "@workspace/scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "hello": "tsx ./src/hello.ts",
+    "gen-brand-assets": "tsx ./src/gen-brand-assets.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "catalog:",
+    "sharp": "^0.35.2",
+    "tsx": "catalog:"
+  }
+}

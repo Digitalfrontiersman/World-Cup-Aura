@@ -1,0 +1,10 @@
+# Normalize line endings: store everything as LF in the repo.
+# This project originated on Linux (Replit) and contains shell scripts;
+# forcing LF prevents CRLF corruption when working on Windows.
+* text=auto eol=lf
+
+# Shell scripts must stay LF or they break when executed on Linux.
+*.sh text eol=lf
+
+# Lockfiles/generated — treat as text but never show in diffs by default.
+pnpm-lock.yaml -diff

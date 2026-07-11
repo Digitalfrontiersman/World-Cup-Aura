@@ -1,0 +1,61 @@
+import { rateLimit, type RateLimitRequestHandler } from "express-rate-limit";
+import { createHash } from "node:crypto";
+import { logger } from "../lib/logger";
+
+function hashIp(ip: string): string {
+  return createHash("sha256").update(ip).digest("hex").slice(0, 16);
+}
+
+const isDev = process.env.NODE_ENV !== "production";
+
+function parseLimit(envVar: string | undefined, defaultVal: number): number {
+  const parsed = parseInt(envVar ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : defaultVal;
+}
+
+function makeLimiter(opts: {
+  max: number;
+  windowMs: number;
+  endpoint: string;
+  message: string;
+}): RateLimitRequestHandler {
+  return rateLimit({
+    windowMs: opts.windowMs,
+    max: opts.max,
+    standardHeaders: true,
+    legacyHeaders: true,
+    keyGenerator: (req) => req.ip ?? "unknown",
+    handler: (req, res) => {
+      logger.warn({
+        event: "rate_limit_exceeded",
+        ip_hash: hashIp(req.ip ?? "unknown"),
+        endpoint: opts.endpoint,
+        timestamp: new Date().toISOString(),
+      }, `Rate limit hit on ${opts.endpoint}`);
+
+      res.status(429).json({ error: opts.message });
+    },
+    skip: () => isDev,
+  });
+}
+
+export const cardRateLimiter = makeLimiter({
+  max: parseLimit(process.env.RATE_LIMIT_CARD_PER_HOUR, 5),
+  windowMs: 60 * 60 * 1000,
+  endpoint: "POST /api/aura/card",
+  message: "Too many cards generated from this IP. Try again later.",
+});
+
+export const transformRateLimiter = makeLimiter({
+  max: parseLimit(process.env.RATE_LIMIT_TRANSFORM_PER_15MIN, 10),
+  windowMs: 15 * 60 * 1000,
+  endpoint: "POST /api/aura/transform",
+  message: "Remix limit reached. Take a breather and try again soon.",
+});
+
+export const mintRateLimiter = makeLimiter({
+  max: parseLimit(process.env.RATE_LIMIT_MINT_PER_HOUR, 3),
+  windowMs: 60 * 60 * 1000,
+  endpoint: "POST /api/aura/mint",
+  message: "Too many mint requests from this IP. Please try again later.",
+});
