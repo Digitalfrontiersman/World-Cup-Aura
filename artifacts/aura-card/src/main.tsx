@@ -1,4 +1,9 @@
 import { createRoot } from "react-dom/client";
+// Self-hosted fonts (bundled with the app, not fetched from Google) so they
+// always load regardless of region, privacy browsers, or font-blockers.
+import "@fontsource-variable/archivo";
+import "@fontsource-variable/archivo/wght-italic.css";
+import "@fontsource-variable/plus-jakarta-sans";
 import { setBaseUrl } from "@workspace/api-client-react";
 import { initAnalytics } from "./lib/analytics";
 import { SolanaProviders } from "./components/SolanaProviders";

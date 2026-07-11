@@ -2253,7 +2253,7 @@ export default function Home() {
           <div
             ref={captureRef}
             style={{
-              fontFamily: "'Archivo', system-ui, sans-serif",
+              fontFamily: "'Archivo Variable', 'Archivo', system-ui, sans-serif",
               width: 400,
               height: 600,
               position: "relative",
