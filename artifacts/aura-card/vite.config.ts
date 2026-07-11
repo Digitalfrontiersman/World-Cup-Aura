@@ -5,27 +5,21 @@ import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
-const rawPort = process.env.PORT;
+// PORT and BASE_PATH are injected by Replit's artifact runner in production
+// (see .replit-artifact/artifact.toml). Locally they're usually unset, so we
+// default them instead of throwing — this keeps `pnpm dev`/`build` working
+// off-Replit and avoids Git Bash mangling a bare `BASE_PATH=/` on Windows.
+// Replit always overrides these, so production behaviour is unchanged.
+const port = Number(process.env.PORT) || 5173;
+const basePath = process.env.BASE_PATH || "/";
 
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
-
-const port = Number(rawPort);
-
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
-
-const basePath = process.env.BASE_PATH;
-
-if (!basePath) {
-  throw new Error(
-    "BASE_PATH environment variable is required but was not provided.",
-  );
-}
+// Locally the frontend and api-server are two separate processes, so the app's
+// same-origin `/api/*` calls (see src/main.tsx) need to be proxied to the
+// api-server. On Replit the artifact path-router does this stitching instead, so
+// this proxy is dev-only and harmless there. Override the target with
+// VITE_API_PROXY_TARGET if the api-server runs on a non-default port.
+const apiProxyTarget =
+  process.env.VITE_API_PROXY_TARGET || "http://localhost:5000";
 
 export default defineConfig({
   base: basePath,
@@ -69,6 +63,9 @@ export default defineConfig({
     allowedHosts: true,
     fs: {
       strict: true,
+    },
+    proxy: {
+      "/api": { target: apiProxyTarget, changeOrigin: true },
     },
   },
   preview: {
