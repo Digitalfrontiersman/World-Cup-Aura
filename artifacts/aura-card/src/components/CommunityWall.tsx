@@ -4,32 +4,8 @@ import type { CommunityCard } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
 import { Loader2, Users, Layers, ThumbsUp, MessageSquare } from "lucide-react";
 import { CardDetailModal } from "./CardDetailModal";
-
-const NATION_FLAGS: Record<string, string> = {
-  Algeria: "dz", Argentina: "ar", Australia: "au", Austria: "at",
-  Belgium: "be", Brazil: "br", Canada: "ca", "Cape Verde": "cv",
-  Colombia: "co", Croatia: "hr", Curacao: "cw", Czechia: "cz",
-  "DR Congo": "cd", Egypt: "eg", England: "gb-eng", France: "fr",
-  Germany: "de", Ghana: "gh", Haiti: "ht", Iran: "ir", Iraq: "iq",
-  Italy: "it", Jamaica: "jm", Japan: "jp", Jordan: "jo", Mexico: "mx",
-  Morocco: "ma", Netherlands: "nl", "New Zealand": "nz", Nigeria: "ng",
-  Panama: "pa", Portugal: "pt", Qatar: "qa", "Saudi Arabia": "sa",
-  Scotland: "gb-sct", Senegal: "sn", "South Africa": "za",
-  "South Korea": "kr", Spain: "es", Switzerland: "ch", Tunisia: "tn",
-  Turkey: "tr", Uruguay: "uy", USA: "us", Uzbekistan: "uz",
-};
-
-const RARITY_COLOR: Record<string, string> = {
-  Core: "#cbd5e1",
-  Rising: "#60a5fa",
-  Elite: "#22d3ee",
-  Icon: "#c084fc",
-  Legendary: "#fbbf24",
-  Mythic: "#fb7185",
-  Common: "#cbd5e1",
-  Rare: "#60a5fa",
-  Epic: "#c084fc",
-};
+import { NATION_FLAGS } from "../lib/nations";
+import { rarityColor } from "../lib/rarity";
 
 const LEGENDARY_GLOW = "0 0 20px rgba(251,191,36,0.7), 0 0 40px rgba(251,191,36,0.35)";
 const MYTHIC_GLOW = "0 0 20px rgba(251,113,133,0.75), 0 0 45px rgba(251,113,133,0.4)";
@@ -110,13 +86,13 @@ export function CommunityWall({ baseUrl }: CommunityWallProps) {
       ) : (
         <div className="grid grid-cols-3 gap-2">
           {cards.map((card, i) => {
-            const rarityColor = RARITY_COLOR[card.rarity] ?? RARITY_COLOR.Core;
+            const cardRarityColor = rarityColor(card.rarity);
             const isLegendary = card.rarity === "Legendary";
             const isMythic = card.rarity === "Mythic";
             const flagCode = NATION_FLAGS[card.nation];
             const hasActivity = card.voteScore !== 0 || card.commentCount > 0;
 
-            let boxShadow = `0 0 12px ${rarityColor}22`;
+            let boxShadow = `0 0 12px ${cardRarityColor}22`;
             if (isLegendary) boxShadow = LEGENDARY_GLOW;
             if (isMythic) boxShadow = MYTHIC_GLOW;
 
@@ -129,7 +105,7 @@ export function CommunityWall({ baseUrl }: CommunityWallProps) {
                 transition={{ delay: Math.min(i * 0.03, 0.4), duration: 0.3 }}
                 className="group relative flex flex-col rounded-xl overflow-hidden border bg-black/40 hover:scale-[1.03] transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-left"
                 style={{
-                  borderColor: (isLegendary || isMythic) ? rarityColor : "rgba(255,255,255,0.1)",
+                  borderColor: (isLegendary || isMythic) ? cardRarityColor : "rgba(255,255,255,0.1)",
                   boxShadow,
                 }}
                 aria-label={`${card.name} — ${card.rarity} ${card.archetype}`}
@@ -145,7 +121,7 @@ export function CommunityWall({ baseUrl }: CommunityWallProps) {
                   ) : (
                     <div
                       className="w-full h-full flex items-center justify-center"
-                      style={{ background: `linear-gradient(135deg, #0a0a0f 0%, ${rarityColor}33 100%)` }}
+                      style={{ background: `linear-gradient(135deg, #0a0a0f 0%, ${cardRarityColor}33 100%)` }}
                     >
                       <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
                         {card.archetype}
@@ -159,7 +135,7 @@ export function CommunityWall({ baseUrl }: CommunityWallProps) {
                     <motion.div
                       className="absolute inset-0 pointer-events-none"
                       style={{
-                        background: `linear-gradient(135deg, transparent 40%, ${rarityColor}33 50%, transparent 60%)`,
+                        background: `linear-gradient(135deg, transparent 40%, ${cardRarityColor}33 50%, transparent 60%)`,
                         backgroundSize: "200% 200%",
                       }}
                       animate={{ backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"] }}
@@ -170,9 +146,9 @@ export function CommunityWall({ baseUrl }: CommunityWallProps) {
                   <div
                     className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border"
                     style={{
-                      color: rarityColor,
-                      borderColor: `${rarityColor}66`,
-                      backgroundColor: `${rarityColor}22`,
+                      color: cardRarityColor,
+                      borderColor: `${cardRarityColor}66`,
+                      backgroundColor: `${cardRarityColor}22`,
                     }}
                   >
                     {card.rarity}

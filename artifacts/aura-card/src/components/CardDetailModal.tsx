@@ -14,26 +14,8 @@ import {
   usePostCardComment,
 } from "@workspace/api-client-react";
 import type { CardComment, CommunityCard } from "@workspace/api-client-react";
-
-const NATION_FLAGS: Record<string, string> = {
-  Algeria: "dz", Argentina: "ar", Australia: "au", Austria: "at",
-  Belgium: "be", Brazil: "br", Canada: "ca", "Cape Verde": "cv",
-  Colombia: "co", Croatia: "hr", Curacao: "cw", Czechia: "cz",
-  "DR Congo": "cd", Egypt: "eg", England: "gb-eng", France: "fr",
-  Germany: "de", Ghana: "gh", Haiti: "ht", Iran: "ir", Iraq: "iq",
-  Italy: "it", Jamaica: "jm", Japan: "jp", Jordan: "jo", Mexico: "mx",
-  Morocco: "ma", Netherlands: "nl", "New Zealand": "nz", Nigeria: "ng",
-  Panama: "pa", Portugal: "pt", Qatar: "qa", "Saudi Arabia": "sa",
-  Scotland: "gb-sct", Senegal: "sn", "South Africa": "za",
-  "South Korea": "kr", Spain: "es", Switzerland: "ch", Tunisia: "tn",
-  Turkey: "tr", Uruguay: "uy", USA: "us", Uzbekistan: "uz",
-};
-
-const RARITY_COLOR: Record<string, string> = {
-  Core: "#cbd5e1", Rising: "#60a5fa", Elite: "#22d3ee",
-  Icon: "#c084fc", Legendary: "#fbbf24", Mythic: "#fb7185",
-  Common: "#cbd5e1", Rare: "#60a5fa", Epic: "#c084fc",
-};
+import { NATION_FLAGS } from "../lib/nations";
+import { rarityColor } from "../lib/rarity";
 
 function getSessionId(): string {
   const key = "aura_session_id";
@@ -79,7 +61,7 @@ interface CardDetailModalProps {
 }
 
 export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps) {
-  const rarityColor = RARITY_COLOR[card.rarity] ?? RARITY_COLOR.Core;
+  const cardRarityColor = rarityColor(card.rarity);
   const flagCode = NATION_FLAGS[card.nation];
 
   const [localVoteScore, setLocalVoteScore] = useState(card.voteScore);
@@ -240,8 +222,8 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                 className="relative w-52 rounded-xl overflow-hidden border"
                 style={{
                   aspectRatio: "2/3",
-                  borderColor: `${rarityColor}66`,
-                  boxShadow: `0 0 24px ${rarityColor}44`,
+                  borderColor: `${cardRarityColor}66`,
+                  boxShadow: `0 0 24px ${cardRarityColor}44`,
                 }}
               >
                 {card.imageUrl ? (
@@ -253,7 +235,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                 ) : (
                   <div
                     className="w-full h-full flex items-center justify-center"
-                    style={{ background: `linear-gradient(135deg, #0a0a0f 0%, ${rarityColor}33 100%)` }}
+                    style={{ background: `linear-gradient(135deg, #0a0a0f 0%, ${cardRarityColor}33 100%)` }}
                   >
                     <span className="text-xs font-black uppercase tracking-widest text-white/30">
                       {card.archetype}
@@ -266,9 +248,9 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                 <div
                   className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border"
                   style={{
-                    color: rarityColor,
-                    borderColor: `${rarityColor}66`,
-                    backgroundColor: `${rarityColor}22`,
+                    color: cardRarityColor,
+                    borderColor: `${cardRarityColor}66`,
+                    backgroundColor: `${cardRarityColor}22`,
                   }}
                 >
                   {card.rarity}

@@ -3,26 +3,8 @@ import { useListAuraCards } from "@workspace/api-client-react";
 import type { CommunityCard } from "@workspace/api-client-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CardDetailModal } from "./CardDetailModal";
-
-const NATION_FLAGS: Record<string, string> = {
-  Algeria: "dz", Argentina: "ar", Australia: "au", Austria: "at",
-  Belgium: "be", Brazil: "br", Canada: "ca", "Cape Verde": "cv",
-  Colombia: "co", Croatia: "hr", Curacao: "cw", Czechia: "cz",
-  "DR Congo": "cd", Egypt: "eg", England: "gb-eng", France: "fr",
-  Germany: "de", Ghana: "gh", Haiti: "ht", Iran: "ir", Iraq: "iq",
-  Italy: "it", Jamaica: "jm", Japan: "jp", Jordan: "jo", Mexico: "mx",
-  Morocco: "ma", Netherlands: "nl", "New Zealand": "nz", Nigeria: "ng",
-  Panama: "pa", Portugal: "pt", Qatar: "qa", "Saudi Arabia": "sa",
-  Scotland: "gb-sct", Senegal: "sn", "South Africa": "za",
-  "South Korea": "kr", Spain: "es", Switzerland: "ch", Tunisia: "tn",
-  Turkey: "tr", Uruguay: "uy", USA: "us", Uzbekistan: "uz",
-};
-
-const RARITY_COLOR: Record<string, string> = {
-  Core: "#cbd5e1", Rising: "#60a5fa", Elite: "#22d3ee",
-  Icon: "#c084fc", Legendary: "#fbbf24", Mythic: "#fb7185",
-  Common: "#cbd5e1", Rare: "#60a5fa", Epic: "#c084fc",
-};
+import { NATION_FLAGS } from "../lib/nations";
+import { rarityColor } from "../lib/rarity";
 
 const LEGENDARY_GLOW = "0 0 16px rgba(251,191,36,0.65), 0 0 32px rgba(251,191,36,0.3)";
 const MYTHIC_GLOW = "0 0 16px rgba(251,113,133,0.7), 0 0 32px rgba(251,113,133,0.35)";
@@ -33,12 +15,12 @@ interface CardTileProps {
 }
 
 function CardTile({ card, onClick }: CardTileProps) {
-  const rarityColor = RARITY_COLOR[card.rarity] ?? RARITY_COLOR.Core;
+  const cardRarityColor = rarityColor(card.rarity);
   const isLegendary = card.rarity === "Legendary";
   const isMythic = card.rarity === "Mythic";
   const flagCode = NATION_FLAGS[card.nation];
 
-  let boxShadow = `0 0 10px ${rarityColor}22`;
+  let boxShadow = `0 0 10px ${cardRarityColor}22`;
   if (isLegendary) boxShadow = LEGENDARY_GLOW;
   if (isMythic) boxShadow = MYTHIC_GLOW;
 
@@ -48,7 +30,7 @@ function CardTile({ card, onClick }: CardTileProps) {
       className="relative flex-shrink-0 w-[72px] rounded-lg overflow-hidden border bg-black/40 cursor-pointer focus:outline-none active:scale-95 transition-transform duration-100"
       style={{
         aspectRatio: "2/3",
-        borderColor: (isLegendary || isMythic) ? rarityColor : "rgba(255,255,255,0.12)",
+        borderColor: (isLegendary || isMythic) ? cardRarityColor : "rgba(255,255,255,0.12)",
         boxShadow,
       }}
       aria-label={`${card.name} — ${card.rarity}`}
@@ -63,7 +45,7 @@ function CardTile({ card, onClick }: CardTileProps) {
       ) : (
         <div
           className="w-full h-full flex items-center justify-center"
-          style={{ background: `linear-gradient(135deg, #0a0a0f 0%, ${rarityColor}33 100%)` }}
+          style={{ background: `linear-gradient(135deg, #0a0a0f 0%, ${cardRarityColor}33 100%)` }}
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
@@ -73,7 +55,7 @@ function CardTile({ card, onClick }: CardTileProps) {
         <motion.div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `linear-gradient(135deg, transparent 40%, ${rarityColor}44 50%, transparent 60%)`,
+            background: `linear-gradient(135deg, transparent 40%, ${cardRarityColor}44 50%, transparent 60%)`,
             backgroundSize: "200% 200%",
           }}
           animate={{ backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"] }}
@@ -85,9 +67,9 @@ function CardTile({ card, onClick }: CardTileProps) {
       <div
         className="absolute top-1 right-1 px-1 py-px rounded text-[7px] font-black uppercase tracking-wider border"
         style={{
-          color: rarityColor,
-          borderColor: `${rarityColor}55`,
-          backgroundColor: `${rarityColor}22`,
+          color: cardRarityColor,
+          borderColor: `${cardRarityColor}55`,
+          backgroundColor: `${cardRarityColor}22`,
         }}
       >
         {card.rarity}

@@ -10,8 +10,8 @@ import { CommunityCarousel } from "@/components/CommunityCarousel";
 import { RarityReveal } from "@/components/RarityReveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { NATION_FLAGS, FLAG_NATIONS } from "../lib/nations";
 import { calculateAuraScore } from "../lib/scoring";
 import { getAppUrl } from "../lib/utils";
 import { getWalletAddress } from "../lib/solanaWallet";
@@ -86,56 +86,6 @@ const RARITY_STYLES: Record<string, { color: string; border: string; bg: string 
   Epic:   { color: "#c084fc", border: "rgba(192,132,252,0.55)", bg: "rgba(192,132,252,0.15)" },
 };
 const getRarityStyle = (rarity: string) => RARITY_STYLES[rarity] || RARITY_STYLES.Core;
-
-const NATION_FLAGS: Record<string, string> = {
-  Algeria: "dz",
-  Argentina: "ar",
-  Australia: "au",
-  Austria: "at",
-  Belgium: "be",
-  Brazil: "br",
-  Canada: "ca",
-  "Cape Verde": "cv",
-  Colombia: "co",
-  Croatia: "hr",
-  Curacao: "cw",
-  Czechia: "cz",
-  "DR Congo": "cd",
-  Egypt: "eg",
-  England: "gb-eng",
-  France: "fr",
-  Germany: "de",
-  Ghana: "gh",
-  Haiti: "ht",
-  Iran: "ir",
-  Iraq: "iq",
-  Italy: "it",
-  Jamaica: "jm",
-  Japan: "jp",
-  Jordan: "jo",
-  Mexico: "mx",
-  Morocco: "ma",
-  Netherlands: "nl",
-  "New Zealand": "nz",
-  Nigeria: "ng",
-  Panama: "pa",
-  Portugal: "pt",
-  Qatar: "qa",
-  "Saudi Arabia": "sa",
-  Scotland: "gb-sct",
-  Senegal: "sn",
-  "South Africa": "za",
-  "South Korea": "kr",
-  Spain: "es",
-  Switzerland: "ch",
-  Tunisia: "tn",
-  Turkey: "tr",
-  Uruguay: "uy",
-  USA: "us",
-  Uzbekistan: "uz",
-};
-
-const FLAG_NATIONS = Object.keys(NATION_FLAGS).sort();
 
 type Gender = "Woman" | "Man";
 

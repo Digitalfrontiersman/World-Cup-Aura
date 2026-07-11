@@ -1,5 +1,6 @@
 import { useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
+import { rarityColor } from "../lib/rarity";
 
 export type RarityTier = "Core" | "Rising" | "Elite" | "Icon" | "Legendary" | "Mythic";
 
@@ -223,18 +224,6 @@ export function HaloRing({ color }: HaloRingProps) {
   );
 }
 
-const RARITY_LABEL_COLORS: Record<string, string> = {
-  Core:      "#cbd5e1",
-  Rising:    "#60a5fa",
-  Elite:     "#22d3ee",
-  Icon:      "#c084fc",
-  Legendary: "#fbbf24",
-  Mythic:    "#fb7185",
-  Common:    "#cbd5e1",
-  Rare:      "#60a5fa",
-  Epic:      "#c084fc",
-};
-
 // Total reveal duration in ms — tied to the keyframe times below
 const REVEAL_DURATION_MS = 1900;
 
@@ -256,7 +245,7 @@ interface RarityRevealOverlayProps {
  * 1900 ms    — onComplete() called, overlay unmounts
  */
 export function RarityRevealOverlay({ rarity, onComplete }: RarityRevealOverlayProps) {
-  const color = RARITY_LABEL_COLORS[rarity] ?? "#cbd5e1";
+  const color = rarityColor(rarity);
   const effect = getRarityEffect(rarity);
 
   // Call onComplete after the full animation duration
