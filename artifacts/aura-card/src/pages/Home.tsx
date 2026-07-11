@@ -9,6 +9,7 @@ import { CommunityWall } from "@/components/CommunityWall";
 import { CommunityCarousel } from "@/components/CommunityCarousel";
 import { RarityReveal } from "@/components/RarityReveal";
 import { VerifyOnChain } from "@/components/VerifyOnChain";
+import { PlayerMatch } from "@/components/PlayerMatch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -1984,6 +1985,16 @@ export default function Home() {
                     </span>
                   </motion.div>
                   </div>
+                )}
+
+                {result && (
+                  <PlayerMatch
+                    card={{
+                      stats: result.stats,
+                      nation: result.nation,
+                      archetype: result.archetype,
+                    }}
+                  />
                 )}
 
                 {(vrfTxSig || vrfProof) && (
