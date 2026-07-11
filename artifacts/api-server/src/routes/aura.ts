@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import express, { Router, type IRouter } from "express";
 import { randomUUID } from "node:crypto";
 import { transformWithGptImage, isGptImageConfigured } from "../lib/gptImage";
 import {
@@ -13,6 +13,8 @@ import {
   cardRateLimiter,
   transformRateLimiter,
   mintRateLimiter,
+  imageUpdateRateLimiter,
+  communityRateLimiter,
 } from "../middleware/rateLimiter";
 import {
   GetMintStatusResponse,
@@ -43,6 +45,12 @@ import { auraCardsTable, rarityQuotasTable, cardVotesTable, cardCommentsTable } 
 import { eq, desc, sql, count, sum, and } from "drizzle-orm";
 
 const router: IRouter = Router();
+
+// Per-route body parsers. Image-bearing routes accept large JSON (data URLs);
+// everything else stays small (the global parser in app.ts is only 64kb, so
+// these must be attached explicitly where a bigger body is legitimate).
+const jsonLarge = express.json({ limit: "25mb" });
+const jsonSmall = express.json({ limit: "64kb" });
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
@@ -434,6 +442,14 @@ function buildBasePrompt(b: TransformBody): string {
 
 const DATA_URL_RE = /^data:image\/(png|jpe?g|webp);base64,(.+)$/;
 
+// Media types we are willing to store and serve back. Anything else (svg+xml,
+// html, …) is rejected so a card image can never execute script in a viewer.
+const ALLOWED_IMAGE_MEDIA_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+]);
+
 const SAVE_CARD_IMAGE_BYTES = 20 * 1024 * 1024;
 
 // ---------------------------------------------------------------------------
@@ -485,10 +501,10 @@ router.get("/aura/cards", async (_req, res): Promise<void> => {
   res.json(ListAuraCardsResponse.parse({ cards, totalIssued }));
 });
 
-router.post("/aura/card", cardRateLimiter, async (req, res): Promise<void> => {
+router.post("/aura/card", cardRateLimiter, jsonLarge, async (req, res): Promise<void> => {
   const parsed = SaveAuraCardBody.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
+    res.status(400).json({ error: "Invalid request body." });
     return;
   }
   const { card, imageDataUrl, vrfSlug } = parsed.data;
@@ -659,12 +675,21 @@ router.post("/aura/card", cardRateLimiter, async (req, res): Promise<void> => {
   res.json(SaveAuraCardResponse.parse({ slug, rarity, editionNumber, vrfTxSig }));
 });
 
-router.patch("/aura/card/:slug/image", async (req, res): Promise<void> => {
-  const { slug } = req.params;
+// NOTE: this route has no ownership check — there is no user/session model yet,
+// so anyone who knows a (publicly-listed) slug can replace its image. It is
+// rate-limited to blunt abuse; real fix is per-owner auth (tracked for later).
+router.patch(
+  "/aura/card/:slug/image",
+  imageUpdateRateLimiter,
+  jsonLarge,
+  async (req, res): Promise<void> => {
+  const slug = req.params.slug as string;
   const { imageDataUrl } = req.body as { imageDataUrl?: unknown };
 
-  if (typeof imageDataUrl !== "string" || !imageDataUrl.startsWith("data:image/")) {
-    res.status(400).json({ error: "imageDataUrl must be a PNG data URL." });
+  // Only raster image data URLs. Crucially this REJECTS `data:image/svg+xml`,
+  // which could carry script and be served back same-origin (stored XSS).
+  if (typeof imageDataUrl !== "string" || !DATA_URL_RE.test(imageDataUrl)) {
+    res.status(400).json({ error: "imageDataUrl must be a PNG, JPEG, or WebP data URL." });
     return;
   }
   if (imageDataUrl.length > SAVE_CARD_IMAGE_BYTES) {
@@ -704,8 +729,15 @@ router.get("/aura/card/:slug/image", async (req, res): Promise<void> => {
     return;
   }
   const mediaType = match[1];
+  // Only ever serve known-safe raster types, never e.g. image/svg+xml or
+  // text/html that could execute in the browser. nosniff stops MIME sniffing.
+  if (!ALLOWED_IMAGE_MEDIA_TYPES.has(mediaType)) {
+    res.status(415).json({ error: "Unsupported image type." });
+    return;
+  }
   const imageBuffer = Buffer.from(match[2], "base64");
   res.setHeader("Content-Type", mediaType);
+  res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
   res.send(imageBuffer);
 });
@@ -754,13 +786,35 @@ router.get("/aura/rarity-stats", async (_req, res): Promise<void> => {
   );
 });
 
-router.post("/aura/transform", transformRateLimiter, async (req, res) => {
-  const body = req.body as TransformBody;
+// Cap every free-text field that gets interpolated into the AI prompt. This
+// bounds prompt-cost abuse and limits prompt-injection surface — these values
+// are attacker-controlled and flow straight into buildPrompt().
+const MAX_PROMPT_FIELD = 120;
+function capField(v: unknown): string | undefined {
+  return typeof v === "string" ? v.slice(0, MAX_PROMPT_FIELD) : undefined;
+}
 
-  if (!body?.image || typeof body.image !== "string") {
+router.post("/aura/transform", transformRateLimiter, jsonLarge, async (req, res) => {
+  const raw = req.body as TransformBody;
+
+  if (!raw?.image || typeof raw.image !== "string") {
     res.status(400).json({ error: "Missing 'image' (image data URL)." });
     return;
   }
+
+  // Sanitized view used everywhere below (never trust raw text lengths/types).
+  // `satisfies` keeps image narrowed to string (guarded above) while checking
+  // the shape against TransformBody.
+  const body = {
+    image: raw.image,
+    nation: capField(raw.nation),
+    archetype: capField(raw.archetype),
+    energy: capField(raw.energy),
+    walkout: capField(raw.walkout),
+    weapon: capField(raw.weapon),
+    styleVariant: raw.styleVariant,
+    auraTier: capField(raw.auraTier),
+  } satisfies TransformBody;
 
   const match = DATA_URL_RE.exec(body.image.trim());
   if (!match) {
@@ -957,10 +1011,10 @@ router.get("/aura/mint-status", async (_req, res): Promise<void> => {
   res.json(GetMintStatusResponse.parse(info));
 });
 
-router.post("/aura/mint", mintRateLimiter, async (req, res): Promise<void> => {
+router.post("/aura/mint", mintRateLimiter, jsonLarge, async (req, res): Promise<void> => {
   const parsed = MintAuraCardBody.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
+    res.status(400).json({ error: "Invalid request body." });
     return;
   }
 
@@ -1042,12 +1096,12 @@ router.post("/aura/mint", mintRateLimiter, async (req, res): Promise<void> => {
 // Votes
 // ---------------------------------------------------------------------------
 
-router.post("/aura/cards/:slug/vote", async (req, res): Promise<void> => {
+router.post("/aura/cards/:slug/vote", communityRateLimiter, jsonSmall, async (req, res): Promise<void> => {
   await ensureQuotasSeeded();
-  const { slug } = req.params;
+  const slug = req.params.slug as string;
   const parsed = VoteAuraCardBody.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
+    res.status(400).json({ error: "Invalid request body." });
     return;
   }
   const { vote, sessionId } = parsed.data;
@@ -1117,12 +1171,12 @@ router.get("/aura/cards/:slug/comments", async (req, res): Promise<void> => {
   res.json(ListCardCommentsResponse.parse({ comments }));
 });
 
-router.post("/aura/cards/:slug/comments", async (req, res): Promise<void> => {
+router.post("/aura/cards/:slug/comments", communityRateLimiter, jsonSmall, async (req, res): Promise<void> => {
   await ensureQuotasSeeded();
-  const { slug } = req.params;
+  const slug = req.params.slug as string;
   const parsed = PostCardCommentBody.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
+    res.status(400).json({ error: "Invalid request body." });
     return;
   }
 

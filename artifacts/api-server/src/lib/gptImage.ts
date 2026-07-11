@@ -1,6 +1,28 @@
 import { toFile } from "openai";
 
+// The OpenAI integration package expects Replit's managed-integration env names
+// (AI_INTEGRATIONS_OPENAI_*). Bridge a plain OPENAI_API_KEY — the name our
+// .env.example/README document — onto them, defaulting the base URL to public
+// OpenAI. This makes local setup with a normal key "just work".
+function applyOpenAiEnvBridge(): void {
+  if (
+    !process.env.AI_INTEGRATIONS_OPENAI_API_KEY &&
+    process.env.OPENAI_API_KEY
+  ) {
+    process.env.AI_INTEGRATIONS_OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+  }
+  if (
+    !process.env.AI_INTEGRATIONS_OPENAI_BASE_URL &&
+    process.env.AI_INTEGRATIONS_OPENAI_API_KEY
+  ) {
+    process.env.AI_INTEGRATIONS_OPENAI_BASE_URL =
+      process.env.OPENAI_BASE_URL || "https://api.openai.com/v1";
+  }
+}
+applyOpenAiEnvBridge();
+
 export function isGptImageConfigured(): boolean {
+  applyOpenAiEnvBridge();
   return Boolean(
     process.env.AI_INTEGRATIONS_OPENAI_BASE_URL &&
       process.env.AI_INTEGRATIONS_OPENAI_API_KEY,

@@ -118,8 +118,14 @@ function loadConfig(): TreasuryConfig | null {
   const rpcUrl =
     process.env[ENV_RPC_URL]?.trim() || fileCfg.rpcUrl || DEFAULT_DEVNET_RPC;
 
-  cachedConfig = secretKey ? { rpcUrl, secretKey } : null;
-  return cachedConfig;
+  // Only MEMOIZE a real config. Do NOT cache the unconfigured (null) state — a
+  // secret may be injected after boot (secret managers, Replit Secrets), and
+  // caching null would keep the treasury "not configured" until a full restart.
+  if (secretKey) {
+    cachedConfig = { rpcUrl, secretKey };
+    return cachedConfig;
+  }
+  return null;
 }
 
 function treasuryKeypair(cfg: TreasuryConfig): Keypair {

@@ -6,7 +6,11 @@ function hashIp(ip: string): string {
   return createHash("sha256").update(ip).digest("hex").slice(0, 16);
 }
 
-const isDev = process.env.NODE_ENV !== "production";
+// Fail CLOSED: rate limiting is ON unless explicitly disabled. Previously this
+// keyed off `NODE_ENV !== "production"`, which failed OPEN — a missing or
+// misspelled NODE_ENV in a real deployment silently turned ALL limits off. For
+// local development, set RATE_LIMIT_DISABLED=true (see .env.example).
+const rateLimitDisabled = process.env.RATE_LIMIT_DISABLED === "true";
 
 function parseLimit(envVar: string | undefined, defaultVal: number): number {
   const parsed = parseInt(envVar ?? "", 10);
@@ -35,7 +39,7 @@ function makeLimiter(opts: {
 
       res.status(429).json({ error: opts.message });
     },
-    skip: () => isDev,
+    skip: () => rateLimitDisabled,
   });
 }
 
@@ -58,4 +62,21 @@ export const mintRateLimiter = makeLimiter({
   windowMs: 60 * 60 * 1000,
   endpoint: "POST /api/aura/mint",
   message: "Too many mint requests from this IP. Please try again later.",
+});
+
+// Overwriting a card's image is unauthenticated (no user model yet), so cap it
+// per-IP to blunt bulk-overwrite abuse until ownership auth exists.
+export const imageUpdateRateLimiter = makeLimiter({
+  max: parseLimit(process.env.RATE_LIMIT_IMAGE_PER_HOUR, 30),
+  windowMs: 60 * 60 * 1000,
+  endpoint: "PATCH /api/aura/card/:slug/image",
+  message: "Too many image updates from this IP. Please try again later.",
+});
+
+// Votes + comments: prevent spam floods.
+export const communityRateLimiter = makeLimiter({
+  max: parseLimit(process.env.RATE_LIMIT_COMMUNITY_PER_15MIN, 60),
+  windowMs: 15 * 60 * 1000,
+  endpoint: "POST /api/aura/cards/:slug/(vote|comments)",
+  message: "You're doing that too fast. Please slow down.",
 });
