@@ -5,6 +5,12 @@ A fan-card generator: users take a selfie, answer a short quiz, and get a genera
 NFT** in-app (no external wallet; a throwaway devnet wallet is created in
 `localStorage` and the mint is sponsored by a server-side treasury).
 
+The card also carries a **live market read** from real **TxOdds / TxLINE** World Cup
+data: the betting market's win-probability for your nation drives an "aura stance"
+(Frontrunner / Contender / Dark Horse) on the card. The rarity roll is **verifiable
+on Solana** (slot-hash VRF), and the TxLINE feed itself is **activated via an on-chain
+Solana subscription** - the wallet proves entitlement, no shared API key.
+
 This is a **pnpm workspace monorepo**. It originated on Replit; this README covers
 running it **locally**. For Replit/deployment specifics see [`replit.md`](./replit.md).
 
@@ -16,15 +22,15 @@ running it **locally**. For Replit/deployment specifics see [`replit.md`](./repl
 - **DB**: PostgreSQL 16 + Drizzle ORM (`lib/db`)
 - **API contract**: OpenAPI spec (`lib/api-spec`) → generated Zod schemas (`lib/api-zod`) + React Query hooks (`lib/api-client-react`) via Orval
 - **AI images**: OpenAI (`lib/integrations-openai-ai-server`)
-- **Chain**: Solana devnet (`@solana/web3.js` + Metaplex Umi)
+- **Chain**: Solana devnet (`@solana/web3.js` + Metaplex Umi) - VRF-verifiable rarity + sponsored minting
+- **Live data**: TxOdds / TxLINE World Cup feed - fixtures + StablePrice odds, activated via an on-chain Solana subscription (`artifacts/api-server/src/lib/txline.ts`, `txlineActivate.ts`)
 
 ## Repo layout
 
 | Path | What |
 |---|---|
 | `artifacts/aura-card` | The main app (frontend) |
-| `artifacts/api-server` | REST API: card gen, AI transform, mint, community |
-| `artifacts/pitch-deck`, `artifacts/mockup-sandbox` | Secondary static apps |
+| `artifacts/api-server` | REST API: card gen, AI transform, mint, community, TxLINE feed |
 | `lib/*` | Shared libraries (db, api spec/zod/client, OpenAI integration) |
 | `scripts` | Workspace tooling |
 
@@ -58,6 +64,7 @@ cp artifacts/api-server/.env.example artifacts/api-server/.env
 | `OPENAI_API_KEY` | For AI transform | Without it, `/api/aura/transform` returns a graceful 503 |
 | `SOLANA_TREASURY_SECRET_KEY` | For minting | base58 secret. **Prefer** the gitignored `artifacts/api-server/.solana-treasury.json` file (`{ "rpcUrl", "secretKey" }`) - never commit a key |
 | `SOLANA_DEVNET_RPC_URL` | Optional | Defaults to the public devnet RPC |
+| `TXLINE_API_TOKEN` | For live ticker/odds | TxOdds/TxLINE World Cup token. If unset, the server **auto-activates on-chain** using the treasury wallet (needs devnet SOL) |
 | `RATE_LIMIT_*` | Optional | Prod-only tuning; see `.env.example` |
 
 > **Security:** a treasury private key must never live in a tracked file. Locally it
