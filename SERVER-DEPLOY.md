@@ -51,9 +51,13 @@ API-only quick restart: `cd /opt/worldcupaura && sudo docker compose up -d --bui
 - **TLS:** auto-renews (certbot). Manual: `sudo certbot renew`.
 
 ## Rollback
-- Fast: repoint DNS `@`/`www` back to the old host `34.111.179.208`.
-- Or stop this app only: `cd /opt/worldcupaura && sudo docker compose down`
-  (streaming/clipping are separate and unaffected).
+- **App:** repoint DNS `@`/`www` back to `34.111.179.208`, or stop this app only:
+  `cd /opt/worldcupaura && sudo docker compose down` (streaming/clipping unaffected).
+- **Database:** the DB was migrated Neon Singapore → Neon **US-East** (`us-east-1`,
+  near the Montreal box) for latency. The Singapore project is retained, untouched,
+  as fallback. To roll back the DB:
+  `sudo cp /opt/worldcupaura/api.env.singapore-fallback /opt/worldcupaura/api.env && cd /opt/worldcupaura && sudo docker compose up -d`
+  Don't delete the Singapore Neon project until you're confident in US-East.
 
 ## Known behavior / follow-ups
 - **Neon cold-start:** Neon auto-suspends when idle, so the first request after a
