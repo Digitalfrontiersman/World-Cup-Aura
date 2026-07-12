@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { TrendingUp, TrendingDown, Minus, Radio } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Radio,
+  BadgeCheck,
+  ExternalLink,
+} from "lucide-react";
 
 const API_BASE = import.meta.env.BASE_URL.replace(/\/+$/, "");
 
@@ -17,6 +24,7 @@ interface MarketReadData {
 interface OddsResponse {
   configured: boolean;
   read: MarketReadData | null;
+  subscriptionTx?: string | null;
 }
 
 const STANCE = {
@@ -65,6 +73,7 @@ export function MarketRead({ nation }: { nation: string }) {
   const s = STANCE[read.stance];
   const Icon = s.icon;
   const winPct = Math.round(read.winProbability * 100);
+  const subTx = data?.subscriptionTx;
 
   return (
     <div
@@ -99,6 +108,19 @@ export function MarketRead({ nation }: { nation: string }) {
           </p>
         </div>
       </div>
+      {subTx && (
+        <a
+          href={`https://explorer.solana.com/tx/${subTx}?cluster=devnet`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex items-center gap-1.5 border-t border-white/[0.06] pt-2.5 text-[11px] font-semibold text-emerald-500/80 transition-colors hover:text-emerald-400"
+          title="The on-chain Solana subscription that authorizes this live odds feed"
+        >
+          <BadgeCheck className="h-3.5 w-3.5" />
+          Odds feed authorized on-chain
+          <ExternalLink className="h-3 w-3 opacity-60" />
+        </a>
+      )}
     </div>
   );
 }

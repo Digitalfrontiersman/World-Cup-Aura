@@ -17,6 +17,7 @@ import {
 import type { CardComment, CommunityCard } from "@workspace/api-client-react";
 import { NATION_FLAGS } from "../lib/nations";
 import { rarityColor } from "../lib/rarity";
+import { MarketRead } from "./MarketRead";
 
 function getSessionId(): string {
   const key = "aura_session_id";
@@ -302,6 +303,11 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                   <ExternalLink className="h-2.5 w-2.5 opacity-70" />
                 </a>
               )}
+            </div>
+
+            {/* Live TxOdds market read + on-chain proof for this card's nation */}
+            <div className="mb-5">
+              <MarketRead nation={card.nation} />
             </div>
 
             {/* Vote buttons */}

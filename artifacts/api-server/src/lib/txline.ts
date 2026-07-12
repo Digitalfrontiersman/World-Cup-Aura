@@ -10,7 +10,11 @@
 // Without TXLINE_API_TOKEN the data endpoints return 403, so `isConfigured()`
 // lets the routes degrade gracefully instead of erroring.
 
-import { canActivate, getActivatedApiToken } from "./txlineActivate";
+import {
+  canActivate,
+  getActivatedApiToken,
+  getSubscribeTx,
+} from "./txlineActivate";
 
 // The activated token is devnet-scoped, so default to the devnet host.
 const BASE = (process.env.TXLINE_API_BASE || "https://txline-dev.txodds.com").replace(/\/+$/, "");
@@ -23,6 +27,16 @@ const WC_COMPETITION_ID = process.env.TXLINE_WC_COMPETITION_ID
 /** Either a token is provided directly, or we can activate one on-chain. */
 export function isConfigured(): boolean {
   return ENV_TOKEN.length > 0 || canActivate();
+}
+
+/**
+ * The Solana tx signature of the on-chain subscription that authorized the live
+ * TxLINE feed. Prefers the tx persisted at activation; falls back to an explicit
+ * TXLINE_SUBSCRIPTION_TX env (useful when the token was cached before this field
+ * existed). Returns null when unknown.
+ */
+export function getSubscriptionTx(): string | null {
+  return getSubscribeTx() || process.env.TXLINE_SUBSCRIPTION_TX?.trim() || null;
 }
 
 /** The API token: an explicit env token wins; otherwise activate on-chain (cached). */

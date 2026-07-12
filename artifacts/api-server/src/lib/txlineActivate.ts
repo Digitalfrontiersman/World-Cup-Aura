@@ -30,19 +30,33 @@ const SELECTED_LEAGUES: number[] = []; // empty = standard World Cup bundle
 const TOKEN_FILE = "artifacts/api-server/.txline-token.json";
 const TOKEN_TTL_MS = 24 * 24 * 60 * 60 * 1000; // ~24 days (< the 4-week validity)
 
-interface CachedToken { token: string; createdAt: number; }
+interface CachedToken { token: string; createdAt: number; subscribeTx?: string; }
 
-function readCachedToken(): string | null {
+function readCache(): CachedToken | null {
   try {
     const c = JSON.parse(fs.readFileSync(TOKEN_FILE, "utf8")) as CachedToken;
-    if (c.token && Date.now() - c.createdAt < TOKEN_TTL_MS) return c.token;
+    if (c.token) return c;
   } catch { /* none */ }
   return null;
 }
 
-function writeCachedToken(token: string): void {
+function readCachedToken(): string | null {
+  const c = readCache();
+  if (c && Date.now() - c.createdAt < TOKEN_TTL_MS) return c.token;
+  return null;
+}
+
+/** The on-chain subscription tx signature that activated the current token. */
+export function getSubscribeTx(): string | null {
+  return readCache()?.subscribeTx ?? null;
+}
+
+function writeCachedToken(token: string, subscribeTx?: string): void {
   try {
-    fs.writeFileSync(TOKEN_FILE, JSON.stringify({ token, createdAt: Date.now() }, null, 2));
+    fs.writeFileSync(
+      TOKEN_FILE,
+      JSON.stringify({ token, createdAt: Date.now(), subscribeTx }, null, 2),
+    );
   } catch (err) {
     logger.warn({ err }, "Could not persist TxLINE token");
   }
@@ -146,7 +160,7 @@ async function activate(): Promise<string> {
   }
   if (!token) throw new Error("TxLINE activation returned an empty token.");
 
-  writeCachedToken(token);
+  writeCachedToken(token, txSig);
   logger.info("TxLINE: API token activated + cached");
   return token;
 }

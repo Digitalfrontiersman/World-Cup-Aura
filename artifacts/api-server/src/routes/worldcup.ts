@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import {
   getWorldCupFixtures,
   getNationMarketRead,
+  getSubscriptionTx,
   isConfigured,
 } from "../lib/txline";
 
@@ -38,7 +39,7 @@ router.get("/worldcup/odds/:nation", async (req, res): Promise<void> => {
   }
   try {
     const read = await getNationMarketRead(req.params.nation);
-    res.json({ configured: true, read });
+    res.json({ configured: true, read, subscriptionTx: getSubscriptionTx() });
   } catch (err) {
     req.log?.error({ err, event: "txline_odds_failed" }, "TxLINE odds fetch failed");
     res.status(502).json({ configured: true, error: "Upstream TxLINE error.", read: null });
