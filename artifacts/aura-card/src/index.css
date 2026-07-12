@@ -52,7 +52,7 @@
   --color-rarity-legendary: hsl(var(--rarity-legendary));
   --color-rarity-mythic: hsl(var(--rarity-mythic));
 
-  --font-sans: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-sans: 'Geist Variable', 'Geist', system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --font-display: 'Archivo Variable', 'Archivo', system-ui, sans-serif;

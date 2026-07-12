@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 // always load regardless of region, privacy browsers, or font-blockers.
 import "@fontsource-variable/archivo";
 import "@fontsource-variable/archivo/wght-italic.css";
-import "@fontsource-variable/plus-jakarta-sans";
+import "@fontsource-variable/geist";
 // Oswald: athletic condensed voice for the card face + buttons (jersey feel).
 import "@fontsource-variable/oswald";
 import { setBaseUrl } from "@workspace/api-client-react";
