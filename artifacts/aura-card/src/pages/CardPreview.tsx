@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ParticleSparks, HaloRing, getRarityEffect } from "@/components/RarityEffects";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { PlayerMatch } from "@/components/PlayerMatch";
+import { MarketRead } from "@/components/MarketRead";
 import { rarityColor } from "@/lib/rarity";
 
 const RARITY_STYLES: Record<string, { color: string; border: string; glow: string; bg: string }> = {
@@ -195,6 +196,15 @@ export default function CardPreview() {
               <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{label}</p>
             </div>
           ))}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 11 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.41 }}
+          className="w-full"
+        >
+          <MarketRead nation={card.nation} />
         </motion.div>
 
         <motion.div

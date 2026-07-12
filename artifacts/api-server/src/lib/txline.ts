@@ -108,21 +108,108 @@ function normalizeFixture(f: TxFixture): WorldCupMatch {
   };
 }
 
-/**
- * Current World Cup fixtures. If TXLINE_WC_COMPETITION_ID is set we filter
- * server-side; otherwise we pull the snapshot and keep fixtures whose
- * competition name looks like a World Cup.
- */
-export async function getWorldCupFixtures(): Promise<WorldCupMatch[]> {
-  if (!isConfigured()) return [];
+async function getRawFixtures(): Promise<TxFixture[]> {
   const qs = WC_COMPETITION_ID ? `?competitionId=${WC_COMPETITION_ID}` : "";
   const res = await txlineGet(`/api/fixtures/snapshot${qs}`);
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     throw new Error(`TxLINE fixtures ${res.status}: ${body.slice(0, 200)}`);
   }
-  const raw = (await res.json()) as TxFixture[];
-  let matches = raw.map(normalizeFixture);
-  if (!WC_COMPETITION_ID) matches = matches.filter((m) => /world\s*cup/i.test(m.competition));
-  return matches.sort((a, b) => a.startTime - b.startTime);
+  let raw = (await res.json()) as TxFixture[];
+  if (!WC_COMPETITION_ID) raw = raw.filter((f) => /world\s*cup/i.test(f.Competition));
+  return raw;
+}
+
+/**
+ * Current World Cup fixtures. If TXLINE_WC_COMPETITION_ID is set we filter
+ * server-side; otherwise we keep fixtures whose competition name looks like a
+ * World Cup.
+ */
+export async function getWorldCupFixtures(): Promise<WorldCupMatch[]> {
+  if (!isConfigured()) return [];
+  return (await getRawFixtures())
+    .map(normalizeFixture)
+    .sort((a, b) => a.startTime - b.startTime);
+}
+
+// ── Odds → market read ───────────────────────────────────────────────────────
+// The TxLINE StablePrice feed exposes a 1X2 (home/draw/away) match-result market
+// with de-margined implied probabilities. We turn a nation's implied win chance
+// into an "aura stance" that drives the card's live market read.
+interface TxOdds {
+  FixtureId: number;
+  SuperOddsType: string;
+  PriceNames: string[];
+  Prices: number[]; // decimal odds * 1000
+  Pct: string[]; // de-margined implied %, or "NA"
+}
+
+export type MarketStance = "favorite" | "contender" | "underdog";
+
+export interface NationMarketRead {
+  nation: string;
+  opponent: string;
+  fixtureId: number;
+  kickoff: number; // epoch ms
+  winProbability: number; // 0..1 (de-margined)
+  drawProbability: number; // 0..1
+  decimalOdds: number; // e.g. 2.41
+  stance: MarketStance;
+}
+
+const normName = (s: string): string => s.trim().toLowerCase();
+
+function stanceFor(winProbability: number): MarketStance {
+  if (winProbability >= 0.45) return "favorite";
+  if (winProbability >= 0.28) return "contender";
+  return "underdog";
+}
+
+/**
+ * The live market's read on a nation: finds its soonest World Cup fixture that
+ * carries 1X2 odds and returns the de-margined win chance + decimal price.
+ * Returns null when the feed has no odds for that nation (graceful degrade).
+ */
+export async function getNationMarketRead(
+  nation: string,
+): Promise<NationMarketRead | null> {
+  if (!isConfigured()) return null;
+  const n = normName(nation);
+  const candidates = (await getRawFixtures())
+    .filter((f) => normName(f.Participant1) === n || normName(f.Participant2) === n)
+    .sort((a, b) => a.StartTime - b.StartTime);
+
+  for (const f of candidates) {
+    const res = await txlineGet(`/api/odds/snapshot/${f.FixtureId}`);
+    if (!res.ok) continue;
+    const arr = (await res.json().catch(() => [])) as TxOdds[];
+    const m = arr.find(
+      (o) =>
+        o.SuperOddsType === "1X2_PARTICIPANT_RESULT" &&
+        Array.isArray(o.Pct) &&
+        o.Pct.length === 3 &&
+        o.Pct[0] !== "NA",
+    );
+    if (!m) continue;
+
+    const isP1 = normName(f.Participant1) === n;
+    const winPct = Number(m.Pct[isP1 ? 0 : 2]);
+    const drawPct = Number(m.Pct[1]);
+    const price = m.Prices[isP1 ? 0 : 2] / 1000;
+    if (!Number.isFinite(winPct) || winPct <= 0) continue;
+
+    const winProbability = winPct / 100;
+    const startTime = f.StartTime > 1e12 ? f.StartTime : f.StartTime * 1000;
+    return {
+      nation: isP1 ? f.Participant1 : f.Participant2,
+      opponent: isP1 ? f.Participant2 : f.Participant1,
+      fixtureId: f.FixtureId,
+      kickoff: startTime,
+      winProbability,
+      drawProbability: Number.isFinite(drawPct) ? drawPct / 100 : 0,
+      decimalOdds: price,
+      stance: stanceFor(winProbability),
+    };
+  }
+  return null;
 }

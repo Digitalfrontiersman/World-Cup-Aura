@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import { WalletConnect } from "@/components/WalletConnect";
 
 interface NavbarProps {
@@ -55,6 +56,13 @@ export function Navbar({ onOpenOdds, onOpenCollection, onHome }: NavbarProps) {
               Odds
             </button>
           )}
+          <Link
+            href="/docs"
+            className="px-2.5 py-2 font-condensed text-xs font-semibold uppercase tracking-wide text-white/60 transition-colors hover:text-white sm:px-3"
+            data-testid="nav-docs"
+          >
+            Docs
+          </Link>
           <WalletConnect compact />
         </nav>
       </div>
