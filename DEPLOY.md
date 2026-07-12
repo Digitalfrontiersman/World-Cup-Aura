@@ -27,15 +27,12 @@ Same origin ⇒ the frontend's `/api/*` calls need no cross-origin CORS.
 
 ## Your part
 
-### 0. Decide the deploy branch
-The spec currently points at **`main`** (`.do/app.yaml`, both components). This
-deploy config is on the **`Bilal`** branch right now, so do ONE of:
-- Merge `Bilal` → `main` (recommended for production), **or**
-- Change `branch: main` → `branch: Bilal` in `.do/app.yaml` (both places) to
-  deploy the feature branch while testing.
-
-App Platform deploys **from GitHub**, so whichever branch you pick must contain
-these files (they're pushed to `Bilal`).
+### 0. Deploy branch (already set)
+The spec tracks the **`Bilal`** branch (both components in `.do/app.yaml`),
+because `main` receives the designer's frontend pushes and should not trigger
+production deploys. Every push to `Bilal` rebuilds prod (`deploy_on_push: true`).
+Nothing to change — the config already lives on `Bilal`. Do your integration on
+`Bilal` (merge `main` → `Bilal` when you want the designer's work to go live).
 
 ### 1. Create the DO app + connect GitHub
 Two ways:

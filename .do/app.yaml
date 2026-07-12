@@ -30,9 +30,9 @@ services:
     source_dir: /
     github:
       repo: Digitalfrontiersman/World-Cup-Aura
-      # NOTE: this deploy config currently lives on the `Bilal` branch. Merge it
-      # to `main` before first deploy, or change this to `branch: Bilal`.
-      branch: main
+      # Production tracks `Bilal`. `main` is reserved for the designer's
+      # frontend pushes, so it must NOT auto-deploy.
+      branch: Bilal
       deploy_on_push: true
     http_port: 8080
     instance_size_slug: apps-s-1vcpu-1gb
@@ -97,7 +97,7 @@ static_sites:
     source_dir: /
     github:
       repo: Digitalfrontiersman/World-Cup-Aura
-      branch: main
+      branch: Bilal
       deploy_on_push: true
     # Build only the frontend + its workspace deps from the monorepo root.
     build_command: >-
