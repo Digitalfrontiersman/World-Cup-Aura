@@ -26,6 +26,13 @@ export interface Player {
   profile: PlayerStatProfile;
   blurb: string;
   photoUrl?: string;
+  /**
+   * Resemblance rarity gate. Undefined players can match any card. "star"
+   * players only surface on Icon+ cards; "goat" players (Messi, Ronaldo) only
+   * on Legendary/Mythic cards - so mirroring a GOAT is genuinely rare.
+   * See matchPlayer() in playerMatch.ts.
+   */
+  eliteTier?: "star" | "goat";
 }
 
 export const PLAYERS: Player[] = [
@@ -37,6 +44,7 @@ export const PLAYERS: Player[] = [
     keywords: ["vision", "clutch", "genius", "aura"],
     profile: { speed: 82, clutch: 96, iq: 99, chaos: 55, loyalty: 88, banter: 60 },
     blurb: "a calm genius who decides finals with a single moment of vision",
+    eliteTier: "goat",
   },
   {
     id: "dimaria",
@@ -55,6 +63,7 @@ export const PLAYERS: Player[] = [
     keywords: ["power", "clutch", "confidence", "banter"],
     profile: { speed: 90, clutch: 92, iq: 80, chaos: 60, loyalty: 70, banter: 88 },
     blurb: "relentless self-belief and a walkout that demands the spotlight",
+    eliteTier: "goat",
   },
   {
     id: "mbappe",
@@ -64,6 +73,7 @@ export const PLAYERS: Player[] = [
     keywords: ["speed", "power", "clutch"],
     profile: { speed: 99, clutch: 88, iq: 82, chaos: 62, loyalty: 68, banter: 66 },
     blurb: "pure acceleration and ice-cold finishing under pressure",
+    eliteTier: "star",
   },
   {
     id: "griezmann",
@@ -82,6 +92,7 @@ export const PLAYERS: Player[] = [
     keywords: ["flair", "chaos", "banter", "trickery"],
     profile: { speed: 88, clutch: 78, iq: 86, chaos: 92, loyalty: 66, banter: 95 },
     blurb: "flair, drama and total chaos energy with the ball at his feet",
+    eliteTier: "star",
   },
   {
     id: "vinicius",
@@ -91,6 +102,7 @@ export const PLAYERS: Player[] = [
     keywords: ["speed", "flair", "chaos"],
     profile: { speed: 96, clutch: 80, iq: 78, chaos: 84, loyalty: 70, banter: 82 },
     blurb: "fearless dribbling and unbothered swagger down the wing",
+    eliteTier: "star",
   },
   {
     id: "bellingham",
@@ -100,6 +112,7 @@ export const PLAYERS: Player[] = [
     keywords: ["clutch", "iq", "leadership"],
     profile: { speed: 82, clutch: 92, iq: 90, chaos: 58, loyalty: 82, banter: 68 },
     blurb: "a born leader who arrives late in the box when it matters most",
+    eliteTier: "star",
   },
   {
     id: "kane",
@@ -136,6 +149,7 @@ export const PLAYERS: Player[] = [
     keywords: ["power", "finishing", "clutch"],
     profile: { speed: 88, clutch: 94, iq: 78, chaos: 55, loyalty: 78, banter: 72 },
     blurb: "a relentless goal machine built purely to score",
+    eliteTier: "star",
   },
   {
     id: "vandijk",
@@ -181,6 +195,7 @@ export const PLAYERS: Player[] = [
     keywords: ["flair", "fearless", "speed"],
     profile: { speed: 90, clutch: 84, iq: 86, chaos: 78, loyalty: 76, banter: 80 },
     blurb: "a fearless teenager with no respect for reputations",
+    eliteTier: "star",
   },
   {
     id: "salah",

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ChevronRight } from "lucide-react";
 import { NATION_FLAGS } from "../lib/nations";
 import { matchPlayer, type MatchInput } from "../lib/playerMatch";
 
@@ -43,10 +43,10 @@ export function PlayerMatch({ card }: PlayerMatchProps) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.4 }}
-      className="w-full rounded-2xl border border-primary/25 bg-gradient-to-b from-primary/10 to-black/40 p-4 space-y-3"
+      className="w-full rounded-xl surface-card border-primary/25 p-4 space-y-3"
       data-testid="player-match"
     >
-      <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest text-primary">
+      <div className="flex items-center gap-1.5 type-eyebrow text-[0.68rem] text-primary">
         <Sparkles className="h-3.5 w-3.5" />
         You play like
       </div>
@@ -97,9 +97,9 @@ export function PlayerMatch({ card }: PlayerMatchProps) {
         {reasons.map((reason, i) => (
           <li
             key={i}
-            className="text-[12px] text-gray-300 leading-snug flex gap-1.5"
+            className="text-[12px] text-gray-300 leading-snug flex gap-1"
           >
-            <span className="text-primary/70 shrink-0">›</span>
+            <ChevronRight className="mt-px h-3.5 w-3.5 shrink-0 text-primary/70" />
             <span>{reason}</span>
           </li>
         ))}

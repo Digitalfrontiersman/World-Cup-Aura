@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useListAuraCards } from "@workspace/api-client-react";
 import type { CommunityCard } from "@workspace/api-client-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CardDetailModal } from "./CardDetailModal";
 import { NATION_FLAGS } from "../lib/nations";
 import { rarityColor } from "../lib/rarity";
 
-const LEGENDARY_GLOW = "0 0 16px rgba(251,191,36,0.65), 0 0 32px rgba(251,191,36,0.3)";
-const MYTHIC_GLOW = "0 0 16px rgba(251,113,133,0.7), 0 0 32px rgba(251,113,133,0.35)";
+// Top tiers earn a solid tier-colored frame; the rest a neutral hairline.
+const FRAMED_TIERS = new Set(["Legendary", "Mythic", "Icon", "Elite"]);
 
 interface CardTileProps {
   card: CommunityCard;
@@ -16,22 +16,17 @@ interface CardTileProps {
 
 function CardTile({ card, onClick }: CardTileProps) {
   const cardRarityColor = rarityColor(card.rarity);
-  const isLegendary = card.rarity === "Legendary";
-  const isMythic = card.rarity === "Mythic";
+  const framed = FRAMED_TIERS.has(card.rarity);
   const flagCode = NATION_FLAGS[card.nation];
-
-  let boxShadow = `0 0 10px ${cardRarityColor}22`;
-  if (isLegendary) boxShadow = LEGENDARY_GLOW;
-  if (isMythic) boxShadow = MYTHIC_GLOW;
 
   return (
     <button
       onClick={onClick}
-      className="relative flex-shrink-0 w-[72px] rounded-lg overflow-hidden border bg-black/40 cursor-pointer focus:outline-none active:scale-95 transition-transform duration-100"
+      className="relative flex-shrink-0 w-[72px] rounded-lg overflow-hidden border bg-surface-1 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary active:scale-95 transition-transform duration-100"
       style={{
         aspectRatio: "2/3",
-        borderColor: (isLegendary || isMythic) ? cardRarityColor : "rgba(255,255,255,0.12)",
-        boxShadow,
+        borderColor: framed ? cardRarityColor : "hsl(var(--card-border))",
+        borderWidth: framed ? "1.5px" : "1px",
       }}
       aria-label={`${card.name} - ${card.rarity}`}
     >
@@ -43,33 +38,16 @@ function CardTile({ card, onClick }: CardTileProps) {
           loading="lazy"
         />
       ) : (
-        <div
-          className="w-full h-full flex items-center justify-center"
-          style={{ background: `linear-gradient(135deg, #0a0a0f 0%, ${cardRarityColor}33 100%)` }}
-        />
+        <div className="w-full h-full bg-surface-2" />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/5 to-transparent" />
 
-      {/* Rarity glow shimmer for Legendary/Mythic */}
-      {(isLegendary || isMythic) && (
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(135deg, transparent 40%, ${cardRarityColor}44 50%, transparent 60%)`,
-            backgroundSize: "200% 200%",
-          }}
-          animate={{ backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-        />
-      )}
-
-      {/* Rarity badge */}
+      {/* Rarity tier chip — flat, meaningful color coding */}
       <div
-        className="absolute top-1 right-1 px-1 py-px rounded text-[7px] font-black uppercase tracking-wider border"
+        className="absolute top-1 right-1 px-1 py-px rounded text-[7px] font-black uppercase tracking-[0.06em]"
         style={{
-          color: cardRarityColor,
-          borderColor: `${cardRarityColor}55`,
-          backgroundColor: `${cardRarityColor}22`,
+          color: "#0a0a0f",
+          backgroundColor: cardRarityColor,
         }}
       >
         {card.rarity}
@@ -79,13 +57,13 @@ function CardTile({ card, onClick }: CardTileProps) {
         <img
           src={`https://flagcdn.com/w20/${flagCode}.png`}
           alt={card.nation}
-          className="absolute top-1 left-1 w-4 h-auto rounded-sm opacity-90"
+          className="absolute top-1 left-1 w-4 h-auto rounded-sm"
           loading="lazy"
         />
       )}
 
       <div className="absolute bottom-0 left-0 right-0 px-1 pb-1">
-        <p className="text-white text-[8px] font-black uppercase tracking-wide truncate leading-tight">
+        <p className="text-white text-[8px] font-black uppercase tracking-[0.02em] truncate leading-tight">
           {card.name}
         </p>
       </div>
@@ -104,6 +82,7 @@ interface CommunityCarouselProps {
 }
 
 export function CommunityCarousel({ baseUrl, active = true }: CommunityCarouselProps) {
+  const reduceMotion = useReducedMotion() ?? false;
   const { data } = useListAuraCards({ query: { staleTime: 60_000 } } as never);
   const [selectedCard, setSelectedCard] = useState<CommunityCard | null>(null);
 
@@ -135,15 +114,18 @@ export function CommunityCarousel({ baseUrl, active = true }: CommunityCarouselP
           transition={{ duration: 0.5, delay: 0.3 }}
           className="w-full mt-auto pt-6 pb-2"
         >
-          <p className="text-center text-[9px] font-black uppercase tracking-[0.2em] text-primary/50 mb-2.5">
-            Community Cards
-          </p>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="h-3 w-1 bg-primary rounded-full" aria-hidden />
+            <p className="type-eyebrow text-[0.62rem] text-muted-foreground">
+              Community Cards
+            </p>
+          </div>
 
           {/* Marquee container */}
           <div className="relative overflow-hidden w-full">
             {/* Left + right fade edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
             <style>{`
               @keyframes aura-marquee {
@@ -156,7 +138,7 @@ export function CommunityCarousel({ baseUrl, active = true }: CommunityCarouselP
               className="flex"
               style={{
                 gap: `${GAP}px`,
-                animation: `aura-marquee ${durationSec}s linear infinite`,
+                animation: reduceMotion ? undefined : `aura-marquee ${durationSec}s linear infinite`,
                 width: `${loopCards.length * (CARD_W + GAP)}px`,
               }}
             >

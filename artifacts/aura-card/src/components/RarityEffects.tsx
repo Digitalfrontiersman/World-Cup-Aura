@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { rarityColor } from "../lib/rarity";
 
 export type RarityTier = "Core" | "Rising" | "Elite" | "Icon" | "Legendary" | "Mythic";
@@ -247,12 +247,26 @@ interface RarityRevealOverlayProps {
 export function RarityRevealOverlay({ rarity, onComplete }: RarityRevealOverlayProps) {
   const color = rarityColor(rarity);
   const effect = getRarityEffect(rarity);
+  const reduceMotion = useReducedMotion() ?? false;
 
   // Call onComplete after the full animation duration
   useEffect(() => {
     const timer = setTimeout(onComplete, REVEAL_DURATION_MS);
     return () => clearTimeout(timer);
   }, [onComplete]);
+
+  // Under reduced-motion: a calm centred fade with no scale-pop or fly-to-corner.
+  const reducedTierNameVariants = {
+    initial: { opacity: 0 },
+    animate: {
+      opacity: [0, 1, 1, 0] as number[],
+      transition: {
+        duration: REVEAL_DURATION_MS / 1000,
+        times: [0, 0.15, 0.8, 1],
+        ease: "easeInOut" as const,
+      },
+    },
+  };
 
   // Backdrop: fade-in then fade-out
   const backdropVariants = {
@@ -313,7 +327,7 @@ export function RarityRevealOverlay({ rarity, onComplete }: RarityRevealOverlayP
       />
 
       {/* Burst lines radiating from centre */}
-      {effect.glowColor && (
+      {effect.glowColor && !reduceMotion && (
         <motion.div
           className="absolute inset-0"
           variants={burstVariants}
@@ -342,7 +356,7 @@ export function RarityRevealOverlay({ rarity, onComplete }: RarityRevealOverlayP
       {/* Tier name - big centre reveal → settles to top-right badge location */}
       <motion.div
         className="relative z-10 flex flex-col items-center gap-2 select-none"
-        variants={tierNameVariants}
+        variants={reduceMotion ? reducedTierNameVariants : tierNameVariants}
         initial="initial"
         animate="animate"
       >

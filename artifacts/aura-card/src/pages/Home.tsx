@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { flushSync } from "react-dom";
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Download, Share2, Swords, RotateCcw, Camera, Upload, User, ChevronRight, ChevronDown, Trophy, Zap, ScanLine, Sparkles, Loader2, Check, Copy, ExternalLink, Flame, Layers, X } from "lucide-react";
+import { motion, AnimatePresence, useMotionValue, useTransform, useReducedMotion } from "framer-motion";
+import { Download, Share2, Swords, RotateCcw, Camera, Upload, User, ChevronRight, ChevronLeft, ChevronDown, Trophy, Zap, ScanLine, Sparkles, Loader2, Check, Copy, ExternalLink, Flame, Layers, Package, X } from "lucide-react";
 import { ParticleSparks, HaloRing, RarityRevealOverlay, getRarityEffect } from "@/components/RarityEffects";
 import { ChallengeSheet } from "@/components/ChallengeSheet";
 import { ShareSheet } from "@/components/ShareSheet";
@@ -9,11 +9,18 @@ import { CommunityWall } from "@/components/CommunityWall";
 import { CommunityCarousel } from "@/components/CommunityCarousel";
 import { RarityReveal } from "@/components/RarityReveal";
 import { VerifyOnChain } from "@/components/VerifyOnChain";
-import { PlayerMatch } from "@/components/PlayerMatch";
+import { AuraCardBack } from "@/components/AuraCardBack";
+import { useStepHistory, type NavPosition } from "@/hooks/useStepHistory";
 import { WalletConnect } from "@/components/WalletConnect";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { CollectionOddsModal } from "@/components/CollectionOddsModal";
+import { CollectionGallery } from "@/components/CollectionGallery";
+import { WorldCupTicker } from "@/components/WorldCupTicker";
+import { ShipCardSheet } from "@/components/ShipCardSheet";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { MintingCinematic } from "@/components/MintingCinematic";
-import { rarityColor } from "@/lib/rarity";
+import { rarityColor, getRarityStyle } from "@/lib/rarity";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,20 +86,6 @@ function CountUp({ to, duration = 2 }: { to: number, duration?: number }) {
   return <span>{count}</span>;
 }
 
-const RARITY_STYLES: Record<string, { color: string; border: string; bg: string }> = {
-  // New canonical tier names
-  Core:      { color: "#cbd5e1", border: "rgba(203,213,225,0.55)", bg: "rgba(203,213,225,0.12)" },
-  Rising:    { color: "#60a5fa", border: "rgba(96,165,250,0.55)",  bg: "rgba(96,165,250,0.15)"  },
-  Elite:     { color: "#22d3ee", border: "rgba(34,211,238,0.55)",  bg: "rgba(34,211,238,0.15)"  },
-  Icon:      { color: "#c084fc", border: "rgba(192,132,252,0.55)", bg: "rgba(192,132,252,0.15)" },
-  Legendary: { color: "#fbbf24", border: "rgba(251,191,36,0.55)",  bg: "rgba(251,191,36,0.15)"  },
-  Mythic:    { color: "#fb7185", border: "rgba(251,113,133,0.6)",  bg: "rgba(251,113,133,0.16)" },
-  // Legacy names for backward compat
-  Common: { color: "#cbd5e1", border: "rgba(203,213,225,0.55)", bg: "rgba(203,213,225,0.12)" },
-  Rare:   { color: "#60a5fa", border: "rgba(96,165,250,0.55)",  bg: "rgba(96,165,250,0.15)"  },
-  Epic:   { color: "#c084fc", border: "rgba(192,132,252,0.55)", bg: "rgba(192,132,252,0.15)" },
-};
-const getRarityStyle = (rarity: string) => RARITY_STYLES[rarity] || RARITY_STYLES.Core;
 
 type Gender = "Woman" | "Man";
 
@@ -134,6 +127,11 @@ export default function Home() {
   const [quizDirection, setQuizDirection] = useState(1);
   const touchStartX = useRef<number | null>(null);
   const [result, setResult] = useState<any>(null);
+  // Card flip: front = aura card, back = football-player resemblance.
+  const [isFlipped, setIsFlipped] = useState(false);
+  // The back face is only mounted once the user chooses to flip - this is what
+  // guarantees it can never flash/leak as a stray element during the reveal.
+  const [backMounted, setBackMounted] = useState(false);
   const [transformedImage, setTransformedImage] = useState<string | null>(null);
   const [transformStatus, setTransformStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [transformErrorKind, setTransformErrorKind] = useState<"capacity" | "ai_error" | null>(null);
@@ -168,7 +166,54 @@ export default function Home() {
 
   const effectiveRarity = serverRarity ?? result?.rarity ?? "Core";
   const rarityStyle = getRarityStyle(effectiveRarity);
+
+  // Wire the step machine into browser history so Back navigates within the app
+  // (result → quiz → photo → landing) instead of leaving the site entirely.
+  const restoreNav = useCallback((pos: NavPosition) => {
+    setQuizDirection(-1);
+    setStep(pos.step as Step);
+    setQuizStep(pos.quizStep);
+    setIsFlipped(false);
+  }, []);
+  useStepHistory({
+    step,
+    quizStep,
+    onRestore: restoreNav,
+    transientSteps: ["scanner"],
+    rootStep: "landing",
+    // No hashFor: the Back button is driven by history state, so we keep the
+    // URL clean at "/" instead of showing cosmetic (non-deep-linkable) hashes.
+  });
+
+  // Handle the return from Ziina checkout (?ship=success&pi=… / ?ship=cancelled).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ship = params.get("ship");
+    if (!ship) return;
+    const clean = () => window.history.replaceState({}, "", window.location.pathname);
+    if (ship === "cancelled") {
+      toast({ title: "Checkout cancelled", description: "No worries — your card wasn't ordered." });
+      clean();
+      return;
+    }
+    if (ship === "success") {
+      const pi = params.get("pi");
+      if (!pi) { clean(); return; }
+      const base = import.meta.env.BASE_URL.replace(/\/+$/, "");
+      fetch(`${base}/api/aura/ship/${pi}/status`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.paid) toast({ title: "Order confirmed", description: "Your physical Aura Card is on its way." });
+          else toast({ title: "Payment pending", description: "We'll ship your card once payment clears." });
+        })
+        .catch(() => {})
+        .finally(clean);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [rarityOddsOpen, setRarityOddsOpen] = useState(false);
+  const [collectionOpen, setCollectionOpen] = useState(false);
+  const [shipOpen, setShipOpen] = useState(false);
   const [showRarityReveal, setShowRarityReveal] = useState(false);
   // Track which card slugs have already shown the reveal (persisted in localStorage
   // so a page refresh does not replay the animation for an already-seen card).
@@ -187,6 +232,7 @@ export default function Home() {
   const rarityStatsQuery = useGetRarityStats({ query: { staleTime: 60_000 } } as never);
   const mintMutation = useMintAuraCard();
   const mintResult = mintMutation.data ?? null;
+  const prefersReducedMotion = useReducedMotion();
   const saveCardMutation = useSaveAuraCard();
   const updateCardImageMutation = useUpdateAuraCardImage();
 
@@ -599,6 +645,8 @@ export default function Home() {
     if (transformed) trackGenerateAuraCard();
     setResult(finalResult);
     setIsFirstReveal(true);
+    setIsFlipped(false);
+    setBackMounted(false);
     setStep("result");
     
     // Epic confetti blast
@@ -965,12 +1013,14 @@ export default function Home() {
       trackStep("aura_step_mint_success");
       trackPurchase();
       toast({ title: "NFT minted!", description: "Your Aura Card is now in your wallet on Solana devnet." });
-      confetti({
-        particleCount: 120,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ["#22c55e", "#3b82f6", "#fbbf24"],
-      });
+      if (!prefersReducedMotion) {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ["#22c55e", "#3b82f6", "#fbbf24"],
+        });
+      }
     } catch (err) {
       const apiMessage =
         err && typeof err === "object" && "data" in err
@@ -1023,7 +1073,7 @@ export default function Home() {
                   <button
                     key={n}
                     onClick={() => selectAndAdvance("nation", n)}
-                    className={`flex flex-col items-center rounded-xl overflow-hidden border-2 transition-all duration-150 bg-black/50 hover:bg-black/70 focus:outline-none ${selected ? "border-primary shadow-[0_0_12px_rgba(251,191,36,0.6)]" : "border-white/10 hover:border-white/30"}`}
+                    className={`flex flex-col items-center rounded-xl overflow-hidden border-2 transition-all duration-150 bg-black/50 hover:bg-black/70 focus:outline-none ${selected ? "border-primary" : "border-white/10 hover:border-white/30"}`}
                   >
                     <div className="card-shine w-full relative" style={{ aspectRatio: "3/2" }}>
                       <img
@@ -1124,7 +1174,7 @@ export default function Home() {
               />
             </div>
             <div className="text-center space-y-2">
-              <div className="text-5xl font-display font-bold aura-text-gradient">{quizState.confidence}%</div>
+              <div className="text-5xl font-display font-black text-primary">{quizState.confidence}%</div>
               <div className="text-xl text-primary font-medium">
                 {quizState.confidence <= 25 ? "Protect your heart" : 
                  quizState.confidence <= 50 ? "Cautiously faithful" : 
@@ -1159,18 +1209,20 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-background relative overflow-hidden font-sans select-none text-foreground">
+    <div className="min-h-[100dvh] w-full bg-background relative overflow-hidden font-sans text-foreground">
       {/* Deep base color so the app reads as a refined dark product, not a photo */}
       <div className="absolute inset-0 z-0" style={{ background: "#07070c" }} />
 
-      {/* Subtle stadium texture, kept faint so it never competes with content */}
+      {/* Stadium action photo. Faint on setup steps so it never fights content,
+          but brought back up on the result/reveal - that action shot reads great
+          behind the card and lets the aurora + particles sit on top of it. */}
       <div
         className={`absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-700${step === "landing" ? " landing-bg-pan" : ""}`}
         style={{
           backgroundImage: step === "landing"
             ? "url('/landing-action-bg.png')"
             : "url('/pitch-bg.png')",
-          opacity: step === "landing" ? 0.14 : 0.08,
+          opacity: step === "landing" ? 0.14 : step === "result" ? 0.34 : 0.08,
         }}
       />
 
@@ -1183,25 +1235,42 @@ export default function Home() {
         }
       />
 
-      {/* Vignette: darken edges + bottom so content floats and the palette stays deep */}
+      {/* Reveal spotlight: a soft rarity-tinted glow behind the card so it reads
+          like a spotlit collectible on the result screen. */}
+      {step === "result" && (
+        <div
+          className="absolute inset-0 z-0 pointer-events-none mix-blend-screen transition-opacity duration-700"
+          style={{
+            background: `radial-gradient(60% 46% at 50% 40%, ${rarityColor(
+              serverRarity ?? (result?.rarity as string) ?? "Core",
+            )}2e 0%, transparent 70%)`,
+          }}
+        />
+      )}
+
+      {/* Vignette: darken edges + bottom so content floats and the palette stays
+          deep. Lighter on the result screen so the action photo reads through. */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="absolute inset-0 z-0 pointer-events-none transition-[background] duration-700"
         style={{
-          background:
-            "radial-gradient(120% 90% at 50% 8%, rgba(7,7,12,0) 0%, rgba(7,7,12,0.55) 62%, rgba(7,7,12,0.92) 100%)",
+          background: step === "result"
+            ? "radial-gradient(120% 95% at 50% 12%, rgba(7,7,12,0) 0%, rgba(7,7,12,0.35) 58%, rgba(7,7,12,0.8) 100%)"
+            : "radial-gradient(120% 90% at 50% 8%, rgba(7,7,12,0) 0%, rgba(7,7,12,0.55) 62%, rgba(7,7,12,0.92) 100%)",
         }}
       />
 
-      {/* Persistent wallet connect - always accessible, top-right */}
-      <div
-        className="absolute right-3 z-40"
-        style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
-      >
-        <WalletConnect compact />
-      </div>
+      {/* Persistent top bar: wordmark, collection link, wallet connect */}
+      <Navbar
+        onOpenOdds={() => setRarityOddsOpen(true)}
+        onOpenCollection={() => setCollectionOpen(true)}
+        onHome={() => { setCollectionOpen(false); setRarityOddsOpen(false); setIsFlipped(false); setQuizStep(0); setStep("landing"); }}
+      />
 
-      <main className={`relative z-10 mx-auto w-full min-h-[100dvh] flex flex-col pt-8 pb-12 px-4 transition-[max-width] duration-500 ease-in-out ${step === 'result' ? 'max-w-4xl' : step === 'landing' ? 'max-w-md md:max-w-6xl' : 'max-w-md'}`} style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
-        
+      <main className={`relative z-10 mx-auto w-full min-h-[100dvh] flex flex-col pt-20 pb-12 px-4 transition-[max-width] duration-500 ease-in-out ${step === 'result' ? 'max-w-4xl' : step === 'landing' ? 'max-w-md md:max-w-6xl' : 'max-w-md'}`} style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
+
+        {/* Live World Cup ticker (TxLINE feed) - self-hides until configured */}
+        <div className="-mt-2 mb-4"><WorldCupTicker /></div>
+
         <AnimatePresence mode="wait">
           {/* LANDING */}
           {step === "landing" && (
@@ -1219,42 +1288,23 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, type: "spring", bounce: 0.4 }}
               >
-                <motion.div
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 border border-primary/40 text-primary text-sm font-bold uppercase tracking-wider mb-1 shadow-[0_0_20px_rgba(251,191,36,0.25)]"
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Zap size={16} className="text-accent fill-accent" />
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg surface-flat type-eyebrow text-primary mb-2">
+                  <Zap size={13} className="text-primary" />
                   <span>The Ultimate Fan Experience</span>
-                </motion.div>
-                <h1
-                  className="text-5xl md:text-7xl font-display font-black tracking-tight text-white uppercase italic leading-none pb-1"
-                  style={{ textShadow: "0 2px 6px rgba(0,0,0,1), 0 4px 20px rgba(0,0,0,0.9)" }}
-                >
-                  Unleash Your <br/>
-                  <span
-                    style={{
-                      color: "#FFD700",
-                      textShadow: "0 0 1px #000, 0 2px 0px #000, 0 3px 8px rgba(0,0,0,1), 0 6px 24px rgba(0,0,0,0.95), 0 12px 40px rgba(0,0,0,0.7)",
-                    }}
-                  >World Cup Aura</span>
+                </div>
+                <h1 className="type-hero text-white uppercase italic pb-1 text-balance">
+                  Unleash Your <br className="hidden md:block" />
+                  <span className="gold-text-static not-italic">World Cup Aura</span>
                 </h1>
-                <p
-                  className="text-white text-lg max-w-[290px] mx-auto md:mx-0 md:max-w-sm font-medium"
-                  style={{ textShadow: "0 1px 4px rgba(0,0,0,1), 0 3px 12px rgba(0,0,0,0.9)" }}
-                >
+                <p className="text-white/70 text-lg leading-relaxed max-w-[300px] mx-auto md:mx-0 md:max-w-sm font-medium">
                   Turn your selfie into a legendary fan card. Pick your nation. Reveal your power level.
                 </p>
               </motion.div>
 
               {/* Card stack - mobile: 2nd; desktop: col-2 spanning both rows */}
               <div className="relative w-full flex items-center justify-center h-[300px] md:h-[460px] overflow-hidden md:col-start-2 md:row-start-1 md:row-span-2">
-                {/* Aura glow behind the stack */}
-                <motion.div
-                  className="absolute w-56 h-56 rounded-full bg-primary/40 blur-[90px] pointer-events-none"
-                  animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0.8, 0.5] }}
-                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                />
+                {/* Ambient depth behind the stack — calm, not pulsing */}
+                <div className="absolute w-56 h-56 rounded-full bg-primary/20 blur-[100px] pointer-events-none" />
 
                 {/* Left back card */}
                 <motion.div
@@ -1294,7 +1344,7 @@ export default function Home() {
 
                 {/* Center hero card */}
                 <motion.div
-                  className="relative w-52 h-72 glass-panel rounded-xl overflow-hidden card-shine shadow-[0_20px_60px_rgba(0,0,0,0.7),0_0_40px_rgba(34,197,94,0.45)] border-primary/60 z-10"
+                  className="relative w-52 h-72 glass-panel rounded-xl overflow-hidden card-shine shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)] border-primary/60 z-10"
                   initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
                   animate={{ opacity: 1, scale: 1, rotate: -3, y: [0, -14, 0] }}
                   transition={{
@@ -1325,15 +1375,15 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7, type: "spring", bounce: 0.3 }}
               >
-                <p className="text-xs text-gray-400 text-center md:text-left uppercase tracking-widest">Unlock Your World Cup Aura Fan Card Now</p>
-                <Button onClick={handleStart} className="w-full h-14 text-lg font-black uppercase tracking-wider rounded-xl text-black bg-gradient-to-br from-amber-300 via-primary to-amber-500 border-0 shadow-[0_10px_40px_-8px_hsl(var(--primary)/0.7)] hover:brightness-110">
+                <p className="type-eyebrow text-white/40 text-center md:text-left text-[0.68rem]">Unlock your fan card now</p>
+                <Button onClick={handleStart} className="w-full h-14 text-lg font-black uppercase tracking-[0.06em] rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
                   <Camera className="mr-2" /> Take Selfie
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
-                  <Button onClick={() => { setPhotoIntent("upload"); handleStart(); }} variant="outline" className="h-14 bg-black/60 border-gray-700 text-white hover:bg-black/80 hover:border-primary/50">
+                  <Button onClick={() => { setPhotoIntent("upload"); handleStart(); }} variant="outline" className="h-14 surface-flat text-white hover:border-primary/50">
                     <Upload className="mr-2 h-5 w-5" /> Upload
                   </Button>
-                  <Button onClick={handleStart} variant="outline" className="h-14 bg-black/60 border-gray-700 text-white hover:bg-black/80 hover:border-primary/50">
+                  <Button onClick={handleStart} variant="outline" className="h-14 surface-flat text-white hover:border-primary/50">
                     <User className="mr-2 h-5 w-5" /> Sample
                   </Button>
                 </div>
@@ -1346,9 +1396,9 @@ export default function Home() {
                   </span>
                   <button
                     onClick={() => setRarityOddsOpen(true)}
-                    className="text-[11px] text-primary/80 hover:text-primary underline underline-offset-2 font-semibold transition-colors focus:outline-none"
+                    className="inline-flex items-center gap-0.5 text-[11px] text-primary/80 hover:text-primary underline underline-offset-2 font-semibold transition-colors focus:outline-none"
                   >
-                    See the odds →
+                    See the odds <ChevronRight className="h-3 w-3" />
                   </button>
                 </div>
               </motion.div>
@@ -1372,7 +1422,7 @@ export default function Home() {
               <div className="flex-1 flex flex-col items-center justify-center">
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoSelect} className="hidden" />
 
-                <div className="relative w-64 h-80 rounded-2xl overflow-hidden glass-panel border-2 border-primary/50 shadow-[0_0_40px_rgba(255,215,0,0.15)] flex items-center justify-center transition-all">
+                <div className="relative w-64 h-80 rounded-2xl overflow-hidden surface-flat border-2 border-primary/40 flex items-center justify-center transition-all">
                   {cameraActive ? (
                     <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover -scale-x-100" />
                   ) : photo ? (
@@ -1389,19 +1439,19 @@ export default function Home() {
 
                 {cameraActive ? (
                   <div className="mt-8 w-full grid grid-cols-2 gap-3">
-                    <Button onClick={capturePhoto} className="h-14 text-base font-bold uppercase tracking-wider bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.4)]">
+                    <Button onClick={capturePhoto} className="h-14 text-base font-bold uppercase tracking-[0.06em] bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl">
                       <Camera className="mr-2 h-5 w-5" /> Capture
                     </Button>
-                    <Button onClick={stopCamera} variant="outline" className="h-14 bg-black/60 border-gray-700 text-white hover:bg-black/80 hover:border-primary/50">
+                    <Button onClick={stopCamera} variant="outline" className="h-14 surface-flat text-white hover:border-primary/50">
                       Cancel
                     </Button>
                   </div>
                 ) : (
                   <div className="mt-8 w-full grid grid-cols-2 gap-3">
-                    <Button onClick={startCamera} className="h-14 text-base font-bold uppercase tracking-wider bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.4)]">
+                    <Button onClick={startCamera} className="h-14 text-base font-bold uppercase tracking-[0.06em] bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl">
                       <Camera className="mr-2 h-5 w-5" /> {photo ? "Retake" : "Take Selfie"}
                     </Button>
-                    <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="h-14 bg-black/60 border-gray-700 text-white hover:bg-black/80 hover:border-primary/50">
+                    <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="h-14 surface-flat text-white hover:border-primary/50">
                       <Upload className="mr-2 h-5 w-5" /> Upload
                     </Button>
                   </div>
@@ -1443,7 +1493,7 @@ export default function Home() {
                       }}
                       className={`flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-all ${
                         gender === g
-                          ? "bg-primary text-primary-foreground shadow-[0_0_12px_rgba(255,215,0,0.4)]"
+                          ? "bg-primary text-primary-foreground"
                           : "text-gray-400 hover:text-white hover:bg-white/5"
                       }`}
                     >
@@ -1484,7 +1534,7 @@ export default function Home() {
                     aria-label={`Go to step ${i + 1}`}
                     className={`flex-1 rounded-full transition-all duration-300 focus:outline-none ${
                       i === quizStep
-                        ? 'h-2 bg-primary shadow-[0_0_8px_rgba(255,215,0,0.7)]'
+                        ? 'h-2 bg-primary'
                         : i < quizStep
                         ? 'h-2 bg-primary/50 hover:bg-primary/75 cursor-pointer'
                         : 'h-1.5 bg-gray-700 cursor-default opacity-40'
@@ -1531,9 +1581,9 @@ export default function Home() {
               <div className="mt-8 pt-6 space-y-3">
                 {/* Explicit-confirm button - only for name (0), nation (1), confidence (5) */}
                 {[0, 1, 5].includes(quizStep) && (
-                  <Button 
+                  <Button
                     onClick={nextQuizStep}
-                    className="w-full h-16 text-lg font-bold uppercase tracking-wider bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-all"
+                    className="w-full h-16 text-lg font-bold uppercase tracking-[0.06em] bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl transition-all"
                   >
                     Continue <ChevronRight className="ml-2" />
                   </Button>
@@ -1545,7 +1595,7 @@ export default function Home() {
                     onClick={prevQuizStep}
                     className="w-full h-10 text-gray-500 hover:text-white text-sm"
                   >
-                    ← Back
+                    <ChevronLeft className="mr-1 h-4 w-4" /> Back
                   </Button>
                 )}
               </div>
@@ -1568,7 +1618,7 @@ export default function Home() {
 
               {/* Main scanning content - centred vertically in the upper portion */}
               <div className="flex flex-col items-center justify-center flex-1 space-y-8 pt-8 pb-4 w-full z-10">
-                <div className="relative w-56 h-72 rounded-xl overflow-hidden border-2 border-primary/30 shadow-[0_0_50px_rgba(255,215,0,0.2)]">
+                <div className="relative w-56 h-72 rounded-xl overflow-hidden border-2 border-primary/30">
                   {photo && <img src={photo} alt="" className="w-full h-full object-cover filter contrast-125 grayscale-[0.5]" />}
                   <div className="absolute inset-0 bg-primary/20 mix-blend-overlay" />
                   
@@ -1634,12 +1684,12 @@ export default function Home() {
 
           {/* RESULT CARD */}
           {step === "result" && result && (
-            <motion.div 
+            <motion.div
               key="result"
-              initial={{ opacity: 0, scale: 0.8, y: 50, rotateX: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
-              transition={{ type: "spring", bounce: 0.5, duration: 1 }}
-              className="flex-1 flex flex-col items-center pb-12 w-full pt-4 perspective-1000 overflow-y-auto"
+              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: "spring", bounce: 0.35, duration: 0.8 }}
+              className="flex-1 flex flex-col items-center pb-12 w-full pt-4 overflow-y-auto"
             >
               {/* Rarity reveal overlay - plays once on fresh card generation */}
               {isFirstReveal && result && (
@@ -1649,20 +1699,22 @@ export default function Home() {
                 />
               )}
 
-              <div className="text-center mb-8 space-y-1">
-                <motion.div 
+              <div className="text-center mb-5 flex flex-col items-center gap-2">
+                <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="text-primary font-bold tracking-widest uppercase text-sm"
+                  className="type-eyebrow inline-flex items-center gap-2 text-[0.72rem]"
+                  style={{ color: rarityColor(effectiveRarity) }}
                 >
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: rarityColor(effectiveRarity) }} />
                   Aura Analyzed
                 </motion.div>
-                <motion.h2 
-                  initial={{ opacity: 0, scale: 0.9 }}
+                <motion.h2
+                  initial={{ opacity: 0, scale: 0.92 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.7, type: "spring" }}
-                  className="text-4xl font-display font-black text-white uppercase tracking-wider"
+                  className="type-display text-white uppercase drop-shadow-[0_2px_16px_rgba(0,0,0,0.6)]"
                 >
                   {result.rank}
                 </motion.h2>
@@ -1670,7 +1722,7 @@ export default function Home() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1 }}
-                  className="text-xs text-gray-400 max-w-[280px] mx-auto mt-2"
+                  className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 font-condensed text-[11px] uppercase tracking-wide text-white/60 backdrop-blur-sm"
                 >
                   Top {Math.max(1, 100 - result.aura)}% of fans globally
                 </motion.div>
@@ -1715,20 +1767,29 @@ export default function Home() {
                   );
                 })()}
 
-                {/* Actual Card - flip-in on first reveal */}
+                {/* Flip container - front = aura card, back = resemblance.
+                    The card's entrance is handled by the outer result spring;
+                    this element only owns the flip (0deg front / 180deg back),
+                    so the reveal no longer does a jarring 3D "door" swing. */}
                 <motion.div
-                  initial={isFirstReveal ? { rotateY: 80 } : false}
-                  animate={{ rotateY: 0 }}
-                  transition={{ duration: 0.55, ease: [0.2, 0.1, 0.1, 1] }}
-                  style={{ transformStyle: "preserve-3d", perspective: "1200px" }}
-                >
-                <div 
-                  ref={cardRef}
-                  className={`aspect-[2/3] relative rounded-2xl overflow-hidden glass-panel border-[3px] card-3d-inner rarity-glow-${effectiveRarity} rarity-border-${effectiveRarity}`}
+                  className="relative"
+                  animate={{ rotateY: isFlipped ? 180 : 0 }}
+                  transition={{ duration: 0.6, ease: [0.2, 0.1, 0.1, 1] }}
                   style={{
                     width: 'clamp(280px, 80vw, 360px)',
+                    aspectRatio: '2 / 3',
+                    transformStyle: "preserve-3d",
+                  }}
+                >
+                <div
+                  ref={cardRef}
+                  className={`absolute inset-0 w-full h-full rounded-2xl overflow-hidden glass-panel border-[3px] card-3d-inner rarity-glow-${effectiveRarity} rarity-border-${effectiveRarity}`}
+                  style={{
                     background: 'linear-gradient(145deg, #111A15 0%, #050806 100%)',
                     boxShadow: getRarityEffect(result.rarity).glowShadow,
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    pointerEvents: isFlipped ? 'none' : 'auto',
                   }}
                 >
                   {/* Pointer/gyro-driven holographic foil sheen (all rarities) */}
@@ -1832,7 +1893,7 @@ export default function Home() {
                     {/* Power Level overlay on image */}
                     <div className={`absolute bottom-2 right-3 text-right transition-opacity duration-200 ${remixFocusMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
                       <div className="text-[10px] text-white/80 font-bold uppercase tracking-widest drop-shadow-md">Power Level</div>
-                      <div className="text-3xl font-display font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                      <div className="text-3xl font-condensed font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                         <CountUp to={result.power} />
                       </div>
                     </div>
@@ -1840,7 +1901,7 @@ export default function Home() {
 
                   {/* Score Badge (Top Left) */}
                   <div className={`absolute top-4 left-3 z-30 text-center drop-shadow-2xl transition-opacity duration-200 ${remixFocusMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
-                    <div className="text-6xl font-display font-black leading-none gold-text-gradient tracking-tighter">
+                    <div className="text-6xl font-condensed font-bold leading-none gold-text-gradient tracking-tight">
                       <CountUp to={result.aura} />
                     </div>
                     <div className="text-[11px] font-bold uppercase text-white tracking-[0.2em] mt-1 drop-shadow-md rounded px-1 border border-white/10 bg-black/40 backdrop-blur-sm">Aura</div>
@@ -1879,7 +1940,7 @@ export default function Home() {
                   {/* Card Content - Bottom Half */}
                   <div className="absolute bottom-0 inset-x-0 min-h-[45%] p-4 flex flex-col justify-end z-30">
                     <div className="text-center mb-2">
-                      <h3 className="text-3xl font-display font-black text-white uppercase tracking-wider leading-tight drop-shadow-lg line-clamp-2">
+                      <h3 className="text-3xl font-condensed font-bold text-white uppercase tracking-wide leading-tight drop-shadow-lg line-clamp-2">
                         {result.name}
                       </h3>
                       <div className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-black uppercase tracking-widest bg-primary/20 text-primary border border-primary/30 max-w-full truncate transition-opacity duration-200 ${remixFocusMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
@@ -1897,7 +1958,7 @@ export default function Home() {
                         { label: "PHY", value: result.stats.banter }
                       ].map(stat => (
                         <div key={stat.label} className="flex flex-col items-center justify-center relative">
-                          <span className="text-xl font-display font-black text-white leading-none drop-shadow-md"><CountUp to={stat.value} duration={1.5} /></span>
+                          <span className="text-xl font-condensed font-bold text-white leading-none drop-shadow-md"><CountUp to={stat.value} duration={1.5} /></span>
                           <span className="text-[10px] text-white/50 font-bold uppercase tracking-wider">{stat.label}</span>
                         </div>
                       ))}
@@ -1932,15 +1993,49 @@ export default function Home() {
                       )}
                       <span className="flex flex-col items-end shrink-0">
                         {vrfTxSig && (
-                          <span className="text-[8px] font-bold text-emerald-500/70 tracking-wider leading-tight">⛓ Verified</span>
+                          <span className="text-[8px] font-bold text-emerald-500/70 tracking-wider leading-tight uppercase">Verified</span>
                         )}
                         <span className="text-[9px] font-mono text-white/40 tracking-widest uppercase leading-tight">{result.id}</span>
                       </span>
                     </div>
                   </div>
                 </div>
+
+                {/* Back face - only mounted once the user flips, so it can never
+                    paint as a stray element during the card reveal. */}
+                {backMounted && (
+                  <div
+                    className="absolute inset-0 w-full h-full cursor-pointer"
+                    style={{
+                      transform: 'rotateY(180deg)',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                      pointerEvents: isFlipped ? 'auto' : 'none',
+                      boxShadow: getRarityEffect(result.rarity).glowShadow,
+                    }}
+                    onClick={() => setIsFlipped(false)}
+                    aria-hidden={!isFlipped}
+                  >
+                    <AuraCardBack
+                      card={{ stats: result.stats, nation: result.nation, archetype: result.archetype, rarity: effectiveRarity }}
+                      rarity={effectiveRarity}
+                    />
+                  </div>
+                )}
                 </motion.div>
               </motion.div>
+
+              {/* Flip toggle */}
+              <button
+                type="button"
+                onClick={() => { setBackMounted(true); setIsFlipped((f) => !f); }}
+                className={`mt-4 inline-flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-5 py-2.5 text-xs font-bold uppercase tracking-[0.08em] text-primary transition-colors hover:bg-primary/20 ${remixFocusMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+                style={{ width: 'clamp(280px, 80vw, 360px)', justifyContent: 'center' }}
+                data-testid="button-flip-card"
+              >
+                <RotateCcw className="h-4 w-4" />
+                {isFlipped ? "Back to your card" : "Reveal your lookalike"}
+              </button>
 
               {/* Action Buttons */}
               <div className={`transition-opacity duration-200 ${remixFocusMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
@@ -1948,16 +2043,16 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 }}
-                className="grid grid-cols-2 gap-3 mt-10 relative z-20"
+                className="grid grid-cols-2 gap-3 mt-5 relative z-20"
                 style={{ width: 'clamp(280px, 80vw, 360px)' }}
               >
-                <Button onClick={handleDownload} className="h-14 bg-white text-black hover:bg-gray-200 font-bold uppercase tracking-wider rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                <Button onClick={handleDownload} className="h-14 bg-white text-black hover:bg-gray-200 font-bold uppercase tracking-[0.06em] rounded-xl">
                   <Download className="mr-2 h-5 w-5" /> Save
                 </Button>
                 <Button
                   onClick={() => setShareOpen(true)}
                   disabled={transformStatus !== "success" || shareGenerating}
-                  className="h-14 bg-primary text-primary-foreground hover:bg-primary/90 font-bold uppercase tracking-wider rounded-xl shadow-[0_0_15px_rgba(255,215,0,0.3)] disabled:opacity-50"
+                  className="h-14 bg-primary text-primary-foreground hover:bg-primary/90 font-bold uppercase tracking-[0.06em] rounded-xl disabled:opacity-50"
                 >
                   {(transformStatus === "loading" || shareGenerating) ? (
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -1971,28 +2066,32 @@ export default function Home() {
                   onClick={handleRemix}
                   disabled={remixCount >= MAX_REMIXES || transformStatus === "loading" || remixForging}
                   variant="outline"
-                  className="h-12 relative bg-black/60 border-orange-500/50 text-white font-bold uppercase tracking-wider rounded-xl hover:bg-black/80 hover:border-orange-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="h-12 relative surface-flat text-white font-bold uppercase tracking-[0.06em] rounded-xl hover:border-primary/50 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {remixForging ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 text-orange-400 animate-spin" />
+                      <Loader2 className="mr-2 h-4 w-4 text-primary animate-spin" />
                       <span>{remixResolvedCount} of 3 ready…</span>
                     </>
                   ) : (
                     <>
-                      <Flame className="mr-2 h-4 w-4 text-orange-400" />
+                      <Flame className="mr-2 h-4 w-4 text-primary" />
                       Remix
-                      <span className={`ml-2 text-[10px] font-black px-1.5 py-0.5 rounded-full ${remixCount >= MAX_REMIXES ? 'bg-gray-700 text-gray-400' : 'bg-orange-500/30 text-orange-300 border border-orange-500/40'}`}>
+                      <span className={`ml-2 text-[10px] font-black px-1.5 py-0.5 rounded ${remixCount >= MAX_REMIXES ? 'bg-white/10 text-gray-400' : 'bg-primary/15 text-primary border border-primary/30'}`}>
                         {MAX_REMIXES - remixCount} left
                       </span>
                     </>
                   )}
                 </Button>
-                <Button onClick={() => { setStep("landing"); setQuizStep(0); setPhoto(null); setTransformedImage(null); setTransformStatus("idle"); mintMutation.reset(); setRecipientInput(""); setUseTempWallet(false); setRemixCount(0); setRemixForging(false); setRemixPickerOpen(false); setRemixVariants([null, null, null]); setShareAssets({ just: null, prophecy: null, story: null }); setShareOpen(false); setServerRarity(null); setEditionNumber(null); setShowRarityReveal(false); setIsFirstReveal(false); setVrfTxSig(null); setVrfProof(null); vrfSlugRef.current = null; vrfSeedRef.current = null; remixVrfSlugsRef.current = [null, null, null]; remixVrfSeedsRef.current = [null, null, null]; }} variant="outline" className="h-12 bg-black/60 border-gray-700 text-white font-bold uppercase tracking-wider rounded-xl hover:bg-black/80 hover:border-primary/50">
+                <Button onClick={() => { setStep("landing"); setQuizStep(0); setIsFlipped(false); setBackMounted(false); setPhoto(null); setTransformedImage(null); setTransformStatus("idle"); mintMutation.reset(); setRecipientInput(""); setUseTempWallet(false); setRemixCount(0); setRemixForging(false); setRemixPickerOpen(false); setRemixVariants([null, null, null]); setShareAssets({ just: null, prophecy: null, story: null }); setShareOpen(false); setServerRarity(null); setEditionNumber(null); setShowRarityReveal(false); setIsFirstReveal(false); setVrfTxSig(null); setVrfProof(null); vrfSlugRef.current = null; vrfSeedRef.current = null; remixVrfSlugsRef.current = [null, null, null]; remixVrfSeedsRef.current = [null, null, null]; }} variant="outline" className="h-12 surface-flat text-white font-bold uppercase tracking-[0.06em] rounded-xl hover:border-primary/50">
                   <RotateCcw className="mr-2 h-4 w-4" /> Retry
                 </Button>
-                <Button onClick={() => setChallengeOpen(true)} variant="outline" className="col-span-2 h-12 bg-black/60 border-primary/40 text-primary font-bold uppercase tracking-wider rounded-xl hover:bg-black/80 hover:border-primary">
+                <Button onClick={() => setChallengeOpen(true)} variant="outline" className="col-span-2 h-12 surface-flat text-primary font-bold uppercase tracking-[0.06em] rounded-xl hover:border-primary">
                   <Swords className="mr-2 h-4 w-4" /> Challenge a friend
+                </Button>
+                <Button onClick={() => setShipOpen(true)} className="col-span-2 h-14 bg-gradient-to-br from-amber-300 via-primary to-amber-500 text-black font-black uppercase tracking-[0.06em] rounded-xl hover:brightness-110">
+                  <Package className="mr-2 h-5 w-5" /> Ship the physical card
+                  <span className="ml-2 rounded bg-black/20 px-1.5 py-0.5 text-[11px] font-black">$4.99</span>
                 </Button>
               </motion.div>
               </div>
@@ -2002,16 +2101,16 @@ export default function Home() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
-                className="mt-8 p-5 rounded-2xl glass-panel border border-primary/20 space-y-4 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+                className="mt-5 p-5 rounded-2xl surface-card space-y-4"
                 style={{ width: 'clamp(280px, 80vw, 360px)' }}
               >
-                <div className="flex items-center gap-2 text-primary drop-shadow-md">
+                <div className="flex items-center gap-2 text-primary">
                   <Trophy size={20} className="fill-primary" />
-                  <h3 className="font-display font-black text-lg uppercase tracking-wider">Collectible Secured</h3>
+                  <h3 className="font-display font-black text-lg uppercase tracking-[0.04em]">Collectible Secured</h3>
                 </div>
-                <div className="grid grid-cols-2 gap-3 text-xs text-gray-300 bg-black/60 p-4 rounded-xl border border-white/5">
-                  <div className="flex flex-col"><span className="text-gray-500 mb-1 font-bold uppercase tracking-widest text-[9px]">Card ID</span> <span className="font-mono text-white/90">{result.id}</span></div>
-                  <div className="flex flex-col"><span className="text-gray-500 mb-1 font-bold uppercase tracking-widest text-[9px]">Rarity</span>
+                <div className="grid grid-cols-2 gap-3 text-xs text-gray-300 surface-flat p-4 rounded-xl">
+                  <div className="flex flex-col"><span className="label-stat text-gray-500 mb-1">Card ID</span> <span className="font-mono text-white/90">{result.id}</span></div>
+                  <div className="flex flex-col"><span className="label-stat text-gray-500 mb-1">Rarity</span>
                     <span className="font-black text-sm" style={{ color: getRarityStyle(serverRarity ?? result.rarity).color }}>
                       {serverRarity ?? result.rarity}
                     </span>
@@ -2036,32 +2135,42 @@ export default function Home() {
                   </div>
                 )}
 
-                {result && (
-                  <PlayerMatch
-                    card={{
-                      stats: result.stats,
-                      nation: result.nation,
-                      archetype: result.archetype,
-                    }}
-                  />
-                )}
 
                 {(vrfTxSig || vrfProof) && (
                   <VerifyOnChain vrfTxSig={vrfTxSig} proof={vrfProof} />
                 )}
 
                 {mintResult ? (
-                  <div className="space-y-3" data-testid="mint-success">
-                    <div className="flex items-center gap-2 text-primary text-sm font-bold">
-                      <Check size={16} /> Minted to your wallet on Solana devnet
+                  <motion.div
+                    className="space-y-3"
+                    data-testid="mint-success"
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {/* Success seal — pays off the minting cinematic */}
+                    <div className="surface-card relative overflow-hidden rounded-2xl p-5 text-center">
+                      <motion.div
+                        className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-1 ring-primary/40"
+                        initial={prefersReducedMotion ? false : { scale: 0.4, rotate: -12 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 420, damping: 16, delay: 0.1 }}
+                      >
+                        <Check size={26} className="text-primary" strokeWidth={3} />
+                      </motion.div>
+                      <div className="type-eyebrow mt-3 text-primary">Minted</div>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Your Aura Card is now a live NFT on Solana devnet
+                      </p>
                     </div>
-                    <div className="bg-black/40 p-3 rounded-lg border border-gray-800 space-y-1">
-                      <span className="text-gray-500 text-xs">Mint address</span>
+
+                    <div className="surface-card rounded-xl p-3 space-y-1">
+                      <span className="type-eyebrow text-muted-foreground">Mint address</span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-xs text-white break-all flex-1" data-testid="text-mint-address">{mintResult.mintAddress}</span>
                         <button
                           onClick={handleCopyMint}
-                          className="shrink-0 text-gray-400 hover:text-white transition-colors"
+                          className="shrink-0 text-muted-foreground hover:text-white transition-colors"
                           aria-label="Copy mint address"
                           data-testid="button-copy-mint"
                         >
@@ -2069,26 +2178,26 @@ export default function Home() {
                         </button>
                       </div>
                     </div>
-                    <div className="bg-black/40 p-3 rounded-lg border border-gray-800 space-y-1">
-                      <span className="text-gray-500 text-xs">Owner wallet</span>
-                      <p className="font-mono text-[11px] text-gray-300 break-all" data-testid="text-mint-recipient">{mintResult.recipient}</p>
+                    <div className="surface-card rounded-xl p-3 space-y-1">
+                      <span className="type-eyebrow text-muted-foreground">Owner wallet</span>
+                      <p className="font-mono text-[11px] text-white/70 break-all" data-testid="text-mint-recipient">{mintResult.recipient}</p>
                     </div>
                     <a
                       href={mintResult.explorerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full h-12 rounded-xl bg-black/40 border border-gray-700 text-white font-bold uppercase tracking-wider text-sm hover:border-primary/50 transition-colors"
+                      className="flex items-center justify-center gap-2 w-full h-12 rounded-xl surface-card text-white font-bold uppercase tracking-[0.06em] text-sm hover:border-primary/50 transition-colors"
                       data-testid="link-explorer"
                     >
                       <ExternalLink className="h-4 w-4" /> View on Explorer
                     </a>
-                  </div>
+                  </motion.div>
                 ) : mintMutation.isPending ? (
                   <MintingCinematic />
                 ) : (
                   <>
-                    <div className="bg-black/40 p-3 rounded-lg border border-gray-800 space-y-2.5" data-testid="mint-recipient-option">
-                      <span className="text-gray-500 text-[10px] uppercase tracking-wider">Send the NFT to</span>
+                    <div className="surface-flat p-3 rounded-lg space-y-2.5" data-testid="mint-recipient-option">
+                      <span className="label-stat text-gray-500">Send the NFT to</span>
 
                       <WalletConnect />
 
@@ -2128,7 +2237,7 @@ export default function Home() {
                     <Button
                       onClick={handleMint}
                       disabled={mintMutation.isPending || !mintReady || !recipient}
-                      className="w-full h-14 text-white font-black uppercase tracking-wider rounded-xl border-0 bg-gradient-to-br from-accent via-rose-500 to-orange-500 shadow-[0_10px_40px_-8px_hsl(var(--accent)/0.7)] hover:brightness-110"
+                      className="w-full h-14 text-white font-black uppercase tracking-[0.06em] rounded-xl border-0 bg-accent hover:bg-accent/90"
                       data-testid="button-mint"
                     >
                       {mintMutation.isPending ? (
@@ -2156,7 +2265,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 2, duration: 0.6 }}
-                className="flex flex-col items-center gap-1.5 mt-8 cursor-pointer select-none"
+                className="flex flex-col items-center gap-1.5 mt-6 cursor-pointer select-none"
                 onClick={() => communityWallRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                 role="button"
                 tabIndex={0}
@@ -2183,6 +2292,16 @@ export default function Home() {
       {step === "result" && result && (
         <div ref={communityWallRef} className="w-full pt-8 border-t border-white/5">
           <CommunityWall baseUrl={`${import.meta.env.BASE_URL}`} />
+        </div>
+      )}
+
+      {/* Site footer - on the landing + result screens */}
+      {(step === "landing" || step === "result") && (
+        <div
+          className="relative z-10 mx-auto w-full max-w-4xl px-4"
+          style={{ paddingLeft: "max(1rem, env(safe-area-inset-left))", paddingRight: "max(1rem, env(safe-area-inset-right))" }}
+        >
+          <Footer onOpenOdds={() => setRarityOddsOpen(true)} />
         </div>
       )}
 
@@ -2245,12 +2364,13 @@ export default function Home() {
             - NO -webkit-background-clip:text (renders doubled)
             - Use block/inline-block with explicit margins for all stacking
             - Use inline-block with exact widths for row layouts (footer, stats)
-            - Apply the Archivo display font explicitly on all text; await document.fonts.ready before capture
+            - Apply the Oswald condensed card font explicitly on all text (mirrors
+              the on-screen card face); await document.fonts.ready before capture
           */}
           <div
             ref={captureRef}
             style={{
-              fontFamily: "'Archivo Variable', 'Archivo', system-ui, sans-serif",
+              fontFamily: "'Oswald Variable', 'Oswald', 'Archivo Variable', system-ui, sans-serif",
               width: 400,
               height: 600,
               position: "relative",
@@ -2344,14 +2464,14 @@ export default function Home() {
               {/* Footer - inline-block row, no flex */}
               <div style={{ paddingTop: 6, borderTop: "1px solid rgba(255,255,255,0.1)", fontSize: 0 }}>
                 <span style={{ display: "inline-block", width: "40%", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#34d399", verticalAlign: "middle", textAlign: "left" }}>
-                  ▸ {result.rank}
+                  {result.rank}
                 </span>
                 <span style={{ display: "inline-block", width: "30%", fontSize: 9, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.08em", color: result.rarity === "Mythic" ? "#FFD700" : rarityStyle.color, verticalAlign: "middle", textAlign: "center" }}>
                   {editionNumber != null ? `#${editionNumber.toLocaleString()} / 100,000` : ""}
                 </span>
                 <span style={{ display: "inline-block", width: "30%", verticalAlign: "middle", textAlign: "right" }}>
                   {vrfTxSig && (
-                    <span style={{ display: "block", fontSize: 8, fontWeight: 700, color: "rgba(52,211,153,0.8)", lineHeight: 1.3 }}>⛓ Verified</span>
+                    <span style={{ display: "block", fontSize: 8, fontWeight: 700, textTransform: "uppercase", color: "rgba(52,211,153,0.8)", lineHeight: 1.3 }}>Verified</span>
                   )}
                   <span style={{ display: "block", fontSize: 9, fontFamily: "monospace", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", lineHeight: 1.3 }}>{result.id}</span>
                 </span>
@@ -2519,128 +2639,20 @@ export default function Home() {
       />
 
       {/* "The Collection" - Rarity Odds Modal */}
-      <AnimatePresence>
-        {rarityOddsOpen && (
-          <motion.div
-            key="rarity-odds-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm px-4"
-            onClick={() => setRarityOddsOpen(false)}
-          >
-            <motion.div
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: "100%", opacity: 0 }}
-              transition={{ type: "spring", bounce: 0.18, duration: 0.55 }}
-              className="w-full max-w-md bg-[#07090f] border border-white/10 rounded-t-3xl sm:rounded-2xl overflow-hidden shadow-[0_-20px_80px_rgba(0,0,0,0.9)]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div
-                className="px-6 pt-6 pb-5 border-b border-white/10"
-                style={{ background: "linear-gradient(135deg, #0a0d16 0%, #0c1120 100%)" }}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Layers className="h-4 w-4 text-primary" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80">The Collection · 2026 Edition</span>
-                    </div>
-                    <h2 className="text-xl font-display font-black text-white leading-tight">
-                      The 2026 World Cup<br/>Aura Card Collection
-                    </h2>
-                  </div>
-                  <button
-                    onClick={() => setRarityOddsOpen(false)}
-                    className="mt-0.5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors shrink-0"
-                    aria-label="Close"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
+      <CollectionOddsModal
+        open={rarityOddsOpen}
+        onClose={() => setRarityOddsOpen(false)}
+        stats={rarityStatsQuery.data}
+      />
 
-              {/* Rarity table */}
-              <div className="px-6 py-4 space-y-2">
-                {(rarityStatsQuery.data?.tiers ?? [
-                  { tier: "Core",      quota: 55000, issued: 0, remaining: 55000, pullRate: 55.0 },
-                  { tier: "Rising",    quota: 25000, issued: 0, remaining: 25000, pullRate: 25.0 },
-                  { tier: "Elite",     quota: 12000, issued: 0, remaining: 12000, pullRate: 12.0 },
-                  { tier: "Icon",      quota: 5500,  issued: 0, remaining: 5500,  pullRate: 5.5  },
-                  { tier: "Legendary", quota: 2000,  issued: 0, remaining: 2000,  pullRate: 2.0  },
-                  { tier: "Mythic",    quota: 500,   issued: 0, remaining: 500,   pullRate: 0.5  },
-                ]).map((row) => {
-                  const style = getRarityStyle(row.tier);
-                  const pct = (row.issued / row.quota) * 100;
-                  return (
-                    <div key={row.tier} className="flex items-center gap-3 p-2.5 rounded-xl bg-black/30 border border-white/5">
-                      <div
-                        className="w-1.5 h-8 rounded-full shrink-0"
-                        style={{ background: style.color, boxShadow: `0 0 8px ${style.color}80` }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="text-sm font-black text-white">{row.tier}</span>
-                          <span className="text-[11px] font-bold" style={{ color: style.color }}>
-                            {row.pullRate.toFixed(1)}%
-                          </span>
-                        </div>
-                        <div className="mt-1 h-1 w-full rounded-full bg-white/10 overflow-hidden">
-                          <div
-                            className="h-full rounded-full transition-all"
-                            style={{
-                              width: `${pct.toFixed(1)}%`,
-                              background: style.color,
-                            }}
-                          />
-                        </div>
-                        <div className="flex justify-between mt-0.5">
-                          <span className="text-[9px] text-gray-600 font-mono">
-                            {row.issued.toLocaleString()} issued
-                          </span>
-                          <span className="text-[9px] text-gray-600 font-mono">
-                            {row.remaining.toLocaleString()} left
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+      <CollectionGallery open={collectionOpen} onClose={() => setCollectionOpen(false)} />
 
-                {/* Total counter */}
-                {rarityStatsQuery.data && (
-                  <div className="flex items-center justify-between px-2 pt-1">
-                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Total claimed</span>
-                    <span className="text-[11px] font-black text-white">
-                      {rarityStatsQuery.data.totalIssued.toLocaleString()} / 100,000
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Collectible story */}
-              <div className="px-6 pb-6 pt-2">
-                <div className="p-4 rounded-xl bg-black/40 border border-primary/10 space-y-2.5">
-                  <p className="text-[11px] text-gray-400 leading-relaxed">
-                    <span className="text-white font-bold">The founding edition.</span> The 2026 World Cup Aura Card Collection marks the tournament that brought the world together. Every card is numbered and permanently tied to this moment.
-                  </p>
-                  <p className="text-[11px] text-gray-500 leading-relaxed">
-                    This edition holds up to 100,000 cards. Future collections may follow - new tournaments, new editions, new chapters - but the 2026 Edition will always be the original.
-                  </p>
-                </div>
-                <button
-                  onClick={() => setRarityOddsOpen(false)}
-                  className="mt-4 w-full h-11 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-bold uppercase tracking-wider transition-colors"
-                >
-                  Got it
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ShipCardSheet
+        open={shipOpen}
+        onClose={() => setShipOpen(false)}
+        cardSlug={result?.id ?? null}
+        cardName={result?.name ?? null}
+      />
 
       {/* Rarity reveal overlay - fires once when the server assigns a tier */}
       <AnimatePresence>

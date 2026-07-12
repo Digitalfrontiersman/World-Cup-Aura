@@ -4,6 +4,8 @@ import { createRoot } from "react-dom/client";
 import "@fontsource-variable/archivo";
 import "@fontsource-variable/archivo/wght-italic.css";
 import "@fontsource-variable/plus-jakarta-sans";
+// Oswald: athletic condensed voice for the card face + buttons (jersey feel).
+import "@fontsource-variable/oswald";
 import { setBaseUrl } from "@workspace/api-client-react";
 import { initAnalytics } from "./lib/analytics";
 import { SolanaProviders } from "./components/SolanaProviders";

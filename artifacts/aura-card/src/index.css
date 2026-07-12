@@ -39,81 +39,138 @@
   --color-destructive-foreground: hsl(var(--destructive-foreground));
   --color-destructive-border: var(--destructive-border);
 
+  /* ── Layered surface scale (raised panels on the near-black base) ─── */
+  --color-surface-1: hsl(var(--surface-1));
+  --color-surface-2: hsl(var(--surface-2));
+  --color-surface-3: hsl(var(--surface-3));
+
+  /* ── Rarity accents exposed to Tailwind (text-rarity-legendary, etc.) ─ */
+  --color-rarity-core: hsl(var(--rarity-core));
+  --color-rarity-rising: hsl(var(--rarity-rising));
+  --color-rarity-elite: hsl(var(--rarity-elite));
+  --color-rarity-icon: hsl(var(--rarity-icon));
+  --color-rarity-legendary: hsl(var(--rarity-legendary));
+  --color-rarity-mythic: hsl(var(--rarity-mythic));
+
   --font-sans: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --font-display: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+  /* Athletic condensed voice: the card face + buttons (jersey/EA-FC feel). */
+  --font-condensed: 'Oswald Variable', 'Oswald', 'Archivo Variable', system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
 }
 
 :root {
-  --background: 220 30% 4%;
+  /* ─── Base palette ────────────────────────────────────────────────
+     A deep, faintly cool near-black. One canonical base so the whole
+     product reads as a single refined dark surface, not a patchwork. */
+  --background: 240 24% 4%;      /* ≈ #08080d — app base */
   --foreground: 0 0% 98%;
 
-  --border: 220 30% 15%;
-  --input: 220 30% 15%;
+  --border: 240 16% 15%;
+  --input: 240 16% 15%;
   --ring: 43 96% 56%;
 
-  --card: 220 30% 6%;
+  --card: 240 20% 7%;            /* raised card surface */
   --card-foreground: 0 0% 98%;
-  --card-border: 220 30% 15%;
+  --card-border: 240 16% 16%;
 
-  --popover: 220 30% 6%;
+  --popover: 240 22% 6%;
   --popover-foreground: 0 0% 98%;
-  --popover-border: 220 30% 15%;
+  --popover-border: 240 16% 16%;
 
-  --primary: 43 96% 56%; /* Gold */
-  --primary-foreground: 220 30% 4%;
+  --primary: 43 96% 56%;         /* Gold — the brand hero accent */
+  --primary-foreground: 240 24% 4%;
 
-  --secondary: 217 91% 60%; /* Electric Blue */
+  --secondary: 217 91% 60%;      /* Electric Blue */
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 220 30% 12%;
-  --muted-foreground: 220 10% 60%;
+  --muted: 240 16% 13%;
+  --muted-foreground: 240 8% 62%;
 
-  --accent: 0 84% 60%; /* Crimson / Fire */
+  --accent: 0 84% 60%;           /* Crimson / Fire */
   --accent-foreground: 0 0% 98%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
 
   --radius: 0.75rem;
+
+  /* ─── Elevation surfaces ──────────────────────────────────────────
+     Progressively lighter panels stacked above the base. */
+  --surface-1: 240 20% 7%;
+  --surface-2: 240 18% 10%;
+  --surface-3: 240 15% 14%;
+
+  /* ─── Rarity accents ──────────────────────────────────────────────
+     Single source of truth for tier hues. Mirrors the hex used in the
+     card JS (Core→Mythic). Other components may consume via
+     hsl(var(--rarity-*)) or the text-rarity-* / bg-rarity-* utilities. */
+  --rarity-core: 213 27% 84%;        /* slate  #cbd5e1 */
+  --rarity-rising: 213 94% 68%;      /* blue   #60a5fa */
+  --rarity-elite: 187 85% 53%;       /* cyan   #22d3ee */
+  --rarity-icon: 270 95% 75%;        /* violet #c084fc */
+  --rarity-legendary: 43 96% 56%;    /* gold   #fbbf24 */
+  --rarity-mythic: 351 95% 71%;      /* rose   #fb7185 */
+
+  /* ─── Elevation shadows ───────────────────────────────────────────
+     Composed, layered shadows — soft ambient + tight contact. */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px -4px rgba(0,0,0,0.5), 0 2px 6px -2px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 40px -8px rgba(0,0,0,0.6), 0 4px 12px -4px rgba(0,0,0,0.5);
+  --shadow-xl: 0 24px 70px -12px rgba(0,0,0,0.75), 0 8px 20px -8px rgba(0,0,0,0.6);
+
+  /* ─── Signature glow tokens ───────────────────────────────────────
+     Reusable focus glows so accents feel emissive, not painted-on. */
+  --glow-gold: 0 0 18px -6px hsl(43 96% 56% / 0.32);
+  --glow-blue: 0 0 18px -6px hsl(217 91% 60% / 0.32);
+  --glow-accent: 0 0 18px -6px hsl(0 84% 60% / 0.32);
+
+  /* ─── Gradients ───────────────────────────────────────────────────*/
+  --gradient-gold: linear-gradient(135deg, #FFE9A3 0%, hsl(var(--primary)) 42%, #E0A020 100%);
+  --gradient-aura: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
 }
 
 .dark {
-  --background: 220 30% 4%;
+  --background: 240 24% 4%;
   --foreground: 0 0% 98%;
 
-  --border: 220 30% 15%;
-  --input: 220 30% 15%;
+  --border: 240 16% 15%;
+  --input: 240 16% 15%;
   --ring: 43 96% 56%;
 
-  --card: 220 30% 6%;
+  --card: 240 20% 7%;
   --card-foreground: 0 0% 98%;
-  --card-border: 220 30% 15%;
+  --card-border: 240 16% 16%;
 
-  --popover: 220 30% 6%;
+  --popover: 240 22% 6%;
   --popover-foreground: 0 0% 98%;
-  --popover-border: 220 30% 15%;
+  --popover-border: 240 16% 16%;
 
   --primary: 43 96% 56%;
-  --primary-foreground: 220 30% 4%;
+  --primary-foreground: 240 24% 4%;
 
   --secondary: 217 91% 60%;
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 220 30% 12%;
-  --muted-foreground: 220 10% 60%;
+  --muted: 240 16% 13%;
+  --muted-foreground: 240 8% 62%;
 
   --accent: 0 84% 60%;
   --accent-foreground: 0 0% 98%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
+
+  --surface-1: 240 20% 7%;
+  --surface-2: 240 18% 10%;
+  --surface-3: 240 15% 14%;
 }
 
 @layer base {
@@ -122,19 +179,127 @@
   }
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Display type uses Archivo with tight, confident tracking by default. */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.28);
+    color: #fff;
   }
 }
 
-.glass-panel {
-  background: rgba(10, 15, 25, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+/* ═══════════════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   Fluid, mobile-first display scale. Prefer these over ad-hoc sizes so
+   headings stay consistent across screens.
+   ═══════════════════════════════════════════════════════════════════ */
+.type-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
+.type-hero {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.85rem, 11vw, 5rem);
+  line-height: 0.9;
+  letter-spacing: -0.025em;
+}
+
+.type-display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2rem, 7vw, 3rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+
+/* Balance multi-line headings where supported */
+.text-balance { text-wrap: balance; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SURFACE & GLOW UTILITIES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Refined frosted panel — a hair more contrast + a top inner highlight
+   so panels read as physical glass rather than a flat gray box. */
+.glass-panel {
+  background: linear-gradient(180deg, hsl(240 22% 9% / 0.72), hsl(240 26% 5% / 0.82));
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Solid raised card without blur — for content over busy backdrops. */
+.surface-card {
+  background: linear-gradient(180deg, hsl(var(--surface-2)), hsl(var(--surface-1)));
+  border: 1px solid hsl(var(--card-border));
+  box-shadow: var(--shadow-md), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ── Sports-brand primitives ───────────────────────────────────────
+   Flat, confident surfaces and hard color-blocks. Use these instead
+   of nesting glass panels or stacking glows on chrome. */
+
+/* The default panel: solid near-black, a single hairline border,
+   no blur, no glow. Reach for this before .glass-panel. */
+.surface-flat {
+  background: hsl(var(--surface-1));
+  border: 1px solid hsl(var(--card-border));
+}
+
+/* One accent, used hard: a solid gold color-block (POWER / key stat). */
+.block-gold {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+/* A single crisp hairline divider — for EA-FC-style stat rows/rules. */
+.rule-hairline {
+  border-color: hsl(var(--card-border));
+}
+
+/* Data label: uppercase micro-label with restrained tracking. Prefer
+   over ad-hoc `uppercase tracking-widest` on values and captions. */
+.label-stat {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Hairline: a single-pixel top highlight that gives edges a lit rim. */
+.hairline-top {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+.glow-gold   { box-shadow: var(--glow-gold); }
+.glow-blue   { box-shadow: var(--glow-blue); }
+.glow-accent { box-shadow: var(--glow-accent); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   GRADIENT TEXT
+   ═══════════════════════════════════════════════════════════════════ */
 .aura-text-gradient {
-  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+  background: var(--gradient-aura);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Static premium gold — for large headings where motion would be gaudy. */
+.gold-text-static {
+  background: var(--gradient-gold);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -254,21 +419,21 @@
 .rarity-glow-Rare   { animation: rising-shimmer 5s ease-in-out infinite; }
 .rarity-glow-Epic   { animation: icon-glow 3s ease-in-out infinite; }
 
-/* ─── Rarity border gradients ────────────────────────────────────── */
-/* Core has no border-image, just a flat border (handled by rarity-glow-Core) */
-.rarity-border-Rising    { border-image: linear-gradient(to bottom right, #93c5fd, #3b82f6, #1d4ed8) 1; }
-.rarity-border-Elite     { border-image: linear-gradient(to bottom right, #a5f3fc, #22d3ee, #0e7490) 1; }
-.rarity-border-Icon      { border-image: linear-gradient(to bottom right, #e9d5ff, #c084fc, #7c3aed) 1; }
-.rarity-border-Legendary { border-image: linear-gradient(to bottom right, #fef3c7, #fbbf24, #d97706) 1; }
-.rarity-border-Mythic    { border-image: linear-gradient(to bottom right, #fda4af, #fb7185, #9f1239, #f472b6) 1; }
+/* ─── Rarity borders ─────────────────────────────────────────────────
+   Solid tier-colored frames. Solid `border-color` (not `border-image`)
+   respects the card's border-radius - border-image renders square corners
+   that poke past the rounded card, which read as a "weird outline". The
+   Elite/Legendary/Mythic glow keyframes animate border-color on top. */
+.rarity-border-Rising    { border-color: #3b82f6; }
+.rarity-border-Elite     { border-color: #22d3ee; }
+.rarity-border-Icon      { border-color: #c084fc; }
+.rarity-border-Legendary { border-color: #fbbf24; }
+.rarity-border-Mythic    { border-color: #fb7185; }
 
 /* Legacy */
-.rarity-border-Mythic    { border-image: linear-gradient(to bottom right, #fda4af, #fb7185, #9f1239, #f472b6) 1; }
-.rarity-border-Legendary { border-image: linear-gradient(to bottom right, #fef3c7, #fbbf24, #d97706) 1; }
-.rarity-border-Epic      { border-image: linear-gradient(to bottom right, #e9d5ff, #c084fc, #7c3aed) 1; }
-.rarity-border-Elite     { border-image: linear-gradient(to bottom right, #a5f3fc, #22d3ee, #0e7490) 1; }
-.rarity-border-Rare      { border-image: linear-gradient(to bottom right, #bfdbfe, #60a5fa, #2563eb) 1; }
-.rarity-border-Common    { border-image: linear-gradient(to bottom right, #e2e8f0, #94a3b8, #475569) 1; }
+.rarity-border-Epic      { border-color: #c084fc; }
+.rarity-border-Rare      { border-color: #60a5fa; }
+.rarity-border-Common    { border-color: #94a3b8; }
 
 /* ─── Particle float animation ───────────────────────────────────── */
 @keyframes particle-float {
@@ -329,6 +494,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .aurora-layer { animation: none; }
+  .landing-bg-pan { animation: none; }
+  .gold-text-gradient { animation: none; }
 }
 
 /* Holographic foil sheen that follows the pointer on the live aura card */
@@ -350,3 +517,31 @@
     );
   mix-blend-mode: screen;
 }
+</content>
+</invoke>
+
+/* ─── Slim themed scrollbar for in-app scroll regions ────────────────
+   Replaces the chunky default OS scrollbar that looks out of place on
+   the dark UI. Apply `.scroll-slim` to any internal overflow container. */
+.scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--surface-3)) transparent;
+}
+.scroll-slim::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-slim::-webkit-scrollbar-track { background: transparent; }
+.scroll-slim::-webkit-scrollbar-thumb {
+  background: hsl(var(--surface-3));
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.scroll-slim::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.55);
+  background-clip: content-box;
+}
+
+/* ─── Live ticker marquee (World Cup feed) ───────────────────────────── */
+@keyframes wc-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.animate-wc-ticker { animation: wc-ticker 45s linear infinite; }
+.animate-wc-ticker:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .animate-wc-ticker { animation: none; } }

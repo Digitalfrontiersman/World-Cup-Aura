@@ -8,7 +8,10 @@ export function AuroraBackground({ color }: { color?: string }) {
   const c = color ?? "#fbbf24"; // gold
 
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-60">
+    <div
+      className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-55"
+      style={{ mixBlendMode: "screen" }}
+    >
       <div
         className="aurora-layer"
         style={{
@@ -19,7 +22,7 @@ export function AuroraBackground({ color }: { color?: string }) {
         className="aurora-layer"
         style={{
           background:
-            "radial-gradient(45% 45% at 72% 62%, rgba(34,211,238,0.28), transparent 70%)",
+            "radial-gradient(45% 45% at 72% 62%, rgba(34,211,238,0.24), transparent 70%)",
           animationDelay: "-7s",
           animationDuration: "26s",
         }}

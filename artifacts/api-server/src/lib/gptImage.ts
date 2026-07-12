@@ -61,6 +61,11 @@ export async function transformWithGptImage(
     image: file,
     prompt,
     size: "1024x1024",
+    // Explicit "medium" instead of the default "auto" (which resolves to the
+    // slow, pricey "high" tier for detailed prompts). Medium is markedly faster
+    // AND ~4x cheaper in output tokens, so this speeds generation up without
+    // increasing credit usage. Drop to "low" for maximum speed if needed.
+    quality: "medium",
   });
 
   const b64 = response.data?.[0]?.b64_json ?? "";

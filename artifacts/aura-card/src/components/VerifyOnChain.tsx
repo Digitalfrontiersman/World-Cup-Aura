@@ -47,7 +47,7 @@ export function VerifyOnChain({ vrfTxSig, proof }: VerifyOnChainProps) {
             transition={{ duration: 0.2 }}
             className="w-full max-w-sm overflow-hidden"
           >
-            <div className="rounded-xl border border-white/10 bg-black/40 p-3 space-y-2.5 text-left">
+            <div className="rounded-xl surface-card p-3 space-y-2.5 text-left">
               <p className="text-[11px] text-gray-400 leading-relaxed">
                 This card's rarity and archetype were drawn from a random seed
                 committed on Solana before the card was generated. You can
@@ -57,7 +57,7 @@ export function VerifyOnChain({ vrfTxSig, proof }: VerifyOnChainProps) {
               {result?.seedValid && (
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] uppercase tracking-wider text-gray-500">
+                    <span className="text-[10px] uppercase tracking-[0.08em] text-gray-500">
                       Archetype from seed
                     </span>
                     <span className="text-[11px] font-bold text-white">
@@ -65,7 +65,7 @@ export function VerifyOnChain({ vrfTxSig, proof }: VerifyOnChainProps) {
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] uppercase tracking-wider text-gray-500">
+                    <span className="text-[10px] uppercase tracking-[0.08em] text-gray-500">
                       Rarity roll from seed
                     </span>
                     <span className="text-[11px] font-bold text-white">

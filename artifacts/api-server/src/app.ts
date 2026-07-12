@@ -69,11 +69,21 @@ const corsOptions: CorsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Global body limit is intentionally small: image-heavy routes attach their own
-// larger express.json() parser (see routes/aura.ts), so a large JSON payload
-// can't be used to DoS the lightweight endpoints (votes, comments, health).
-app.use(express.json({ limit: "64kb" }));
-app.use(express.urlencoded({ extended: true, limit: "64kb" }));
+// Global body limit is intentionally small so a large JSON payload can't be used
+// to DoS the lightweight endpoints (votes, comments, health). Image-heavy routes
+// attach their own larger express.json() parser (see routes/aura.ts) - we MUST
+// skip the small global parser for those paths, otherwise it consumes the stream
+// first and rejects real (>64kb) image uploads with 413 before the route runs.
+const needsLargeBody = (path: string): boolean =>
+  path === "/api/aura/transform" ||
+  path === "/api/aura/card" ||
+  path === "/api/aura/mint" ||
+  /^\/api\/aura\/card\/[^/]+\/image$/.test(path);
+
+const smallJson = express.json({ limit: "64kb" });
+const smallUrlencoded = express.urlencoded({ extended: true, limit: "64kb" });
+app.use((req, res, next) => (needsLargeBody(req.path) ? next() : smallJson(req, res, next)));
+app.use((req, res, next) => (needsLargeBody(req.path) ? next() : smallUrlencoded(req, res, next)));
 
 app.use("/api", router);
 

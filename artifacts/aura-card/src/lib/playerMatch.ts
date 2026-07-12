@@ -30,6 +30,31 @@ export interface MatchInput {
   stats: Partial<PlayerStatProfile>;
   nation?: string;
   archetype?: string;
+  /**
+   * The card's rarity tier. Gates which elite players can be matched: mirroring
+   * a GOAT (Messi/Ronaldo) needs a Legendary/Mythic card; "star" players need
+   * Icon+. Omit to allow every player (ungated).
+   */
+  rarity?: string;
+}
+
+// Rarity tiers in ascending order. Legacy names (Common/Rare/Epic) map onto
+// their modern equivalents so older stored cards still gate correctly.
+const RARITY_RANK: Record<string, number> = {
+  Core: 0, Common: 0,
+  Rising: 1, Rare: 1,
+  Elite: 2,
+  Icon: 3, Epic: 3,
+  Legendary: 4,
+  Mythic: 5,
+};
+
+/** Minimum card rank required to be eligible for each elite tier. */
+const ELITE_MIN_RANK = { star: 3 /* Icon */, goat: 4 /* Legendary */ } as const;
+
+function isEligible(player: Player, cardRank: number): boolean {
+  if (!player.eliteTier) return true;
+  return cardRank >= ELITE_MIN_RANK[player.eliteTier];
 }
 
 export interface PlayerMatchResult {
@@ -73,10 +98,15 @@ export function matchPlayer(
     banter: clampStat(input.stats.banter),
   };
 
+  // Gate elite players by the card's rarity tier so GOAT/star mirrors are rare.
+  const cardRank = input.rarity !== undefined ? (RARITY_RANK[input.rarity] ?? 0) : 5;
+  const eligible = players.filter((p) => isEligible(p, cardRank));
+  const pool = eligible.length > 0 ? eligible : players;
+
   let best: Player | null = null;
   let bestDistance = Infinity;
 
-  for (const p of players) {
+  for (const p of pool) {
     let sumSq = 0;
     for (const k of STAT_KEYS) {
       const d = stats[k] - p.profile[k];
@@ -109,6 +139,13 @@ function buildReasons(
   player: Player,
 ): string[] {
   const reasons: string[] = [];
+
+  // Lead with the rarity of the mirror for elite matches.
+  if (player.eliteTier === "goat") {
+    reasons.push("An almost impossible mirror - you share a GOAT's aura.");
+  } else if (player.eliteTier === "star") {
+    reasons.push("A rare mirror - you echo a genuine superstar.");
+  }
 
   // Shared dominant traits: stats where both the user and the player are strong.
   const userTop = topStats(stats, 3);

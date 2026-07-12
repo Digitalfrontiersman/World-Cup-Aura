@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import type { ComponentType } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, Check, Share2, Loader2 } from "lucide-react";
+import { X, Copy, Check, Share2, Loader2, Twitter, Facebook, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getAppUrl } from "@/lib/utils";
 import { trackShareAuraCard } from "@/lib/analytics";
@@ -22,7 +23,7 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
 
   const appUrl = getAppUrl() + window.location.pathname;
   const shareUrl = shareUrlProp || mintExplorerUrl || appUrl;
-  const shareMessage = `I just got my World Cup Aura Card - ${rarity} ${archetype} with ${rank} rank. Bet yours can't top it 👊 Get yours: ${shareUrl}`;
+  const shareMessage = `I just got my World Cup Aura Card - ${rarity} ${archetype} with ${rank} rank. Bet yours can't top it. Get yours: ${shareUrl}`;
   const encodedMsg = encodeURIComponent(shareMessage);
   const encodedUrl = encodeURIComponent(shareUrl);
 
@@ -54,26 +55,28 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
     }
   };
 
-  const platforms = [
+  const platforms: {
+    label: string;
+    Icon: ComponentType<{ className?: string }>;
+    color: string;
+    href: string;
+  }[] = [
     {
       label: "WhatsApp",
-      emoji: "💬",
+      Icon: MessageCircle,
       color: "#25D366",
-      border: "none",
       href: `https://wa.me/?text=${encodedMsg}`,
     },
     {
       label: "X / Twitter",
-      emoji: "𝕏",
+      Icon: Twitter,
       color: "#1a1a1a",
-      border: "1px solid rgba(255,255,255,0.2)",
       href: `https://twitter.com/intent/tweet?text=${encodedMsg}`,
     },
     {
       label: "Facebook",
-      emoji: "f",
+      Icon: Facebook,
       color: "#1877F2",
-      border: "none",
       href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedMsg}`,
     },
   ];
@@ -98,7 +101,14 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 320 }}
-            className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl bg-[#0D1117] border-t border-white/10 shadow-[0_-8px_40px_rgba(0,0,0,0.7)] overflow-hidden"
+            drag="y"
+            dragConstraints={{ top: 0 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
+            dragMomentum={false}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 80 || info.velocity.y > 400) onClose();
+            }}
+            className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-card border-t border-white/10 shadow-[0_-8px_40px_rgba(0,0,0,0.7)] overflow-hidden"
             style={{ maxHeight: "92dvh" }}
           >
             {/* Drag handle */}
@@ -115,13 +125,16 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
               <X className="h-4 w-4" />
             </button>
 
-            <div className="px-6 pb-10 overflow-y-auto" style={{ maxHeight: "calc(92dvh - 32px)" }}>
+            <div
+              className="px-6 overflow-y-auto [padding-bottom:max(2.5rem,env(safe-area-inset-bottom))]"
+              style={{ maxHeight: "calc(92dvh - 32px)" }}
+            >
               {/* Headline */}
               <div className="text-center mb-4 mt-2">
-                <h2 className="text-2xl font-display font-black text-white uppercase tracking-wide leading-tight">
-                  🔥 Think your card<br />can beat mine?
+                <h2 className="text-2xl font-display font-black text-white uppercase tracking-tight leading-[0.95]">
+                  Think your card<br />can beat mine?
                 </h2>
-                <p className="text-sm text-gray-400 mt-1">Show the world what you're made of</p>
+                <p className="text-sm text-muted-foreground mt-1.5">Show the world what you're made of</p>
               </div>
 
               {/* Full card preview */}
@@ -133,7 +146,7 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
                     transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
                   >
                     <div
-                      className="relative rounded-2xl overflow-hidden border border-white/20 shadow-[0_0_30px_rgba(255,215,0,0.18),0_8px_32px_rgba(0,0,0,0.7)]"
+                      className="relative rounded-xl overflow-hidden border border-white/15 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.7)]"
                       style={{ width: "min(70vw, 240px)" }}
                     >
                       <img
@@ -145,7 +158,7 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
                   </motion.div>
                 ) : (
                   <div
-                    className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5"
+                    className="flex flex-col items-center justify-center gap-2 rounded-xl border border-white/10 bg-surface-1"
                     style={{ width: "min(70vw, 240px)", aspectRatio: "2/3" }}
                   >
                     <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
@@ -155,7 +168,7 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
               </div>
 
               {/* Pre-written message */}
-              <div className="bg-black/50 rounded-2xl border border-white/10 p-4 mb-5 text-sm text-gray-300 leading-relaxed">
+              <div className="rounded-xl surface-card p-4 mb-5 text-sm text-gray-300 leading-relaxed">
                 {shareMessage}
               </div>
 
@@ -168,15 +181,15 @@ export function ChallengeSheet({ open, onClose, cardDataUrl, rarity, archetype, 
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => trackShareAuraCard(`challenge_${p.label.toLowerCase().replace(/[\s/]/g, "_")}`)}
-                    className="flex flex-col items-center gap-2 py-3 rounded-2xl border border-white/10 bg-black/40 hover:border-white/30 transition-colors"
+                    className="flex flex-col items-center gap-2 py-3 rounded-xl border border-white/10 bg-surface-1 hover:border-white/25 transition-colors"
                   >
                     <span
-                      className="flex items-center justify-center h-10 w-10 rounded-full text-white font-black text-lg"
-                      style={{ backgroundColor: p.color, border: p.border }}
+                      className="flex items-center justify-center h-10 w-10 rounded-lg text-white"
+                      style={{ backgroundColor: p.color }}
                     >
-                      {p.emoji}
+                      <p.Icon className="h-5 w-5" />
                     </span>
-                    <span className="text-[11px] font-bold text-white/70 uppercase tracking-wider">{p.label}</span>
+                    <span className="text-[11px] font-bold text-white/70 uppercase tracking-[0.06em]">{p.label}</span>
                   </a>
                 ))}
               </div>

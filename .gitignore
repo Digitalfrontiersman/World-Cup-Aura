@@ -50,3 +50,12 @@ Thumbs.db
 
 # Solana treasury (devnet sponsor secret key) - never commit
 **/.solana-treasury.json
+
+# Environment variables - NEVER commit real secrets/keys.
+# All .env files are ignored; only the .env.example templates are tracked.
+.env
+.env.*
+!.env.example
+
+# TxLINE activated API token cache (semi-sensitive)
+**/.txline-token.json

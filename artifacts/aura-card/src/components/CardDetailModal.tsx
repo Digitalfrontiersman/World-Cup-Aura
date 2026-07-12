@@ -7,6 +7,7 @@ import {
   MessageSquare,
   Send,
   ExternalLink,
+  BadgeCheck,
 } from "lucide-react";
 import {
   useListCardComments,
@@ -185,7 +186,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
         {/* Panel */}
         <motion.div
           ref={panelRef}
-          className="relative z-10 w-full max-w-md max-h-[92dvh] flex flex-col rounded-t-2xl sm:rounded-2xl overflow-hidden bg-[#0a0a0f] border border-white/10"
+          className="relative z-10 w-full max-w-md max-h-[92dvh] flex flex-col rounded-t-2xl sm:rounded-2xl overflow-hidden bg-card border border-white/10"
           initial={{ y: "100%", scale: 0.95, opacity: 0 }}
           animate={{ y: 0, scale: 1, opacity: 1 }}
           exit={{ y: "100%", scale: 0.95, opacity: 0 }}
@@ -213,17 +214,16 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
 
           {/* Scrollable body - stop pointer events from propagating to the drag layer */}
           <div
-            className="overflow-y-auto flex-1 px-4 pb-6"
+            className="overflow-y-auto flex-1 px-4 [padding-bottom:max(1.5rem,env(safe-area-inset-bottom))]"
             onPointerDown={(e) => e.stopPropagation()}
           >
             {/* Card image */}
             <div className="flex justify-center mb-4">
               <div
-                className="relative w-52 rounded-xl overflow-hidden border"
+                className="relative w-52 rounded-xl overflow-hidden"
                 style={{
                   aspectRatio: "2/3",
-                  borderColor: `${cardRarityColor}66`,
-                  boxShadow: `0 0 24px ${cardRarityColor}44`,
+                  border: `1.5px solid ${cardRarityColor}`,
                 }}
               >
                 {card.imageUrl ? (
@@ -237,20 +237,19 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                     className="w-full h-full flex items-center justify-center"
                     style={{ background: `linear-gradient(135deg, #0a0a0f 0%, ${cardRarityColor}33 100%)` }}
                   >
-                    <span className="text-xs font-black uppercase tracking-widest text-white/30">
+                    <span className="text-xs font-black uppercase tracking-[0.12em] text-white/30">
                       {card.archetype}
                     </span>
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-                {/* Rarity badge */}
+                {/* Rarity tier chip — flat, meaningful color coding */}
                 <div
-                  className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border"
+                  className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-[0.08em]"
                   style={{
-                    color: cardRarityColor,
-                    borderColor: `${cardRarityColor}66`,
-                    backgroundColor: `${cardRarityColor}22`,
+                    color: "#0a0a0f",
+                    backgroundColor: cardRarityColor,
                   }}
                 >
                   {card.rarity}
@@ -298,7 +297,8 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                   rel="noopener noreferrer"
                   className="flex items-center gap-1 text-[10px] text-emerald-500/80 hover:text-emerald-400 transition-colors font-bold"
                 >
-                  ✓ Verified on Solana
+                  <BadgeCheck className="h-3 w-3" />
+                  Verified on Solana
                   <ExternalLink className="h-2.5 w-2.5 opacity-70" />
                 </a>
               )}
@@ -308,7 +308,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
             <div className="flex items-center justify-center gap-4 mb-6">
               <button
                 onClick={() => handleVote(1)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-5 py-2 rounded-lg border text-sm font-bold transition-all ${
                   localUserVote === 1
                     ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
                     : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-gray-200"
@@ -332,7 +332,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
 
               <button
                 onClick={() => handleVote(-1)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-5 py-2 rounded-lg border text-sm font-bold transition-all ${
                   localUserVote === -1
                     ? "bg-rose-500/20 border-rose-500 text-rose-400"
                     : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-gray-200"
@@ -345,11 +345,11 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
 
             {/* Comments section */}
             <div className="border-t border-white/10 pt-4">
-              <h3 className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-gray-400 mb-4">
+              <h3 className="flex items-center gap-1.5 type-eyebrow text-[0.68rem] text-muted-foreground mb-4">
                 <MessageSquare className="h-3.5 w-3.5" />
                 Comments
                 {comments.length > 0 && (
-                  <span className="ml-1 text-primary">{comments.length}</span>
+                  <span className="ml-1 text-primary tabular-nums">{comments.length}</span>
                 )}
               </h3>
 

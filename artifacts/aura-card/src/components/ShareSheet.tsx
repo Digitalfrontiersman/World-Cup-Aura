@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import type { ComponentType } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Download, Copy, Check, Share2, Loader2 } from "lucide-react";
+import { X, Download, Copy, Check, Share2, Loader2, Twitter, Facebook, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackShareAuraCard } from "@/lib/analytics";
 
@@ -120,26 +121,28 @@ export function ShareSheet({ open, onClose, slides, caption, shareUrl }: ShareSh
   const encodedCaptionWithUrl = encodeURIComponent(captionWithUrl);
   const encodedUrl = encodeURIComponent(shareUrl);
 
-  const socials = [
+  const socials: {
+    label: string;
+    Icon: ComponentType<{ className?: string }>;
+    color: string;
+    href: string;
+  }[] = [
     {
       label: "X / Twitter",
-      emoji: "𝕏",
+      Icon: Twitter,
       color: "#1a1a1a",
-      border: "1px solid rgba(255,255,255,0.2)",
       href: `https://twitter.com/intent/tweet?text=${encodedCaption}&url=${encodedUrl}`,
     },
     {
       label: "WhatsApp",
-      emoji: "💬",
+      Icon: MessageCircle,
       color: "#25D366",
-      border: "none",
       href: `https://wa.me/?text=${encodedCaptionWithUrl}`,
     },
     {
       label: "Facebook",
-      emoji: "f",
+      Icon: Facebook,
       color: "#1877F2",
-      border: "none",
       href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedCaption}`,
     },
   ];
@@ -170,7 +173,7 @@ export function ShareSheet({ open, onClose, slides, caption, shareUrl }: ShareSh
             onDragEnd={(_, info) => {
               if (info.offset.y > 80 || info.velocity.y > 400) onClose();
             }}
-            className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl bg-[#0D1117] border-t border-white/10 shadow-[0_-8px_40px_rgba(0,0,0,0.7)]"
+            className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-card border-t border-white/10 shadow-[0_-8px_40px_rgba(0,0,0,0.7)]"
             style={{ maxHeight: "92dvh" }}
           >
             <div className="flex justify-center pt-3 pb-1">
@@ -185,7 +188,10 @@ export function ShareSheet({ open, onClose, slides, caption, shareUrl }: ShareSh
               <X className="h-4 w-4" />
             </button>
 
-            <div className="px-5 pb-10 overflow-y-auto" style={{ maxHeight: "calc(92dvh - 32px)" }}>
+            <div
+              className="px-5 overflow-y-auto [padding-bottom:max(2.5rem,env(safe-area-inset-bottom))]"
+              style={{ maxHeight: "calc(92dvh - 32px)" }}
+            >
               <div className="text-center mb-3 mt-1">
                 <h2 className="text-xl font-display font-black text-white uppercase tracking-wide">Share Your Card</h2>
                 <p className="text-xs text-gray-500 mt-0.5">Swipe to choose a format</p>
@@ -209,7 +215,7 @@ export function ShareSheet({ open, onClose, slides, caption, shareUrl }: ShareSh
                     className="flex flex-col items-center gap-2 py-1"
                   >
                     <div
-                      className="flex items-center justify-center w-full rounded-2xl bg-black/30"
+                      className="flex items-center justify-center w-full rounded-xl bg-black/30 border border-white/5"
                       style={{ height: 224 }}
                     >
                       {slide?.dataUrl ? (
@@ -305,15 +311,15 @@ export function ShareSheet({ open, onClose, slides, caption, shareUrl }: ShareSh
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => trackShareAuraCard(s.label.toLowerCase().replace(/[\s/]/g, "_"))}
-                    className="flex flex-col items-center gap-1.5 py-2.5 rounded-2xl border border-white/10 bg-black/40 hover:border-white/30 transition-colors"
+                    className="flex flex-col items-center gap-1.5 py-2.5 rounded-xl border border-white/10 bg-surface-1 hover:border-white/25 transition-colors"
                   >
                     <span
-                      className="flex items-center justify-center h-9 w-9 rounded-full text-white font-black text-base"
-                      style={{ backgroundColor: s.color, border: s.border }}
+                      className="flex items-center justify-center h-9 w-9 rounded-lg text-white"
+                      style={{ backgroundColor: s.color }}
                     >
-                      {s.emoji}
+                      <s.Icon className="h-4 w-4" />
                     </span>
-                    <span className="text-[10px] font-bold text-white/60 uppercase tracking-wide">{s.label}</span>
+                    <span className="text-[10px] font-bold text-white/60 uppercase tracking-[0.06em]">{s.label}</span>
                   </a>
                 ))}
               </div>

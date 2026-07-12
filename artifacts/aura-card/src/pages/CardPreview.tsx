@@ -54,20 +54,20 @@ export default function CardPreview() {
 
   if (isLoading) {
     return (
-      <div className="min-h-dvh w-full bg-[#050816] flex flex-col items-center justify-center gap-4 text-white">
-        <Loader2 className="h-10 w-10 animate-spin text-yellow-400" />
-        <p className="text-gray-400 font-medium">Loading card…</p>
+      <div className="min-h-dvh w-full bg-background flex flex-col items-center justify-center gap-4 text-white">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="type-eyebrow text-muted-foreground">Loading card…</p>
       </div>
     );
   }
 
   if (isError || !data) {
     return (
-      <div className="min-h-dvh w-full bg-[#050816] flex flex-col items-center justify-center gap-6 text-white px-6 text-center">
-        <p className="text-2xl font-bold">Card not found</p>
-        <p className="text-gray-400">This link may have expired or the card doesn't exist.</p>
+      <div className="min-h-dvh w-full bg-background flex flex-col items-center justify-center gap-6 text-white px-6 text-center">
+        <p className="type-display text-white">Card not found</p>
+        <p className="text-muted-foreground max-w-xs">This link may have expired or the card doesn't exist.</p>
         <Link href={homeUrl}>
-          <Button className="h-12 px-8 bg-yellow-400 text-black font-bold hover:bg-yellow-300">
+          <Button className="h-12 px-8 bg-primary text-primary-foreground font-bold hover:bg-primary/90">
             Reveal Your Aura
           </Button>
         </Link>
@@ -78,7 +78,7 @@ export default function CardPreview() {
   const { card, imageDataUrl, vrfTxSig } = data;
 
   return (
-    <div className="min-h-dvh w-full bg-[#050816] relative overflow-hidden flex flex-col items-center pb-12">
+    <div className="min-h-dvh w-full bg-background relative overflow-hidden flex flex-col items-center pb-12">
       {/* Living aurora, tinted by the card's rarity */}
       <AuroraBackground color={rarityColor(rarity)} />
       <div className="absolute inset-0 bg-black/40 pointer-events-none" />
@@ -92,15 +92,11 @@ export default function CardPreview() {
           className="text-center space-y-1"
         >
           <div
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 text-xs font-black uppercase tracking-widest"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold uppercase tracking-[0.08em]"
             style={{
               color: style.color,
               borderColor: style.border,
               backgroundColor: style.bg,
-              textShadow: fx.glowColor ? `0 0 8px ${fx.glowColor}` : undefined,
-              boxShadow: fx.glowColor
-                ? `0 0 12px ${fx.glowColor}55`
-                : undefined,
             }}
           >
             <Star className="h-3 w-3 fill-current" />
@@ -109,7 +105,7 @@ export default function CardPreview() {
           <h1 className="text-3xl font-black text-white uppercase tracking-tight mt-2">
             {card.name}
           </h1>
-          <p className="text-sm text-gray-400 font-medium">{card.nation} · {card.rank}</p>
+          <p className="text-sm text-muted-foreground font-medium">{card.nation} · {card.rank}</p>
         </motion.div>
 
         {/* Card with tier effects */}
@@ -173,10 +169,10 @@ export default function CardPreview() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="w-full rounded-2xl bg-black/50 border border-white/10 p-4 text-center"
+            className="w-full rounded-2xl surface-card p-4 text-center"
           >
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Matchday Prophecy</p>
-            <p className="text-white/90 text-sm italic leading-relaxed">"{card.prophecy}"</p>
+            <p className="type-eyebrow text-primary/70 mb-2 text-[0.68rem]">Matchday Prophecy</p>
+            <p className="text-white/90 text-sm italic leading-relaxed font-serif">"{card.prophecy}"</p>
           </motion.div>
         )}
 
@@ -193,10 +189,10 @@ export default function CardPreview() {
           ].map(({ label, value }) => (
             <div
               key={label}
-              className="rounded-xl bg-black/50 border border-white/10 p-3 text-center"
+              className="rounded-xl surface-card p-3 text-center"
             >
-              <p className="text-2xl font-black" style={{ color: style.color }}>{value}</p>
-              <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{label}</p>
+              <p className="text-2xl font-black font-display" style={{ color: style.color }}>{value}</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{label}</p>
             </div>
           ))}
         </motion.div>
@@ -234,12 +230,12 @@ export default function CardPreview() {
           transition={{ delay: 0.5 }}
           className="w-full space-y-3 pt-2"
         >
-          <p className="text-center text-sm text-gray-500 font-medium">Think your card can beat this?</p>
+          <p className="text-center text-sm text-muted-foreground font-medium">Think your card can beat this?</p>
           <Link href={homeUrl}>
             <Button
-              className="w-full h-14 text-base font-black uppercase tracking-wider rounded-xl"
+              className="w-full h-14 text-base font-black uppercase tracking-[0.06em] rounded-xl hover:brightness-105"
               style={{
-                background: `linear-gradient(135deg, ${style.color}dd, ${style.color}99)`,
+                background: style.color,
                 color: "#000",
               }}
             >
@@ -247,7 +243,7 @@ export default function CardPreview() {
               Reveal Your Aura
             </Button>
           </Link>
-          <p className="text-center text-[11px] text-gray-600 uppercase font-bold tracking-widest">
+          <p className="text-center type-eyebrow text-white/30 text-[0.62rem]">
             World Cup Aura Card
           </p>
         </motion.div>

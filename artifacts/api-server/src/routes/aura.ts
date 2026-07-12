@@ -456,10 +456,15 @@ const SAVE_CARD_IMAGE_BYTES = 20 * 1024 * 1024;
 // Routes
 // ---------------------------------------------------------------------------
 
-router.get("/aura/cards", async (_req, res): Promise<void> => {
+router.get("/aura/cards", async (req, res): Promise<void> => {
   // Ensure schema + quota seeding has run so editionNumber and rarity columns
   // are guaranteed to exist before we select them.
   await ensureQuotasSeeded();
+
+  // Optional paging for the full-collection gallery. Defaults preserve the
+  // original behaviour (50 newest, no offset) so existing callers are unchanged.
+  const limit = Math.min(120, Math.max(1, Number.parseInt(String(req.query.limit ?? ""), 10) || 50));
+  const offset = Math.max(0, Number.parseInt(String(req.query.offset ?? ""), 10) || 0);
 
   const [rows, totalResult] = await Promise.all([
     // Use raw SQL to include vrf_tx_sig, which is not in the Drizzle schema
@@ -475,7 +480,7 @@ router.get("/aura/cards", async (_req, res): Promise<void> => {
         COALESCE((SELECT COUNT(*) FROM card_comments c WHERE c.slug = ac.slug), 0) AS comment_count
       FROM aura_cards ac
       ORDER BY ac.created_at DESC
-      LIMIT 50`,
+      LIMIT ${limit} OFFSET ${offset}`,
     ) as unknown as { rows: Array<{ slug: string; card: unknown; has_image: boolean; edition_number: number; rarity: string; vrf_tx_sig: string | null; vote_score: number; comment_count: number }> },
     db.select({ value: count() }).from(auraCardsTable),
   ]);
