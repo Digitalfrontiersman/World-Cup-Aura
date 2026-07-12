@@ -1,4 +1,8 @@
-import { rateLimit, type RateLimitRequestHandler } from "express-rate-limit";
+import {
+  rateLimit,
+  ipKeyGenerator,
+  type RateLimitRequestHandler,
+} from "express-rate-limit";
 import { createHash } from "node:crypto";
 import { logger } from "../lib/logger";
 
@@ -28,7 +32,10 @@ function makeLimiter(opts: {
     max: opts.max,
     standardHeaders: true,
     legacyHeaders: true,
-    keyGenerator: (req) => req.ip ?? "unknown",
+    // IPv6 clients must be keyed by subnet (not a single address), else they can
+    // rotate within their /64 to bypass the limit. `ipKeyGenerator` normalizes
+    // that; without it express-rate-limit v8 throws ERR_ERL_KEY_GEN_IPV6.
+    keyGenerator: (req) => (req.ip ? ipKeyGenerator(req.ip) : "unknown"),
     handler: (req, res) => {
       logger.warn({
         event: "rate_limit_exceeded",
