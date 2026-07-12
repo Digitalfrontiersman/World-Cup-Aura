@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { WalletConnect } from "@/components/WalletConnect";
+import { WorldCupTicker } from "@/components/WorldCupTicker";
 
 interface NavbarProps {
   /** Opens the collection-odds panel. */
@@ -66,6 +67,9 @@ export function Navbar({ onOpenOdds, onOpenCollection, onHome }: NavbarProps) {
           <WalletConnect compact />
         </nav>
       </div>
+      {/* Live World Cup ticker, glued full-width to the navbar (self-hides if the
+          TxLINE feed isn't configured). */}
+      <WorldCupTicker />
     </header>
   );
 }

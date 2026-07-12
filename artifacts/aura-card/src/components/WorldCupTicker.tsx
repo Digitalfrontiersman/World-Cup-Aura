@@ -74,8 +74,8 @@ export function WorldCupTicker() {
   );
 
   return (
-    <div className="w-full overflow-hidden border-y border-white/10 bg-surface-1" data-testid="worldcup-ticker">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4">
+    <div className="w-full overflow-hidden border-t border-white/10 bg-surface-1" data-testid="worldcup-ticker">
+      <div className="flex w-full items-center gap-3 px-4">
         <span className="flex shrink-0 items-center gap-1.5 border-r border-white/10 py-2 pr-3 font-condensed text-[10px] font-bold uppercase tracking-widest text-primary">
           <Radio className="h-3 w-3 animate-pulse" />
           Live · World Cup

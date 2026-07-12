@@ -16,7 +16,6 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CollectionOddsModal } from "@/components/CollectionOddsModal";
 import { CollectionGallery } from "@/components/CollectionGallery";
-import { WorldCupTicker } from "@/components/WorldCupTicker";
 import { ShipCardSheet } from "@/components/ShipCardSheet";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { MintingCinematic } from "@/components/MintingCinematic";
@@ -1266,10 +1265,7 @@ export default function Home() {
         onHome={() => { setCollectionOpen(false); setRarityOddsOpen(false); setIsFlipped(false); setQuizStep(0); setStep("landing"); }}
       />
 
-      <main className={`relative z-10 mx-auto w-full min-h-[100dvh] flex flex-col pt-20 pb-12 px-4 transition-[max-width] duration-500 ease-in-out ${step === 'result' ? 'max-w-4xl' : step === 'landing' ? 'max-w-md md:max-w-6xl' : 'max-w-md'}`} style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
-
-        {/* Live World Cup ticker (TxLINE feed) - self-hides until configured */}
-        <div className="-mt-2 mb-4"><WorldCupTicker /></div>
+      <main className={`relative z-10 mx-auto w-full min-h-[100dvh] flex flex-col pt-28 pb-12 px-4 transition-[max-width] duration-500 ease-in-out ${step === 'result' ? 'max-w-4xl' : step === 'landing' ? 'max-w-md md:max-w-6xl' : 'max-w-md'}`} style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}>
 
         <AnimatePresence mode="wait">
           {/* LANDING */}
