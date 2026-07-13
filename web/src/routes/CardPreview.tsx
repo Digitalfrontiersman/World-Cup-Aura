@@ -7,6 +7,7 @@ import { ParticleSparks, HaloRing, getRarityEffect } from "@/components/RarityEf
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { PlayerMatch } from "@/components/PlayerMatch";
 import { MarketRead } from "@/components/MarketRead";
+import { Navbar } from "@/components/Navbar";
 import { rarityColor } from "@/lib/rarity";
 
 const RARITY_STYLES: Record<string, { color: string; border: string; glow: string; bg: string }> = {
@@ -84,7 +85,9 @@ export default function CardPreview() {
       <AuroraBackground color={rarityColor(rarity)} />
       <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-sm px-5 pt-10 flex flex-col items-center gap-6">
+      <Navbar />
+
+      <div className="relative z-10 w-full max-w-sm px-5 pt-24 flex flex-col items-center gap-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -103,7 +106,7 @@ export default function CardPreview() {
             <Star className="h-3 w-3 fill-current" />
             {card.rarity} {card.archetype}
           </div>
-          <h1 className="text-3xl font-black text-white uppercase tracking-tight mt-2">
+          <h1 className="font-display text-4xl font-bold text-white uppercase tracking-tight mt-2">
             {card.name}
           </h1>
           <p className="text-sm text-muted-foreground font-medium">{card.nation} · {card.rank}</p>
@@ -242,13 +245,7 @@ export default function CardPreview() {
         >
           <p className="text-center text-sm text-muted-foreground font-medium">Think your card can beat this?</p>
           <Link href={homeUrl}>
-            <Button
-              className="w-full h-14 text-base font-black uppercase tracking-[0.06em] rounded-xl hover:brightness-105"
-              style={{
-                background: style.color,
-                color: "#000",
-              }}
-            >
+            <Button className="w-full h-14 text-base font-black uppercase tracking-[0.06em] rounded-xl">
               <Zap className="mr-2 h-5 w-5" />
               Reveal Your Aura
             </Button>

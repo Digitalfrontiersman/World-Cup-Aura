@@ -268,11 +268,11 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                   <p className="text-white text-xs font-black uppercase tracking-wide truncate">
                     {card.name}
                   </p>
-                  <p className="text-[10px] font-mono text-gray-400">
+                  <p className="text-[10px] font-mono text-white/60">
                     {card.nation} · {card.archetype}
                   </p>
                   {card.editionNumber != null && (
-                    <p className="text-[9px] font-mono text-gray-500">
+                    <p className="text-[9px] font-mono text-white/40">
                       #{card.editionNumber.toLocaleString()}
                     </p>
                   )}
@@ -286,7 +286,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                 href={`${baseUrl}card/${card.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
+                className="flex items-center gap-1 text-[10px] text-white/45 hover:text-white/75 transition-colors"
               >
                 <ExternalLink className="h-3 w-3" />
                 View card page
@@ -317,7 +317,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                 className={`flex items-center gap-1.5 px-5 py-2 rounded-lg border text-sm font-bold transition-all ${
                   localUserVote === 1
                     ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
-                    : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-gray-200"
+                    : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:text-white"
                 }`}
                 aria-label="Thumbs up"
               >
@@ -330,7 +330,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                     ? "text-emerald-400"
                     : localVoteScore < 0
                     ? "text-rose-400"
-                    : "text-gray-400"
+                    : "text-white/50"
                 }`}
               >
                 {localVoteScore > 0 ? `+${localVoteScore}` : localVoteScore}
@@ -341,7 +341,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                 className={`flex items-center gap-1.5 px-5 py-2 rounded-lg border text-sm font-bold transition-all ${
                   localUserVote === -1
                     ? "bg-rose-500/20 border-rose-500 text-rose-400"
-                    : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-gray-200"
+                    : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:text-white"
                 }`}
                 aria-label="Thumbs down"
               >
@@ -367,7 +367,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                   value={commentName}
                   onChange={(e) => setCommentName(e.target.value.slice(0, 50))}
                   maxLength={50}
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
+                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors"
                 />
                 <div className="relative">
                   <textarea
@@ -376,16 +376,16 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                     onChange={(e) => setCommentBody(e.target.value.slice(0, 280))}
                     maxLength={280}
                     rows={3}
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-none"
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-white placeholder-white/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors resize-none"
                   />
-                  <span className="absolute bottom-2 right-3 text-[10px] text-gray-600 pointer-events-none">
+                  <span className="absolute bottom-2 right-3 text-[10px] text-white/35 pointer-events-none">
                     {commentBody.length}/280
                   </span>
                 </div>
                 <button
                   onClick={handleSubmitComment}
                   disabled={!commentBody.trim() || isSubmitting}
-                  className="flex items-center gap-1.5 ml-auto px-4 py-1.5 rounded-lg bg-primary text-black text-xs font-black uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 transition-all active:scale-95"
+                  className="flex items-center gap-1.5 ml-auto px-4 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 transition-all active:scale-95"
                 >
                   <Send className="h-3 w-3" />
                   Post
@@ -394,7 +394,7 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
 
               {/* Comment list */}
               {comments.length === 0 ? (
-                <p className="text-center text-xs text-gray-600 py-4">
+                <p className="text-center text-xs text-white/40 py-4">
                   No comments yet. Be the first!
                 </p>
               ) : (
@@ -410,11 +410,11 @@ export function CardDetailModal({ card, baseUrl, onClose }: CardDetailModalProps
                         <span className="text-[11px] font-black text-white/80">
                           {c.displayName}
                         </span>
-                        <span className="text-[10px] text-gray-600">
+                        <span className="text-[10px] text-white/40">
                           {formatRelativeTime(new Date(c.createdAt))}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-300 leading-relaxed">{c.body}</p>
+                      <p className="text-xs text-white/70 leading-relaxed">{c.body}</p>
                     </motion.div>
                   ))}
                 </div>
