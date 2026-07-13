@@ -138,12 +138,7 @@ export function LandingStep() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(42_78%_55%)]" />
-              <span className="type-eyebrow text-[0.66rem] text-white/70">The Ultimate Fan Experience</span>
-            </div>
-
-            <h1 className="mt-6 font-display font-bold uppercase leading-[0.84] tracking-tight text-white text-[clamp(2.9rem,8vw,5.75rem)]">
+            <h1 className="font-display font-bold uppercase leading-[0.84] tracking-tight text-white text-[clamp(2.9rem,8vw,5.75rem)]">
               Unleash
               <br />
               Your <span className="gold-text-static">Aura</span>
