@@ -176,6 +176,18 @@ export function LandingStep() {
                 See the odds <ChevronRight className="h-3 w-3" />
               </Link>
             </div>
+
+            {/* Powered by — official partner marks, normalized to a monochrome strip */}
+            <div className="mt-9 flex flex-col items-center gap-3 md:items-start">
+              <span className="type-eyebrow text-[0.58rem] text-white/30">Powered by</span>
+              <div className="flex items-center gap-6 opacity-55 transition-opacity duration-300 hover:opacity-90">
+                <img src="/logos/solana-mark.svg" alt="Solana" className="h-4 w-auto shrink-0 brightness-0 invert" />
+                <span className="h-5 w-px bg-white/15" aria-hidden />
+                <img src="/logos/superteam.svg" alt="Superteam" className="h-6 w-auto shrink-0 brightness-0 invert" />
+                <span className="h-5 w-px bg-white/15" aria-hidden />
+                <img src="/logos/txodds.png" alt="TxOdds" className="h-3.5 w-auto shrink-0 brightness-0 invert" />
+              </div>
+            </div>
           </motion.div>
 
           {/* Floating card trio */}
