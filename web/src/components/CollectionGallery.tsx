@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Loader2, ThumbsUp, MessageSquare, Layers } from "lucide-react";
+import { ArrowLeft, Loader2, ThumbsUp, MessageSquare } from "lucide-react";
 import type { CommunityCard } from "@/api";
 import { CardDetailModal } from "./CardDetailModal";
 import { NATION_FLAGS } from "../lib/nations";
@@ -139,7 +139,7 @@ export function CollectionGallery({ open, onClose }: CollectionGalleryProps) {
         >
           {/* Sub-header (sits under the persistent app navbar) */}
           <div className="shrink-0 border-b border-white/10 bg-background/80 backdrop-blur-md">
-            <div className="mx-auto w-full max-w-6xl px-4 py-4">
+            <div className="mx-auto w-full max-w-6xl px-4 py-3.5">
               <button
                 onClick={onClose}
                 className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -148,22 +148,18 @@ export function CollectionGallery({ open, onClose }: CollectionGalleryProps) {
               >
                 <ArrowLeft className="h-3.5 w-3.5" /> Back to cards
               </button>
-              <div className="mt-3">
-                <div className="flex items-center gap-2 type-eyebrow text-[0.66rem] text-primary">
-                  <Layers className="h-3.5 w-3.5" />
-                  The Collection
-                </div>
-                <h2 className="mt-2 font-display text-3xl font-bold uppercase leading-[0.9] tracking-tight text-white sm:text-4xl">
+              <div className="mt-2.5 flex items-baseline justify-between gap-4">
+                <h2 className="font-display text-3xl font-bold uppercase leading-[0.9] tracking-tight text-white sm:text-4xl">
                   Every <span className="gold-text-static">Aura Card</span>
                 </h2>
-                <p className="mt-2 font-condensed text-xs font-medium uppercase tracking-wide text-white/45">
-                  {total.toLocaleString()} minted of 100,000
-                </p>
+                <span className="shrink-0 font-condensed text-xs font-medium uppercase tracking-wide text-white/40">
+                  {total.toLocaleString()} / 100,000
+                </span>
               </div>
             </div>
 
-            {/* Rarity filter chips */}
-            <div className="mx-auto flex w-full max-w-6xl gap-2 overflow-x-auto px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {/* Rarity filter chips — quiet by default, tier-colored when active */}
+            <div className="mx-auto flex w-full max-w-6xl gap-1 overflow-x-auto px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {filters.map((f) => {
                 const active = filter === f;
                 const color = f === "All" ? undefined : rarityColor(f);
@@ -171,12 +167,10 @@ export function CollectionGallery({ open, onClose }: CollectionGalleryProps) {
                   <button
                     key={f}
                     onClick={() => setFilter(f)}
-                    className="shrink-0 rounded-md px-3 py-1.5 font-condensed text-xs font-semibold uppercase tracking-wide transition-colors"
-                    style={
-                      active
-                        ? { background: color ?? "hsl(var(--primary))", color: "#0a0a0f" }
-                        : { background: "hsl(var(--surface-2))", color: "rgba(255,255,255,0.55)" }
-                    }
+                    className={`shrink-0 rounded-md px-3 py-1.5 font-condensed text-xs font-semibold uppercase tracking-wide transition-colors ${
+                      active ? "" : "text-white/40 hover:text-white"
+                    }`}
+                    style={active ? { background: color ?? "hsl(var(--primary))", color: "#0a0a0f" } : undefined}
                   >
                     {f}
                   </button>
