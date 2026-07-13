@@ -1,0 +1,11 @@
+# Marks web/ as its own standalone pnpm root so `pnpm install` here does NOT
+# attach to the parent monorepo. This folder manages its own deps + lockfile.
+packages: []
+
+# Supply-chain guard: require npm packages to be published for at least a day
+# before install (malicious releases are usually pulled within hours).
+minimumReleaseAge: 1440
+
+# Allow these packages to run their install scripts (native binaries Vite needs).
+onlyBuiltDependencies:
+  - esbuild

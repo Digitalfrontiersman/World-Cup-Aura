@@ -1,0 +1,503 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+
+  /* ── Layered surface scale (raised panels on the near-black base) ─── */
+  --color-surface-1: hsl(var(--surface-1));
+  --color-surface-2: hsl(var(--surface-2));
+  --color-surface-3: hsl(var(--surface-3));
+
+  /* ── Rarity accents exposed to Tailwind (text-rarity-legendary, etc.) ─ */
+  --color-rarity-core: hsl(var(--rarity-core));
+  --color-rarity-rising: hsl(var(--rarity-rising));
+  --color-rarity-elite: hsl(var(--rarity-elite));
+  --color-rarity-icon: hsl(var(--rarity-icon));
+  --color-rarity-legendary: hsl(var(--rarity-legendary));
+  --color-rarity-mythic: hsl(var(--rarity-mythic));
+
+  /* ─── Type system ─────────────────────────────────────────────────
+     Clash Display (display/headings/hero/card face/numerals) + Satoshi
+     (body/UI) — both self-hosted from public/fonts. Geist Mono for the
+     on-chain data (IDs, mint addresses). */
+  --font-sans: 'Satoshi', system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace;
+  --font-display: 'Clash Display', 'Satoshi', system-ui, sans-serif;
+  /* Impact voice: card name + chrome. Same family as display so the whole
+     product speaks one type language. */
+  --font-condensed: 'Clash Display', 'Satoshi', system-ui, sans-serif;
+  /* Numeral voice: the big card numbers (Aura/Power). */
+  --font-numeral: 'Clash Display', 'Satoshi', system-ui, sans-serif;
+  --font-poster: 'Clash Display', 'Satoshi', system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 3px);
+  --radius-md: calc(var(--radius) - 1px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+  --radius-2xl: calc(var(--radius) + 12px);
+}
+
+:root {
+  /* ─── Base palette ────────────────────────────────────────────────
+     A truer, less-purple premium black. One canonical base so the whole
+     product reads as a single refined dark surface, not a patchwork. */
+  --background: 230 14% 4.5%;    /* app base */
+  --foreground: 0 0% 98%;
+
+  --border: 230 12% 20%;         /* visible hairline — panels read as objects */
+  --input: 230 12% 20%;
+  --ring: 42 78% 55%;
+
+  --card: 230 13% 8%;            /* raised card surface */
+  --card-foreground: 0 0% 98%;
+  --card-border: 230 12% 22%;
+
+  --popover: 230 13% 7%;
+  --popover-foreground: 0 0% 98%;
+  --popover-border: 230 12% 22%;
+
+  --primary: 42 78% 55%;         /* Gold-leaf — deeper, less "yellow" */
+  --primary-foreground: 230 20% 5%;
+
+  --secondary: 217 84% 60%;      /* Electric Blue */
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 230 12% 13%;
+  --muted-foreground: 230 8% 64%;
+
+  --accent: 0 78% 58%;           /* Crimson — destructive/danger ONLY */
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 78% 58%;
+  --destructive-foreground: 0 0% 98%;
+
+  --radius: 0.625rem;            /* 10px — crisper than the old 12px */
+
+  /* ─── Elevation surfaces ──────────────────────────────────────────
+     Progressively lighter panels stacked above the base. */
+  --surface-1: 230 13% 8%;
+  --surface-2: 230 12% 11%;
+  --surface-3: 230 11% 15%;
+
+  /* ─── Rarity accents ──────────────────────────────────────────────
+     Single source of truth for tier hues (Core→Mythic). */
+  --rarity-core: 213 27% 84%;        /* slate  #cbd5e1 */
+  --rarity-rising: 213 94% 68%;      /* blue   #60a5fa */
+  --rarity-elite: 187 85% 53%;       /* cyan   #22d3ee */
+  --rarity-icon: 270 95% 75%;        /* violet #c084fc */
+  --rarity-legendary: 42 88% 58%;    /* gold   */
+  --rarity-mythic: 351 90% 71%;      /* rose   #fb7185 */
+
+  /* ─── Elevation shadows ───────────────────────────────────────────
+     Composed, layered shadows — soft ambient + tight contact. */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px -6px rgba(0,0,0,0.5), 0 2px 6px -3px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 36px -10px rgba(0,0,0,0.6), 0 4px 12px -6px rgba(0,0,0,0.5);
+  --shadow-xl: 0 24px 60px -16px rgba(0,0,0,0.72), 0 8px 20px -10px rgba(0,0,0,0.6);
+
+  /* ─── Signature glow tokens (restrained) ──────────────────────────
+     Reusable focus glows so accents feel emissive, not painted-on. */
+  --glow-gold: 0 0 16px -6px hsl(42 78% 55% / 0.18);
+  --glow-blue: 0 0 16px -6px hsl(217 84% 60% / 0.18);
+  --glow-accent: 0 0 16px -6px hsl(0 78% 58% / 0.18);
+
+  /* ─── Gradients ───────────────────────────────────────────────────
+     Two-stop only — three-stop gold reads plasticky. */
+  --gradient-gold: linear-gradient(180deg, #F6DFA0 0%, hsl(var(--primary)) 100%);
+  --gradient-aura: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+}
+
+.dark {
+  --background: 230 14% 4.5%;
+  --foreground: 0 0% 98%;
+
+  --border: 230 12% 20%;
+  --input: 230 12% 20%;
+  --ring: 42 78% 55%;
+
+  --card: 230 13% 8%;
+  --card-foreground: 0 0% 98%;
+  --card-border: 230 12% 22%;
+
+  --popover: 230 13% 7%;
+  --popover-foreground: 0 0% 98%;
+  --popover-border: 230 12% 22%;
+
+  --primary: 42 78% 55%;
+  --primary-foreground: 230 20% 5%;
+
+  --secondary: 217 84% 60%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 230 12% 13%;
+  --muted-foreground: 230 8% 64%;
+
+  --accent: 0 78% 58%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 78% 58%;
+  --destructive-foreground: 0 0% 98%;
+
+  --surface-1: 230 13% 8%;
+  --surface-2: 230 12% 11%;
+  --surface-3: 230 11% 15%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Form elements don't inherit font-family by default — make them follow the
+     app's type system instead of falling back to the browser default. */
+  button, input, textarea, select {
+    font-family: inherit;
+  }
+  /* Display type: Space Grotesk. Weight is a deliberate hierarchy tool, not a
+     blanket default — the type utilities set the real weights per role. */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.28);
+    color: #fff;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   Fluid, mobile-first display scale. Prefer these over ad-hoc sizes.
+   ═══════════════════════════════════════════════════════════════════ */
+.type-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.type-hero {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.75rem, 2rem + 4vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.type-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 1.6rem + 2vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Numerals for the collectible card face (Aura / Power). */
+.font-numeral {
+  font-family: var(--font-numeral);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Balance multi-line headings where supported */
+.text-balance { text-wrap: balance; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SURFACE & GLOW UTILITIES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Frosted panel — for FLOATING chrome only (overlays, sheets, hero stack).
+   Reach for .surface-card first for regular content panels. */
+.glass-panel {
+  background: linear-gradient(180deg, hsl(230 16% 9% / 0.74), hsl(230 20% 5% / 0.84));
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Solid raised card without blur — the DEFAULT for content panels. */
+.surface-card {
+  background: linear-gradient(180deg, hsl(var(--surface-2)), hsl(var(--surface-1)));
+  border: 1px solid hsl(var(--card-border));
+  box-shadow: var(--shadow-md), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Flattest panel: solid near-black, a single hairline border, no glow. */
+.surface-flat {
+  background: hsl(var(--surface-1));
+  border: 1px solid hsl(var(--card-border));
+}
+
+/* One accent, used hard: a solid gold color-block. */
+.block-gold {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.rule-hairline { border-color: hsl(var(--card-border)); }
+
+/* Data label: uppercase micro-label with restrained tracking. */
+.label-stat {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Single-pixel top highlight that gives edges a lit rim. */
+.hairline-top { box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08); }
+
+.glow-gold   { box-shadow: var(--glow-gold); }
+.glow-blue   { box-shadow: var(--glow-blue); }
+.glow-accent { box-shadow: var(--glow-accent); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   GRADIENT TEXT — static only. Animated heading fills read "cheap".
+   ═══════════════════════════════════════════════════════════════════ */
+.aura-text-gradient {
+  background: var(--gradient-aura);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Static premium gold. Both aliases point here now (no more shimmer sweep). */
+.gold-text-static,
+.gold-text-gradient {
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Holo sweep overlay - speed and opacity are overridden per tier via inline style */
+.holo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.28) 25%,
+    rgba(255, 255, 255, 0) 30%,
+    transparent 45%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 55%
+  );
+  background-size: 250% 250%;
+  animation: holo-sweep var(--holo-duration, 6s) ease-in-out infinite;
+  mix-blend-mode: color-dodge;
+  pointer-events: none;
+  z-index: 20;
+}
+
+@keyframes holo-sweep {
+  0% { background-position: 100% 100%; }
+  20% { background-position: 0% 0%; }
+  100% { background-position: 0% 0%; }
+}
+
+.card-container-3d { perspective: 1000px; }
+
+.card-3d-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+}
+
+/* ─── Rarity glows ────────────────────────────────────────────────────
+   Calmed down: Core–Icon are STATIC soft glows (no perpetual pulsing).
+   Only Legendary + Mythic keep a gentle, slow pulse befitting the top tiers. */
+
+.rarity-glow-Core {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.75);
+  border-color: rgba(203,213,225,0.32) !important;
+}
+.rarity-glow-Rising {
+  box-shadow: 0 0 22px rgba(96,165,250,0.28), 0 16px 40px rgba(0,0,0,0.75);
+}
+.rarity-glow-Elite {
+  box-shadow: 0 0 26px rgba(34,211,238,0.34), 0 16px 40px rgba(0,0,0,0.75);
+}
+.rarity-glow-Icon {
+  box-shadow: 0 0 30px rgba(192,132,252,0.36), 0 16px 40px rgba(0,0,0,0.75);
+}
+
+@keyframes legendary-pulse {
+  0%, 100% { box-shadow: 0 0 34px rgba(251,191,36,0.42), inset 0 0 14px rgba(251,191,36,0.12), 0 16px 40px rgba(0,0,0,0.75); }
+  50%      { box-shadow: 0 0 52px rgba(251,191,36,0.62), inset 0 0 22px rgba(251,191,36,0.2), 0 16px 40px rgba(0,0,0,0.75); }
+}
+@keyframes mythic-pulse {
+  0%, 100% { box-shadow: 0 0 40px rgba(251,113,133,0.46), inset 0 0 18px rgba(251,113,133,0.16), 0 16px 40px rgba(0,0,0,0.75); }
+  50%      { box-shadow: 0 0 62px rgba(251,113,133,0.68), inset 0 0 28px rgba(251,113,133,0.24), 0 16px 40px rgba(0,0,0,0.75); }
+}
+.rarity-glow-Legendary { animation: legendary-pulse 4.5s ease-in-out infinite; }
+.rarity-glow-Mythic    { animation: mythic-pulse 4s ease-in-out infinite; }
+
+/* Legacy compat */
+.rarity-glow-Common { box-shadow: 0 16px 40px rgba(0,0,0,0.75); }
+.rarity-glow-Rare   { box-shadow: 0 0 22px rgba(96,165,250,0.28), 0 16px 40px rgba(0,0,0,0.75); }
+.rarity-glow-Epic   { box-shadow: 0 0 30px rgba(192,132,252,0.36), 0 16px 40px rgba(0,0,0,0.75); }
+
+/* ─── Rarity borders ─────────────────────────────────────────────────
+   Solid tier-colored frames (border-color respects the card radius). */
+.rarity-border-Rising    { border-color: #3b82f6; }
+.rarity-border-Elite     { border-color: #22d3ee; }
+.rarity-border-Icon      { border-color: #c084fc; }
+.rarity-border-Legendary { border-color: #fbbf24; }
+.rarity-border-Mythic    { border-color: #fb7185; }
+.rarity-border-Epic      { border-color: #c084fc; }
+.rarity-border-Rare      { border-color: #60a5fa; }
+.rarity-border-Common    { border-color: #94a3b8; }
+
+/* ─── Particle float animation ───────────────────────────────────── */
+@keyframes particle-float {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: var(--p-opacity, 0.7);
+  }
+  25% { transform: translateY(-25%) translateX(8px) scale(1.1); }
+  50% { transform: translateY(-55%) translateX(-6px) scale(0.9); }
+  75% { transform: translateY(-78%) translateX(10px) scale(1.05); }
+  100% {
+    transform: translateY(-110%) translateX(0) scale(0.5);
+    opacity: 0;
+  }
+}
+.particle-float {
+  animation: particle-float linear infinite;
+  will-change: transform, opacity;
+}
+
+/* ─── Halo ring rotation ─────────────────────────────────────────── */
+@keyframes halo-rotate {
+  from { transform: rotateX(70deg) rotateZ(0deg); }
+  to   { transform: rotateX(70deg) rotateZ(360deg); }
+}
+.halo-spin {
+  animation: halo-rotate 8s linear infinite;
+  transform-style: preserve-3d;
+}
+
+@keyframes bg-pan {
+  0%   { transform: scale(1.0) translate(0%, 0%); }
+  100% { transform: scale(1.06) translate(1.5%, 1%); }
+}
+.landing-bg-pan {
+  animation: bg-pan 18s ease-in-out infinite alternate;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Living aurora background: slow-drifting blurred color fields */
+@keyframes aurora-drift {
+  0%   { transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1.15); }
+  50%  { transform: translate3d(6%, 5%, 0) rotate(6deg) scale(1.3); }
+  100% { transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1.15); }
+}
+.aurora-layer {
+  position: absolute;
+  inset: -25%;
+  filter: blur(70px);
+  will-change: transform;
+  animation: aurora-drift 24s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-layer,
+  .landing-bg-pan,
+  .rarity-glow-Legendary,
+  .rarity-glow-Mythic { animation: none; }
+}
+
+/* Holographic foil sheen that follows the pointer on the live aura card */
+.holo-foil {
+  background:
+    radial-gradient(
+      circle at var(--holo-x, 50%) var(--holo-y, 50%),
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.06) 18%,
+      transparent 45%
+    ),
+    linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(120, 200, 255, 0.14) 45%,
+      rgba(255, 120, 220, 0.14) 50%,
+      rgba(180, 255, 160, 0.14) 55%,
+      transparent 70%
+    );
+  mix-blend-mode: screen;
+}
+
+/* ─── Slim themed scrollbar for in-app scroll regions ──────────────── */
+.scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--surface-3)) transparent;
+}
+.scroll-slim::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-slim::-webkit-scrollbar-track { background: transparent; }
+.scroll-slim::-webkit-scrollbar-thumb {
+  background: hsl(var(--surface-3));
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.scroll-slim::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.55);
+  background-clip: content-box;
+}
+
+/* ─── Live ticker marquee (World Cup feed) ───────────────────────────── */
+@keyframes wc-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.animate-wc-ticker { animation: wc-ticker 45s linear infinite; }
+.animate-wc-ticker:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .animate-wc-ticker { animation: none; } }
