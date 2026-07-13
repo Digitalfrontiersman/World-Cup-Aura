@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { WalletConnect } from "@/components/WalletConnect";
 import { WorldCupTicker } from "@/components/WorldCupTicker";
@@ -11,19 +12,36 @@ const navLink =
   "rounded-md px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-3";
 
 /**
- * Slim persistent top bar shared across pages. Wordmark left; route links +
- * wallet right. Collection / Odds / Docs are real routes now.
+ * Slim persistent top bar shared across pages. Transparent over the hero, then
+ * fades to a frosted-glass bar once you scroll. Wordmark left; route links +
+ * wallet right. Collection / Odds / Docs are real routes.
  */
 export function Navbar({ onHome }: NavbarProps) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const wordmark = (
-    <span className="font-display text-sm font-bold uppercase leading-none tracking-tight text-white">
-      Aura <span className="text-primary">Cards</span>
+    <span className="flex items-center gap-2">
+      <span className="h-2 w-2 rotate-45 rounded-[2px] bg-primary shadow-[0_0_10px_hsl(42_78%_55%/0.6)]" aria-hidden />
+      <span className="font-display text-sm font-bold uppercase leading-none tracking-tight text-white">
+        Aura <span className="text-primary">Cards</span>
+      </span>
     </span>
   );
 
   return (
     <header
-      className="fixed inset-x-0 top-0 z-40 border-b border-card-border bg-background/80 backdrop-blur-xl"
+      className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
+        scrolled
+          ? "border-b border-white/[0.07] bg-background/80 backdrop-blur-xl"
+          : "border-b border-transparent bg-gradient-to-b from-background/70 to-transparent"
+      }`}
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-4">
@@ -52,8 +70,9 @@ export function Navbar({ onHome }: NavbarProps) {
       </div>
 
       {/* Live World Cup ticker, glued full-width to the navbar (self-hides if the
-          TxLINE feed isn't configured). */}
-      <WorldCupTicker />
+          TxLINE feed isn't configured). Only shown once scrolled so the hero
+          stays clean and cinematic. */}
+      {scrolled && <WorldCupTicker />}
     </header>
   );
 }
