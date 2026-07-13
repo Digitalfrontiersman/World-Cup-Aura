@@ -23,8 +23,9 @@ export function PhotoStep() {
       className="flex-1 flex flex-col space-y-8 pt-4"
     >
       <div className="space-y-2 text-center">
-        <h2 className="text-4xl font-display font-black text-white uppercase italic tracking-wide">Player Portrait</h2>
-        <p className="text-gray-400 font-medium">Snap a selfie or upload a photo for your card.</p>
+        <p className="type-eyebrow text-primary">Step 1 · Portrait</p>
+        <h2 className="font-display text-4xl font-bold uppercase tracking-tight text-white">Player Portrait</h2>
+        <p className="font-medium text-white/55">Snap a selfie or upload a photo for your card.</p>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center">
@@ -70,13 +71,13 @@ export function PhotoStep() {
         {!photo && !cameraActive && (
           <div className="mt-8 w-full space-y-5">
             <div className="flex items-center gap-4">
-              <div className="flex-1 h-px bg-gray-800"></div>
-              <div className="text-xs text-gray-500 uppercase font-bold tracking-widest">Or use sample</div>
-              <div className="flex-1 h-px bg-gray-800"></div>
+              <div className="flex-1 h-px bg-white/10"></div>
+              <div className="text-xs text-white/40 uppercase font-bold tracking-widest">Or use sample</div>
+              <div className="flex-1 h-px bg-white/10"></div>
             </div>
             <div className="flex justify-center gap-6">
               {[1, 2, 3].map((num) => (
-                <button key={num} onClick={() => actions.selectSampleAvatar(num)} className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-700 hover:border-primary hover:scale-110 transition-all shadow-lg">
+                <button key={num} onClick={() => actions.selectSampleAvatar(num)} className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/15 hover:border-primary hover:scale-110 transition-all shadow-lg">
                   <img src={`/avatar-${num}.png`} alt={`Avatar ${num}`} className="w-full h-full object-cover" />
                 </button>
               ))}
@@ -87,14 +88,14 @@ export function PhotoStep() {
 
       {/* Gender toggle */}
       <div className="space-y-2">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center">Depict me as</p>
-        <div className="flex rounded-xl overflow-hidden border border-gray-700 bg-black/40">
+        <p className="text-xs font-bold text-white/50 uppercase tracking-widest text-center">Depict me as</p>
+        <div className="flex rounded-xl overflow-hidden border border-card-border bg-black/40">
           {GENDER_LABELS.map((g) => (
             <button
               key={g}
               onClick={() => actions.setGender(gender === g ? null : g)}
               className={`flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-all ${
-                gender === g ? "bg-primary text-primary-foreground" : "text-gray-400 hover:text-white hover:bg-white/5"
+                gender === g ? "bg-primary text-primary-foreground" : "text-white/50 hover:text-white hover:bg-white/5"
               }`}
             >
               {g}
@@ -106,7 +107,7 @@ export function PhotoStep() {
       <Button
         disabled={!photo || cameraActive}
         onClick={() => actions.goToStep("quiz")}
-        className="w-full h-16 text-lg font-bold uppercase tracking-wider bg-white text-black hover:bg-gray-200 rounded-xl disabled:opacity-50 shadow-xl"
+        className="w-full h-16 text-lg font-bold uppercase tracking-wider bg-primary text-primary-foreground hover:brightness-[1.06] rounded-xl disabled:opacity-50 shadow-xl"
       >
         Continue to Aura Scan <ChevronRight className="ml-2 h-6 w-6" />
       </Button>

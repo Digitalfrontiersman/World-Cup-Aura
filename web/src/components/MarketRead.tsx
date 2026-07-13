@@ -44,7 +44,7 @@ const STANCE = {
     label: "Dark Horse",
     tone: "#fb7185",
     icon: TrendingDown,
-    blurb: "the market doubts them — that's the fuel",
+    blurb: "the market doubts them, and that's the fuel",
   },
 } as const;
 
@@ -104,7 +104,7 @@ export function MarketRead({ nation }: { nation: string }) {
             </span>
           </p>
           <p className="text-xs text-muted-foreground">
-            {winPct}% implied vs {read.opponent} — {s.blurb}
+            {winPct}% implied vs {read.opponent}, {s.blurb}
           </p>
         </div>
       </div>

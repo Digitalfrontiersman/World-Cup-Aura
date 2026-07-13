@@ -214,7 +214,7 @@ export function QuizStep() {
             disabled={i >= quizStep}
             aria-label={`Go to step ${i + 1}`}
             className={`flex-1 rounded-full transition-all duration-300 focus:outline-none ${
-              i === quizStep ? "h-2 bg-primary" : i < quizStep ? "h-2 bg-primary/50 hover:bg-primary/75 cursor-pointer" : "h-1.5 bg-gray-700 cursor-default opacity-40"
+              i === quizStep ? "h-2 bg-primary" : i < quizStep ? "h-2 bg-primary/50 hover:bg-primary/75 cursor-pointer" : "h-1.5 bg-white/15 cursor-default opacity-40"
             }`}
           />
         ))}
@@ -232,7 +232,7 @@ export function QuizStep() {
           transition={{ duration: 0.28, ease: "easeInOut" }}
           className="text-xs font-bold uppercase tracking-widest text-primary/60 mb-6"
         >
-          {quizStep + 1} / 7 - {QUIZ_STEP_NAMES[quizStep]}
+          {quizStep + 1} / 7 · {QUIZ_STEP_NAMES[quizStep]}
         </motion.p>
       </AnimatePresence>
 
@@ -262,7 +262,7 @@ export function QuizStep() {
           </Button>
         )}
         {quizStep > 0 && (
-          <Button variant="ghost" onClick={actions.prevQuizStep} className="w-full h-10 text-gray-500 hover:text-white text-sm">
+          <Button variant="ghost" onClick={actions.prevQuizStep} className="w-full h-10 text-white/40 hover:text-white text-sm">
             <ChevronLeft className="mr-1 h-4 w-4" /> Back
           </Button>
         )}

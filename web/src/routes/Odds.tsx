@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ArrowLeft, Layers, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import { useGetRarityStats } from "@/api";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -52,15 +52,14 @@ export default function Odds() {
         </Link>
 
         {/* Header */}
-        <header className="mt-6">
-          <div className="type-eyebrow inline-flex items-center gap-2 text-primary">
-            <Layers className="h-3.5 w-3.5" />
-            2026 Edition · Pull Rates
-          </div>
-          <h1 className="type-display mt-2 text-white">Collection Odds</h1>
-          <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-            Every Aura Card is numbered 1–100,000 and minted to the founding 2026 Edition. Rarer tier, fewer cards —
-            here's how the drop breaks down.
+        <header className="mt-8">
+          <span className="type-eyebrow text-primary">2026 Edition · Pull Rates</span>
+          <h1 className="mt-4 font-display text-[clamp(2.5rem,7vw,4.25rem)] font-bold uppercase leading-[0.9] tracking-tight text-white">
+            Collection <span className="gold-text-static">odds</span>
+          </h1>
+          <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground">
+            Every Aura Card is numbered 1–100,000 and minted to the founding 2026 Edition. Rarer tier, fewer cards. Here's
+            how the drop breaks down.
           </p>
 
           {/* Overall claimed meter */}

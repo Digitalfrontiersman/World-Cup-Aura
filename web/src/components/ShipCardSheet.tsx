@@ -124,7 +124,7 @@ export function ShipCardSheet({ open, onClose, cardSlug, cardName }: ShipCardShe
                   Ship Your Card
                 </h2>
                 <p className="mt-1.5 text-xs text-white/45">
-                  A premium printed edition mailed to your door — <span className="font-bold text-primary">{PRICE_LABEL}</span> incl. shipping.
+                  A premium printed edition mailed to your door. <span className="font-bold text-primary">{PRICE_LABEL}</span> incl. shipping.
                 </p>
               </div>
               <button

@@ -44,7 +44,7 @@ const STEPS = [
   {
     icon: Gem,
     title: "Reveal your rarity",
-    body: "Answer a quick quiz, then watch a provably-fair on-chain roll set your tier — Core to Mythic.",
+    body: "Answer a quick quiz, then watch a provably-fair on-chain roll set your tier, from Core to Mythic.",
   },
   {
     icon: ShieldCheck,
@@ -150,7 +150,7 @@ export function LandingStep() {
             </h1>
 
             <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-white/60 md:mx-0 md:text-lg">
-              Turn your selfie into a legendary fan card. Pick your nation, reveal your power level — minted forever on
+              Turn your selfie into a legendary fan card. Pick your nation, reveal your power level. Minted forever on
               Solana.
             </p>
 
@@ -300,7 +300,7 @@ export function LandingStep() {
             <p className="text-base leading-relaxed text-white/60">
               Every Aura Card is numbered 1–100,000 and minted to the founding 2026 Edition. Six rarity tiers, from
               everyday <span className="text-white/80">Core</span> to one-in-two-hundred{" "}
-              <span className="text-primary">Mythic</span> — each one a unique on-chain collectible.
+              <span className="text-primary">Mythic</span>. Each one a unique on-chain collectible.
             </p>
             <div className="mt-6 grid grid-cols-3 gap-3">
               <Stat value={totalIssued > 0 ? totalIssued.toLocaleString() : "100K"} label="Minted" />

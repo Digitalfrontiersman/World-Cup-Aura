@@ -692,7 +692,7 @@ export function AuraFlowProvider({ children }: { children: ReactNode }) {
     if (!ship) return;
     const clean = () => window.history.replaceState({}, "", window.location.pathname);
     if (ship === "cancelled") {
-      toast({ title: "Checkout cancelled", description: "No worries — your card wasn't ordered." });
+      toast({ title: "Checkout cancelled", description: "No worries, your card wasn't ordered." });
       clean();
       return;
     }

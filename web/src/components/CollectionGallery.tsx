@@ -153,10 +153,10 @@ export function CollectionGallery({ open, onClose }: CollectionGalleryProps) {
                   <Layers className="h-3.5 w-3.5" />
                   The Collection
                 </div>
-                <h2 className="mt-1 font-display text-2xl font-black uppercase leading-none tracking-tight text-white">
-                  Every Aura Card
+                <h2 className="mt-2 font-display text-3xl font-bold uppercase leading-[0.9] tracking-tight text-white sm:text-4xl">
+                  Every <span className="gold-text-static">Aura Card</span>
                 </h2>
-                <p className="mt-1.5 font-condensed text-xs font-medium uppercase tracking-wide text-white/45">
+                <p className="mt-2 font-condensed text-xs font-medium uppercase tracking-wide text-white/45">
                   {total.toLocaleString()} minted of 100,000
                 </p>
               </div>
