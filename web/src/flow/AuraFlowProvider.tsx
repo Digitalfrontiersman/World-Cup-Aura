@@ -30,7 +30,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import confetti from "canvas-confetti";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletBridge } from "@/lib/walletBridge";
 import {
   useGetMintStatus,
   useGetRarityStats,
@@ -293,7 +293,7 @@ export function AuraFlowProvider({ children }: { children: ReactNode }) {
 
   const { toast } = useToast();
   const prefersReducedMotion = useReducedMotion() ?? false;
-  const { publicKey: connectedWalletKey, connected: walletConnected } = useWallet();
+  const { address: connectedWalletAddress, isConnected: walletConnected } = useWalletBridge();
 
   // React Query
   const mintStatusQuery = useGetMintStatus();
@@ -762,11 +762,11 @@ export function AuraFlowProvider({ children }: { children: ReactNode }) {
 
   // Auto-fill the mint recipient when a real wallet connects.
   useEffect(() => {
-    if (walletConnected && connectedWalletKey) {
-      patch({ recipientInput: connectedWalletKey.toBase58(), useTempWallet: false });
+    if (walletConnected && connectedWalletAddress) {
+      patch({ recipientInput: connectedWalletAddress, useTempWallet: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletConnected, connectedWalletKey]);
+  }, [walletConnected, connectedWalletAddress]);
 
   // Gyroscope tilt on the result card (best-effort, mobile).
   useEffect(() => {

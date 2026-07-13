@@ -1,6 +1,5 @@
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { Wallet, Check, LogOut } from "lucide-react";
+import { useWalletBridge } from "@/lib/walletBridge";
 
 function shortAddress(addr: string): string {
   return `${addr.slice(0, 4)}...${addr.slice(-4)}`;
@@ -18,19 +17,18 @@ interface WalletConnectProps {
  * block for the mint flow. Styled to match the app's dark/gold theme.
  */
 export function WalletConnect({ compact = false }: WalletConnectProps) {
-  const { publicKey, connected, connecting, disconnect, wallet } = useWallet();
-  const { setVisible } = useWalletModal();
+  const { address, isConnected, connecting, disconnect, walletName, open } = useWalletBridge();
 
-  if (connected && publicKey) {
+  if (isConnected && address) {
     if (compact) {
       return (
         <div className="flex items-center gap-2 rounded-lg border border-primary/40 bg-surface-2 px-3 h-9">
           <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
           <span className="font-mono text-xs text-white">
-            {shortAddress(publicKey.toBase58())}
+            {shortAddress(address)}
           </span>
           <button
-            onClick={() => disconnect()}
+            onClick={disconnect}
             className="text-gray-400 hover:text-white transition-colors"
             aria-label="Disconnect wallet"
             title="Disconnect"
@@ -45,14 +43,14 @@ export function WalletConnect({ compact = false }: WalletConnectProps) {
         <Check className="h-4 w-4 text-green-400 shrink-0" />
         <div className="flex-1 min-w-0 leading-tight">
           <p className="text-[10px] uppercase tracking-[0.08em] text-primary/80">
-            {wallet?.adapter.name ?? "Wallet"} connected
+            {walletName ?? "Wallet"} connected
           </p>
           <p className="font-mono text-xs text-white truncate">
-            {shortAddress(publicKey.toBase58())}
+            {shortAddress(address)}
           </p>
         </div>
         <button
-          onClick={() => disconnect()}
+          onClick={disconnect}
           className="shrink-0 text-gray-400 hover:text-white transition-colors"
           aria-label="Disconnect wallet"
           title="Disconnect"
@@ -66,7 +64,7 @@ export function WalletConnect({ compact = false }: WalletConnectProps) {
   if (compact) {
     return (
       <button
-        onClick={() => setVisible(true)}
+        onClick={open}
         disabled={connecting}
         className="flex items-center gap-1.5 rounded-lg border border-primary/50 bg-surface-2 px-3.5 h-9 text-xs font-bold uppercase tracking-[0.08em] text-white transition-colors duration-200 hover:bg-primary/15 hover:border-primary active:scale-95 disabled:opacity-60"
         data-testid="button-connect-wallet"
@@ -79,7 +77,7 @@ export function WalletConnect({ compact = false }: WalletConnectProps) {
 
   return (
     <button
-      onClick={() => setVisible(true)}
+      onClick={open}
       disabled={connecting}
       className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/50 bg-surface-1 h-11 text-sm font-bold uppercase tracking-[0.08em] text-white transition-colors duration-200 hover:bg-primary/10 hover:border-primary active:scale-[0.98] disabled:opacity-60"
       data-testid="button-connect-wallet"
