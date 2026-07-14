@@ -352,7 +352,13 @@ export function AuraFlowProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      } catch {
+        // Many desktop webcams reject the front-camera hint — retry with any camera.
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      }
       streamRef.current = stream;
       patch({ photo: null });
       setCameraActive(true);
@@ -361,6 +367,17 @@ export function AuraFlowProvider({ children }: { children: ReactNode }) {
       setCameraActive(false);
     }
   };
+
+  // Attach the live stream to the <video> once cameraActive mounts it. The video
+  // element only exists after cameraActive flips true, so srcObject must be set
+  // here — inside startCamera, videoRef.current is still null.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!cameraActive || !video || !streamRef.current) return;
+    video.srcObject = streamRef.current;
+    const played = video.play();
+    if (played && typeof played.catch === "function") played.catch(() => {});
+  }, [cameraActive]);
 
   const capturePhoto = () => {
     const video = videoRef.current;
