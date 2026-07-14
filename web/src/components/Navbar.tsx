@@ -48,7 +48,7 @@ export function Navbar({ onHome }: NavbarProps) {
     <span className="flex items-center gap-2">
       <span className="h-2 w-2 rotate-45 rounded-[2px] bg-primary shadow-[0_0_10px_hsl(42_78%_55%/0.6)]" aria-hidden />
       <span className="font-display text-sm font-bold uppercase leading-none tracking-tight text-white">
-        Aura <span className="text-primary">Cards</span>
+        World Cup <span className="text-primary">Aura</span>
       </span>
     </span>
   );
@@ -70,13 +70,13 @@ export function Navbar({ onHome }: NavbarProps) {
               onHome();
             }}
             className="flex items-center"
-            aria-label="Aura Cards home"
+            aria-label="World Cup Aura home"
             data-testid="nav-home"
           >
             {wordmark}
           </button>
         ) : (
-          <Link href="/" className="flex items-center" aria-label="Aura Cards home" data-testid="nav-home" onClick={closeMenu}>
+          <Link href="/" className="flex items-center" aria-label="World Cup Aura home" data-testid="nav-home" onClick={closeMenu}>
             {wordmark}
           </Link>
         )}

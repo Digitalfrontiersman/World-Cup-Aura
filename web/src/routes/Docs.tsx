@@ -119,7 +119,7 @@ export default function Docs() {
           <div className="space-y-10">
             <Section id="overview" index="01" icon={Sparkles} title="Overview">
               <p>
-                Aura Cards is a fan-engagement app. You take a selfie, answer a short quiz, and get a generated{" "}
+                World Cup Aura is a fan-engagement app. You take a selfie, answer a short quiz, and get a generated{" "}
                 <b>Aura Card</b>: a stylized portrait with stats, a rarity tier, a matchday prophecy, and the pro
                 footballer you most resemble. Cards can be saved, shared, and minted as Solana NFTs.
               </p>

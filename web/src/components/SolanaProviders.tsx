@@ -23,7 +23,7 @@ if (USE_APPKIT) {
     networks: [solanaDevnet],
     projectId: REOWN_PROJECT_ID,
     metadata: {
-      name: "Aura Cards",
+      name: "World Cup Aura",
       description: "Turn your selfie into a legendary fan card, minted on Solana.",
       url: "https://worldcupaura.com",
       icons: ["https://worldcupaura.com/apple-touch-icon.png"],

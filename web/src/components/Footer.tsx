@@ -9,8 +9,11 @@ export function Footer() {
   return (
     <footer className="relative z-10 mt-16 w-full border-t border-white/10" data-testid="site-footer">
       <div className="flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-6 sm:px-8">
-        <div className="font-display text-sm font-bold uppercase tracking-tight text-white">
-          Aura <span className="text-primary">Cards</span>
+        <div className="flex flex-col gap-0.5">
+          <div className="font-display text-sm font-bold uppercase tracking-tight text-white">
+            World Cup <span className="text-primary">Aura</span>
+          </div>
+          <span className="text-[10px] font-medium uppercase tracking-wide text-white/35">A product of Aura Cards</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-muted-foreground">
@@ -31,7 +34,7 @@ export function Footer() {
           >
             Site <ArrowUpRight className="h-3 w-3" />
           </a>
-          <span className="text-white/30">© 2026 Aura Cards · Minted on Solana · Not affiliated with FIFA</span>
+          <span className="text-white/30">© 2026 World Cup Aura by Aura Cards · Minted on Solana · Not affiliated with FIFA</span>
         </div>
       </div>
     </footer>
