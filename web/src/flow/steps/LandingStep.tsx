@@ -112,6 +112,15 @@ export function LandingStep() {
           className="absolute inset-0 z-0"
           style={{ background: "radial-gradient(125% 90% at 50% 0%, #10101c 0%, #08080e 54%, #050509 100%)" }}
         />
+        {/* Football pitch atmosphere — anchored low, dimmed + desaturated, faded up into the black */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none bg-cover bg-bottom opacity-[0.17] [filter:saturate(0.55)_brightness(0.85)]"
+          style={{
+            backgroundImage: "url('/pitch-bg-rich.png')",
+            maskImage: "linear-gradient(to top, #000 0%, #000 18%, transparent 72%)",
+            WebkitMaskImage: "linear-gradient(to top, #000 0%, #000 18%, transparent 72%)",
+          }}
+        />
         <div
           className="absolute inset-0 z-0 pointer-events-none"
           style={{ background: "radial-gradient(52% 42% at 68% 32%, hsl(42 78% 55% / 0.13) 0%, transparent 66%)" }}
