@@ -130,7 +130,7 @@ export function LandingStep() {
         {/* Fade into the next section */}
         <div className="absolute inset-x-0 bottom-0 z-0 h-40 bg-gradient-to-b from-transparent to-background" />
 
-        <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-6xl grid-cols-1 items-center gap-10 px-5 pb-24 pt-32 md:grid-cols-2 md:gap-8 md:pt-28">
+        <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-6xl grid-cols-1 items-center gap-8 px-5 pb-16 pt-28 md:grid-cols-2 md:gap-8 md:pb-20 md:pt-24 [@media(max-height:780px)]:items-start">
           {/* Copy */}
           <motion.div
             className="order-2 text-center md:order-1 md:text-left"
@@ -138,7 +138,7 @@ export function LandingStep() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1 className="font-display font-bold uppercase leading-[0.84] tracking-tight text-white text-[clamp(2.9rem,8vw,5.75rem)]">
+            <h1 className="font-display font-bold uppercase leading-[0.84] tracking-tight text-white text-[clamp(2.9rem,8vw,5.75rem)] [@media(max-height:780px)]:text-[clamp(2.25rem,6vw,4rem)]">
               Unleash
               <br />
               Your <span className="gold-text-static">Aura</span>
@@ -191,7 +191,7 @@ export function LandingStep() {
           </motion.div>
 
           {/* Floating card trio */}
-          <div className="relative order-1 flex h-[320px] w-full items-center justify-center md:order-2 md:h-[540px]">
+          <div className="relative order-1 flex h-[clamp(280px,46svh,520px)] w-full items-center justify-center md:order-2">
             <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-primary/16 blur-[120px]" />
 
             <motion.div
