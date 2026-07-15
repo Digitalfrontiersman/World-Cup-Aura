@@ -7,7 +7,7 @@ import "./fonts.css";
 import "@fontsource-variable/geist-mono";
 import { setBaseUrl } from "@/api";
 import { initAnalytics } from "@/lib/analytics";
-import { SolanaProviders } from "@/components/SolanaProviders";
+import { WalletRuntimeGate } from "@/components/WalletRuntimeGate";
 import App from "./App";
 import "./index.css";
 
@@ -20,7 +20,9 @@ setBaseUrl(import.meta.env.BASE_URL.replace(/\/+$/, ""));
 initAnalytics();
 
 createRoot(document.getElementById("root")!).render(
-  <SolanaProviders>
+  <>
     <App />
-  </SolanaProviders>,
+    {/* Wallet stack is lazy — loads only when the user activates it (Connect). */}
+    <WalletRuntimeGate />
+  </>,
 );
