@@ -130,7 +130,7 @@ export function LandingStep() {
         {/* Full-bleed stadium action photo, faintly panning (the /archive hero look) */}
         <div
           className="landing-bg-pan absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/landing-action-bg.png')", opacity: 0.14 }}
+          style={{ backgroundImage: "url('/landing-action-bg.webp')", opacity: 0.14 }}
         />
         {/* Living aurora field */}
         <AuroraBackground />
@@ -183,7 +183,7 @@ export function LandingStep() {
                 y: { delay: 1, duration: 5, repeat: Infinity, ease: "easeInOut" },
               }}
             >
-              <img src="/card-action-1.png" alt="" className="h-full w-full object-cover" />
+              <img src="/card-action-1.webp" alt="" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
             </motion.div>
 
@@ -200,7 +200,7 @@ export function LandingStep() {
                 y: { delay: 1.4, duration: 5.5, repeat: Infinity, ease: "easeInOut" },
               }}
             >
-              <img src="/hero-action.png" alt="" className="h-full w-full object-cover" />
+              <img src="/hero-action.webp" alt="" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
             </motion.div>
 
@@ -216,7 +216,7 @@ export function LandingStep() {
               }}
             >
               <img
-                src="/card-action-2.png"
+                src="/card-action-2.webp"
                 alt="Aura Card"
                 className="h-full w-full object-cover object-top contrast-125"
               />
