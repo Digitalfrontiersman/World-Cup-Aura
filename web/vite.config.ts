@@ -28,6 +28,9 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    // Allow Replit's preview domains so the dev server's webview works when a
+    // teammate runs the frontend from a Repl (Vite blocks unknown hosts otherwise).
+    allowedHosts: [".replit.dev", ".repl.co"],
     proxy: {
       "/api": { target: apiProxyTarget, changeOrigin: true },
     },
@@ -35,5 +38,6 @@ export default defineConfig({
   preview: {
     port: 5173,
     host: true,
+    allowedHosts: [".replit.dev", ".repl.co"],
   },
 });

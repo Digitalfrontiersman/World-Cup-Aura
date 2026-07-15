@@ -1,0 +1,17 @@
+# Replit config for the World Cup Aura frontend (web/).
+# When this repo is imported into a Repl, "Run" installs and starts the Vite dev
+# server for web/. The frontend proxies /api/* to the live backend — set the
+# VITE_API_PROXY_TARGET secret to https://worldcupaura.com (Replit → Secrets).
+# The backend runs on our own VPS; nobody needs to run it from Replit.
+
+modules = ["nodejs-24"]
+run = "cd web && corepack enable && pnpm install && pnpm dev"
+entrypoint = "web/src/App.tsx"
+
+[nix]
+channel = "stable-25_05"
+
+# Vite dev server (5173) → served on the Repl's public URL.
+[[ports]]
+localPort = 5173
+externalPort = 80
