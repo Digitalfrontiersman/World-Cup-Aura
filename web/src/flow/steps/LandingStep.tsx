@@ -168,13 +168,13 @@ export function LandingStep() {
 
           {/* Floating card trio — enlarged on desktop, original size on phones */}
           <div className="relative order-2 flex h-[300px] w-full items-center justify-center overflow-hidden md:col-start-2 md:row-start-1 md:row-span-2 md:h-[560px]">
-            <div className="pointer-events-none absolute h-56 w-56 rounded-full bg-primary/20 blur-[100px] md:h-72 md:w-72 md:blur-[120px]" />
+            <div className="pointer-events-none absolute h-44 w-44 rounded-full bg-primary/20 blur-[90px] md:h-72 md:w-72 md:blur-[120px]" />
 
             <motion.div
-              className="glass-panel absolute h-56 w-40 overflow-hidden rounded-xl border-secondary/40 shadow-2xl md:h-72 md:w-52"
+              className="glass-panel absolute h-44 w-32 overflow-hidden rounded-xl border-secondary/40 shadow-2xl md:h-72 md:w-52"
               style={{ transformOrigin: "bottom center" }}
               initial={{ opacity: 0, rotate: 0, x: 0, scale: 0.8 }}
-              animate={{ opacity: 1, rotate: -16, x: isDesktop ? -112 : -88, scale: 0.86, y: [0, -10, 0] }}
+              animate={{ opacity: 1, rotate: -16, x: isDesktop ? -112 : -64, scale: 0.86, y: [0, -10, 0] }}
               transition={{
                 opacity: { delay: 0.35, duration: 0.5 },
                 rotate: { delay: 0.35, type: "spring", bounce: 0.5 },
@@ -188,10 +188,10 @@ export function LandingStep() {
             </motion.div>
 
             <motion.div
-              className="glass-panel absolute h-56 w-40 overflow-hidden rounded-xl border-accent/40 shadow-2xl md:h-72 md:w-52"
+              className="glass-panel absolute h-44 w-32 overflow-hidden rounded-xl border-accent/40 shadow-2xl md:h-72 md:w-52"
               style={{ transformOrigin: "bottom center" }}
               initial={{ opacity: 0, rotate: 0, x: 0, scale: 0.8 }}
-              animate={{ opacity: 1, rotate: 16, x: isDesktop ? 112 : 88, scale: 0.86, y: [0, -10, 0] }}
+              animate={{ opacity: 1, rotate: 16, x: isDesktop ? 112 : 64, scale: 0.86, y: [0, -10, 0] }}
               transition={{
                 opacity: { delay: 0.5, duration: 0.5 },
                 rotate: { delay: 0.5, type: "spring", bounce: 0.5 },
@@ -205,7 +205,7 @@ export function LandingStep() {
             </motion.div>
 
             <motion.div
-              className="glass-panel card-shine relative z-10 h-72 w-52 overflow-hidden rounded-xl border-primary/60 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)] md:h-96 md:w-64 md:shadow-[0_28px_70px_-14px_rgba(0,0,0,0.85)]"
+              className="glass-panel card-shine relative z-10 h-60 w-44 overflow-hidden rounded-xl border-primary/60 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)] md:h-96 md:w-64 md:shadow-[0_28px_70px_-14px_rgba(0,0,0,0.85)]"
               initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
               animate={{ opacity: 1, scale: 1, rotate: -3, y: [0, -14, 0] }}
               transition={{

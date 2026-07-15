@@ -66,10 +66,10 @@ export function WalletConnect({ compact = false }: WalletConnectProps) {
       <button
         onClick={open}
         disabled={connecting}
-        className="flex items-center gap-1.5 rounded-lg border border-primary/50 bg-surface-2 px-3.5 h-9 text-xs font-bold uppercase tracking-[0.08em] text-white transition-colors duration-200 hover:bg-primary/15 hover:border-primary active:scale-95 disabled:opacity-60"
+        className="flex items-center gap-1.5 rounded-lg bg-primary px-4 h-9 text-xs font-black uppercase tracking-[0.1em] text-primary-foreground shadow-[0_0_20px_hsl(42_78%_55%/0.35)] transition duration-200 hover:brightness-110 active:scale-95 disabled:opacity-60"
         data-testid="button-connect-wallet"
       >
-        <Wallet className="h-3.5 w-3.5 text-primary" />
+        <Wallet className="h-3.5 w-3.5" />
         {connecting ? "..." : "Connect"}
       </button>
     );

@@ -17,7 +17,7 @@ const NAV_ITEMS = [
 ] as const;
 
 const mobileLinkBase =
-  "block rounded-lg px-3 py-2.5 text-base font-medium transition-colors";
+  "block rounded-lg px-3 py-2.5 text-sm font-bold uppercase tracking-[0.14em] transition-colors";
 
 /**
  * Slim persistent top bar shared across pages. Transparent over the hero, then
@@ -50,20 +50,20 @@ export function Navbar({ onHome }: NavbarProps) {
   const closeMenu = () => setMenuOpen(false);
 
   const wordmark = (
-    <span className="group flex items-center gap-2">
+    <span className="group flex items-center gap-2.5">
       <motion.span
         aria-hidden
-        className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-primary transition-transform duration-300 group-hover:scale-125"
+        className="h-3 w-3 rotate-45 rounded-[3px] bg-primary transition-transform duration-300 group-hover:scale-125"
         animate={{
           boxShadow: [
             "0 0 8px hsl(42 78% 55% / 0.5)",
-            "0 0 16px hsl(42 78% 55% / 0.9)",
+            "0 0 18px hsl(42 78% 55% / 0.95)",
             "0 0 8px hsl(42 78% 55% / 0.5)",
           ],
         }}
         transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
       />
-      <span className="font-display text-sm font-bold uppercase leading-none tracking-tight text-white">
+      <span className="font-display text-base font-black uppercase leading-none tracking-[0.02em] text-white">
         World Cup <span className="gold-text-static">Aura</span>
       </span>
     </span>
@@ -108,32 +108,31 @@ export function Navbar({ onHome }: NavbarProps) {
           </Link>
         )}
 
-        {/* Desktop nav — frosted pill with a sliding gold active-indicator */}
-        <nav className="hidden items-center gap-2 md:flex">
-          <div className="flex items-center gap-0.5 rounded-full border border-white/[0.08] bg-white/[0.03] p-1 backdrop-blur">
-            {NAV_ITEMS.map((item) => {
-              const active = location === item.href || location.startsWith(`${item.href}/`);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  data-testid={item.testid}
-                  className={`relative rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-                    active ? "text-white" : "text-muted-foreground hover:text-white"
-                  }`}
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="nav-active"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      className="absolute inset-0 -z-10 rounded-full bg-white/[0.07] ring-1 ring-primary/40 shadow-[0_0_16px_hsl(42_78%_55%/0.25)]"
-                    />
-                  )}
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
+        {/* Desktop nav — bold uppercase links with a gold active-underline */}
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAV_ITEMS.map((item) => {
+            const active = location === item.href || location.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                data-testid={item.testid}
+                className={`relative py-1 text-xs font-bold uppercase tracking-[0.16em] transition-colors ${
+                  active ? "text-primary" : "text-white/55 hover:text-white"
+                }`}
+              >
+                {item.label}
+                {active && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-primary shadow-[0_0_10px_hsl(42_78%_55%/0.8)]"
+                  />
+                )}
+              </Link>
+            );
+          })}
+          <span className="ml-1 h-5 w-px bg-white/10" aria-hidden />
           <WalletConnect compact />
         </nav>
 
