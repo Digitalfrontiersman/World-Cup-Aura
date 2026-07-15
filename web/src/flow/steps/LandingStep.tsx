@@ -145,7 +145,7 @@ export function LandingStep() {
         {/* Fade into the next section */}
         <div className="absolute inset-x-0 bottom-0 z-0 h-40 bg-gradient-to-b from-transparent to-background" />
 
-        <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-6xl grid-cols-1 items-center gap-6 px-5 pb-16 pt-28 md:grid-cols-2 md:content-center md:gap-x-8 md:gap-y-6 md:pb-20 md:pt-24 [@media(max-height:780px)]:items-start">
+        <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-6xl grid-cols-1 items-center gap-4 px-5 pb-10 pt-20 md:grid-cols-2 md:content-center md:gap-x-8 md:gap-y-6 md:pb-20 md:pt-24 [@media(max-height:780px)]:items-start">
           {/* Copy — desktop: col-1 row-1 */}
           <motion.div
             className="order-1 space-y-4 text-center md:col-start-1 md:row-start-1 md:text-left"
@@ -166,8 +166,8 @@ export function LandingStep() {
             </p>
           </motion.div>
 
-          {/* Floating card trio — enlarged on desktop, original size on phones */}
-          <div className="relative order-2 flex h-[300px] w-full items-center justify-center overflow-hidden md:col-start-2 md:row-start-1 md:row-span-2 md:h-[560px]">
+          {/* Floating card trio — compact on phones (keeps the CTA in view), enlarged on desktop */}
+          <div className="relative order-2 flex h-[240px] w-full items-center justify-center overflow-hidden md:col-start-2 md:row-start-1 md:row-span-2 md:h-[560px]">
             <div className="pointer-events-none absolute h-44 w-44 rounded-full bg-primary/20 blur-[90px] md:h-72 md:w-72 md:blur-[120px]" />
 
             <motion.div
@@ -205,7 +205,7 @@ export function LandingStep() {
             </motion.div>
 
             <motion.div
-              className="glass-panel card-shine relative z-10 h-60 w-44 overflow-hidden rounded-xl border-primary/60 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)] md:h-96 md:w-64 md:shadow-[0_28px_70px_-14px_rgba(0,0,0,0.85)]"
+              className="glass-panel card-shine relative z-10 h-52 w-40 overflow-hidden rounded-xl border-primary/60 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)] md:h-96 md:w-64 md:shadow-[0_28px_70px_-14px_rgba(0,0,0,0.85)]"
               initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
               animate={{ opacity: 1, scale: 1, rotate: -3, y: [0, -14, 0] }}
               transition={{
