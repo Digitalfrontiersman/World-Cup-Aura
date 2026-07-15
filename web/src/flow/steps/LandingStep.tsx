@@ -152,14 +152,14 @@ export function LandingStep() {
           </motion.div>
 
           {/* Floating card trio — desktop: col-2, spans both rows */}
-          <div className="relative order-2 flex h-[300px] w-full items-center justify-center overflow-hidden md:col-start-2 md:row-start-1 md:row-span-2 md:h-[460px]">
-            <div className="pointer-events-none absolute h-56 w-56 rounded-full bg-primary/20 blur-[100px]" />
+          <div className="relative order-2 flex h-[400px] w-full items-center justify-center overflow-hidden md:col-start-2 md:row-start-1 md:row-span-2 md:h-[560px]">
+            <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-primary/20 blur-[120px]" />
 
             <motion.div
-              className="glass-panel absolute h-56 w-40 overflow-hidden rounded-xl border-secondary/40 shadow-2xl"
+              className="glass-panel absolute h-72 w-52 overflow-hidden rounded-xl border-secondary/40 shadow-2xl"
               style={{ transformOrigin: "bottom center" }}
               initial={{ opacity: 0, rotate: 0, x: 0, scale: 0.8 }}
-              animate={{ opacity: 1, rotate: -16, x: -88, scale: 0.86, y: [0, -10, 0] }}
+              animate={{ opacity: 1, rotate: -16, x: -112, scale: 0.86, y: [0, -10, 0] }}
               transition={{
                 opacity: { delay: 0.35, duration: 0.5 },
                 rotate: { delay: 0.35, type: "spring", bounce: 0.5 },
@@ -173,10 +173,10 @@ export function LandingStep() {
             </motion.div>
 
             <motion.div
-              className="glass-panel absolute h-56 w-40 overflow-hidden rounded-xl border-accent/40 shadow-2xl"
+              className="glass-panel absolute h-72 w-52 overflow-hidden rounded-xl border-accent/40 shadow-2xl"
               style={{ transformOrigin: "bottom center" }}
               initial={{ opacity: 0, rotate: 0, x: 0, scale: 0.8 }}
-              animate={{ opacity: 1, rotate: 16, x: 88, scale: 0.86, y: [0, -10, 0] }}
+              animate={{ opacity: 1, rotate: 16, x: 112, scale: 0.86, y: [0, -10, 0] }}
               transition={{
                 opacity: { delay: 0.5, duration: 0.5 },
                 rotate: { delay: 0.5, type: "spring", bounce: 0.5 },
@@ -190,7 +190,7 @@ export function LandingStep() {
             </motion.div>
 
             <motion.div
-              className="glass-panel card-shine relative z-10 h-72 w-52 overflow-hidden rounded-xl border-primary/60 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)]"
+              className="glass-panel card-shine relative z-10 h-96 w-64 overflow-hidden rounded-xl border-primary/60 shadow-[0_28px_70px_-14px_rgba(0,0,0,0.85)]"
               initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
               animate={{ opacity: 1, scale: 1, rotate: -3, y: [0, -14, 0] }}
               transition={{
@@ -207,14 +207,14 @@ export function LandingStep() {
               />
               <div className="holo-overlay" />
               <div className="absolute left-3 top-3 z-20 text-center drop-shadow-xl">
-                <div className="gold-text-gradient font-display text-4xl font-black leading-none">94</div>
-                <div className="text-[9px] font-bold uppercase tracking-widest text-white/80">Aura</div>
+                <div className="gold-text-gradient font-display text-6xl font-black leading-none">94</div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-white/80">Aura</div>
               </div>
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-3">
-                <div className="font-display text-base font-black uppercase leading-tight tracking-wide text-white">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-4">
+                <div className="font-display text-xl font-black uppercase leading-tight tracking-wide text-white">
                   Mythic Champion
                 </div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-primary">Legendary Striker</div>
+                <div className="text-xs font-bold uppercase tracking-widest text-primary">Legendary Striker</div>
               </div>
             </motion.div>
           </div>
