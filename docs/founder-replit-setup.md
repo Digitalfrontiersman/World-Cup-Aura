@@ -17,10 +17,9 @@ You only ever edit files under **`web/src/`** (the React frontend). Everything e
      `Digitalfrontiersman/World-Cup-Aura`.
    - (If GitHub isn't linked yet, Replit will prompt you to connect it once.)
 
-2. **Switch to the working branch**
-   - Open the **Git** pane (left sidebar) → branch dropdown → select **`Bilal`**
-     (that's where the current code lives — `main` is older).
-   - Then create your own branch to work on: type `founder` and **Create branch**.
+2. **Make your own branch**
+   - Open the **Git** pane (left sidebar). You'll be on `main` (it's current).
+   - Create a branch to work on: type `founder` and **Create branch**.
      You'll commit to `founder`; Bilal merges it in.
 
 3. **Add the one secret** (so the app hits the live backend)
