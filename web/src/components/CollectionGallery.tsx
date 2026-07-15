@@ -38,10 +38,11 @@ function GalleryTile({ card, onOpen }: { card: CommunityCard; onOpen: () => void
       <div className="relative aspect-[2/3] overflow-hidden">
         {card.imageUrl ? (
           <img
-            src={card.imageUrl}
+            src={`/thumbs/${card.slug}.webp`}
             alt={card.name}
             loading="lazy"
             className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.04]"
+            onError={(e) => { const i = e.currentTarget; if (!i.dataset.full && card.imageUrl) { i.dataset.full = "1"; i.src = card.imageUrl; } }}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-surface-2">

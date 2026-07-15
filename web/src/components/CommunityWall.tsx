@@ -107,10 +107,11 @@ export function CommunityWall({ baseUrl }: CommunityWallProps) {
                 <div className="aspect-[2/3] relative overflow-hidden">
                   {card.imageUrl ? (
                     <img
-                      src={card.imageUrl}
+                      src={`/thumbs/${card.slug}.webp`}
                       alt={card.name}
                       className="w-full h-full object-cover object-top group-hover:scale-[1.04] transition-transform duration-300"
                       loading="lazy"
+                      onError={(e) => { const i = e.currentTarget; if (!i.dataset.full && card.imageUrl) { i.dataset.full = "1"; i.src = card.imageUrl; } }}
                     />
                   ) : (
                     <div

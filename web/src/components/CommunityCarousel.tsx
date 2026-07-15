@@ -32,10 +32,11 @@ function CardTile({ card, onClick }: CardTileProps) {
     >
       {card.imageUrl ? (
         <img
-          src={card.imageUrl}
+          src={`/thumbs/${card.slug}.webp`}
           alt={card.name}
           className="w-full h-full object-cover object-top"
           loading="lazy"
+          onError={(e) => { const i = e.currentTarget; if (!i.dataset.full && card.imageUrl) { i.dataset.full = "1"; i.src = card.imageUrl; } }}
         />
       ) : (
         <div className="w-full h-full bg-surface-2" />
