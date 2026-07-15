@@ -11,9 +11,12 @@ import {
   Gem,
   ShieldCheck,
   ArrowRight,
+  Zap,
+  Layers,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
+import { AuroraBackground } from "@/components/AuroraBackground";
 import { CommunityCarousel } from "@/components/CommunityCarousel";
 import { useGetRarityStats } from "@/api";
 import { useAuraFlow } from "../AuraFlowProvider";
@@ -107,107 +110,56 @@ export function LandingStep() {
     <div className="relative w-full">
       {/* ══════════════════════ HERO ══════════════════════ */}
       <section className="relative w-full overflow-hidden">
-        {/* Layered cinematic background */}
+        {/* ── Archive hero background: deep base + panning action photo + aurora + vignette ── */}
+        <div className="absolute inset-0 z-0" style={{ background: "#07070c" }} />
+        {/* Full-bleed stadium action photo, faintly panning (the /archive hero look) */}
         <div
-          className="absolute inset-0 z-0"
-          style={{ background: "radial-gradient(125% 90% at 50% 0%, #10101c 0%, #08080e 54%, #050509 100%)" }}
+          className="landing-bg-pan absolute inset-0 z-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/landing-action-bg.png')", opacity: 0.14 }}
         />
-        {/* Bespoke gold-lit stadium (AI-generated), dimmed + faded so it blends into the black */}
-        <div
-          className="absolute inset-0 z-0 pointer-events-none bg-cover bg-center opacity-30 [filter:saturate(0.85)_brightness(0.9)]"
-          style={{
-            backgroundImage: "url('/pitch-stadium.webp')",
-            maskImage: "linear-gradient(to top, #000 0%, #000 32%, transparent 86%)",
-            WebkitMaskImage: "linear-gradient(to top, #000 0%, #000 32%, transparent 86%)",
-          }}
-        />
+        {/* Living aurora field */}
+        <AuroraBackground />
+        {/* Vignette: darken edges + bottom so content floats and the palette stays deep */}
         <div
           className="absolute inset-0 z-0 pointer-events-none"
-          style={{ background: "radial-gradient(52% 42% at 68% 32%, hsl(42 78% 55% / 0.13) 0%, transparent 66%)" }}
-        />
-        {/* Faint grid for texture */}
-        <div
-          className="absolute inset-0 z-0 pointer-events-none opacity-[0.04]"
           style={{
-            backgroundImage:
-              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            maskImage: "radial-gradient(80% 60% at 50% 30%, #000 0%, transparent 80%)",
-            WebkitMaskImage: "radial-gradient(80% 60% at 50% 30%, #000 0%, transparent 80%)",
+            background:
+              "radial-gradient(120% 90% at 50% 8%, rgba(7,7,12,0) 0%, rgba(7,7,12,0.55) 62%, rgba(7,7,12,0.92) 100%)",
           }}
         />
         {/* Fade into the next section */}
         <div className="absolute inset-x-0 bottom-0 z-0 h-40 bg-gradient-to-b from-transparent to-background" />
 
-        <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-6xl grid-cols-1 items-center gap-8 px-5 pb-16 pt-28 md:grid-cols-2 md:gap-8 md:pb-20 md:pt-24 [@media(max-height:780px)]:items-start">
-          {/* Copy */}
+        <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-6xl grid-cols-1 items-center gap-6 px-5 pb-16 pt-28 md:grid-cols-2 md:content-center md:gap-x-8 md:gap-y-6 md:pb-20 md:pt-24 [@media(max-height:780px)]:items-start">
+          {/* Copy — desktop: col-1 row-1 */}
           <motion.div
-            className="order-2 text-center md:order-1 md:text-left"
-            initial={{ opacity: 0, y: 24 }}
+            className="order-1 space-y-4 text-center md:col-start-1 md:row-start-1 md:text-left"
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ delay: 0.1, type: "spring", bounce: 0.4 }}
           >
-            <h1 className="font-display font-bold uppercase leading-[0.84] tracking-tight text-white text-[clamp(2.9rem,8vw,5.75rem)] [@media(max-height:780px)]:text-[clamp(2.25rem,6vw,4rem)]">
-              Unleash
-              <br />
-              Your <span className="gold-text-static">Aura</span>
+            <div className="type-eyebrow surface-flat inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-primary">
+              <Zap size={13} className="text-primary" />
+              <span>The Ultimate Fan Experience</span>
+            </div>
+            <h1 className="type-hero text-balance uppercase italic text-white pb-1 [@media(max-height:780px)]:text-[clamp(2.25rem,6vw,4rem)]">
+              Unleash Your <br className="hidden md:block" />
+              <span className="gold-text-static not-italic">World Cup Aura</span>
             </h1>
-
-            <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-white/60 md:mx-0 md:text-lg">
-              Turn your selfie into a legendary fan card. Pick your nation, reveal your power level. Minted forever on
-              Solana.
+            <p className="mx-auto max-w-[300px] text-lg font-medium leading-relaxed text-white/70 md:mx-0 md:max-w-sm">
+              Turn your selfie into a legendary fan card. Pick your nation. Reveal your power level.
             </p>
-
-            <div className="mt-8 flex flex-col gap-3 sm:max-w-md">
-              <Button
-                onClick={actions.start}
-                size="lg"
-                className="h-14 w-full text-base font-black uppercase tracking-[0.06em]"
-              >
-                <Camera className="mr-1" /> Take Selfie
-              </Button>
-              <div className="grid grid-cols-2 gap-3">
-                <Button onClick={actions.requestUpload} variant="outline" className="h-12">
-                  <Upload className="mr-1 h-4 w-4" /> Upload
-                </Button>
-                <Button onClick={actions.start} variant="outline" className="h-12">
-                  <User className="mr-1 h-4 w-4" /> Sample
-                </Button>
-              </div>
-            </div>
-
-            <div className="mt-6 flex items-center justify-center gap-1.5 md:justify-start">
-              <span className="text-xs text-white/40">Part of an exclusive 100,000-card collection.</span>
-              <Link
-                href="/odds"
-                className="inline-flex items-center gap-0.5 text-xs font-semibold text-primary/85 underline underline-offset-2 transition-colors hover:text-primary"
-              >
-                See the odds <ChevronRight className="h-3 w-3" />
-              </Link>
-            </div>
-
-            {/* Powered by — official partner marks, normalized to a monochrome strip */}
-            <div className="mt-9 flex flex-col items-center gap-3 md:items-start">
-              <span className="type-eyebrow text-[0.58rem] text-white/30">Powered by</span>
-              <div className="flex items-center gap-6 opacity-55 transition-opacity duration-300 hover:opacity-90">
-                <img src="/logos/solana-mark.svg" alt="Solana" className="h-4 w-auto shrink-0 brightness-0 invert" />
-                <span className="h-5 w-px bg-white/15" aria-hidden />
-                <img src="/logos/superteam.svg" alt="Superteam" className="h-6 w-auto shrink-0 brightness-0 invert" />
-                <span className="h-5 w-px bg-white/15" aria-hidden />
-                <img src="/logos/txodds.png" alt="TxOdds" className="h-3.5 w-auto shrink-0 brightness-0 invert" />
-              </div>
-            </div>
           </motion.div>
 
-          {/* Floating card trio */}
-          <div className="relative order-1 flex h-[clamp(280px,46svh,520px)] w-full items-center justify-center md:order-2">
-            <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-primary/16 blur-[120px]" />
+          {/* Floating card trio — desktop: col-2, spans both rows */}
+          <div className="relative order-2 flex h-[300px] w-full items-center justify-center overflow-hidden md:col-start-2 md:row-start-1 md:row-span-2 md:h-[460px]">
+            <div className="pointer-events-none absolute h-56 w-56 rounded-full bg-primary/20 blur-[100px]" />
 
             <motion.div
-              className="absolute h-60 w-44 overflow-hidden rounded-xl border border-white/10 bg-surface-1 shadow-2xl"
+              className="glass-panel absolute h-56 w-40 overflow-hidden rounded-xl border-secondary/40 shadow-2xl"
               style={{ transformOrigin: "bottom center" }}
               initial={{ opacity: 0, rotate: 0, x: 0, scale: 0.8 }}
-              animate={{ opacity: 1, rotate: -16, x: -104, scale: 0.86, y: [0, -12, 0] }}
+              animate={{ opacity: 1, rotate: -16, x: -88, scale: 0.86, y: [0, -10, 0] }}
               transition={{
                 opacity: { delay: 0.35, duration: 0.5 },
                 rotate: { delay: 0.35, type: "spring", bounce: 0.5 },
@@ -221,10 +173,10 @@ export function LandingStep() {
             </motion.div>
 
             <motion.div
-              className="absolute h-60 w-44 overflow-hidden rounded-xl border border-white/10 bg-surface-1 shadow-2xl"
+              className="glass-panel absolute h-56 w-40 overflow-hidden rounded-xl border-accent/40 shadow-2xl"
               style={{ transformOrigin: "bottom center" }}
               initial={{ opacity: 0, rotate: 0, x: 0, scale: 0.8 }}
-              animate={{ opacity: 1, rotate: 16, x: 104, scale: 0.86, y: [0, -12, 0] }}
+              animate={{ opacity: 1, rotate: 16, x: 88, scale: 0.86, y: [0, -10, 0] }}
               transition={{
                 opacity: { delay: 0.5, duration: 0.5 },
                 rotate: { delay: 0.5, type: "spring", bounce: 0.5 },
@@ -238,9 +190,9 @@ export function LandingStep() {
             </motion.div>
 
             <motion.div
-              className="glass-panel card-shine relative z-10 h-80 w-56 overflow-hidden rounded-xl border-primary/60 shadow-[0_28px_70px_-14px_rgba(0,0,0,0.85)]"
+              className="glass-panel card-shine relative z-10 h-72 w-52 overflow-hidden rounded-xl border-primary/60 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)]"
               initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
-              animate={{ opacity: 1, scale: 1, rotate: -3, y: [0, -16, 0] }}
+              animate={{ opacity: 1, scale: 1, rotate: -3, y: [0, -14, 0] }}
               transition={{
                 opacity: { duration: 0.5 },
                 scale: { type: "spring", bounce: 0.5 },
@@ -255,17 +207,68 @@ export function LandingStep() {
               />
               <div className="holo-overlay" />
               <div className="absolute left-3 top-3 z-20 text-center drop-shadow-xl">
-                <div className="gold-text-gradient font-display text-5xl font-black leading-none">94</div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-white/80">Aura</div>
+                <div className="gold-text-gradient font-display text-4xl font-black leading-none">94</div>
+                <div className="text-[9px] font-bold uppercase tracking-widest text-white/80">Aura</div>
               </div>
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent p-3">
-                <div className="font-display text-lg font-black uppercase leading-tight tracking-wide text-white">
+                <div className="font-display text-base font-black uppercase leading-tight tracking-wide text-white">
                   Mythic Champion
                 </div>
-                <div className="text-[11px] font-bold uppercase tracking-widest text-primary">Legendary Striker</div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-primary">Legendary Striker</div>
               </div>
             </motion.div>
           </div>
+
+          {/* CTA — desktop: col-1 row-2 */}
+          <motion.div
+            className="order-3 w-full space-y-3 md:col-start-1 md:row-start-2"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, type: "spring", bounce: 0.3 }}
+          >
+            <p className="type-eyebrow text-center text-[0.68rem] text-white/40 md:text-left">
+              Unlock your fan card now
+            </p>
+            <Button
+              onClick={actions.start}
+              size="lg"
+              className="h-14 w-full text-lg font-black uppercase tracking-[0.06em]"
+            >
+              <Camera className="mr-2" /> Take Selfie
+            </Button>
+            <div className="grid grid-cols-2 gap-3">
+              <Button onClick={actions.requestUpload} variant="outline" className="h-14">
+                <Upload className="mr-2 h-5 w-5" /> Upload
+              </Button>
+              <Button onClick={actions.start} variant="outline" className="h-14">
+                <User className="mr-2 h-5 w-5" /> Sample
+              </Button>
+            </div>
+
+            {/* Edition collection teaser */}
+            <div className="flex items-center justify-center gap-1.5 pt-1 md:justify-start">
+              <Layers className="h-3 w-3 shrink-0 text-white/40" />
+              <span className="text-[11px] text-white/40">Part of an exclusive 100,000-card collection.</span>
+              <Link
+                href="/odds"
+                className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-primary/85 underline underline-offset-2 transition-colors hover:text-primary"
+              >
+                See the odds <ChevronRight className="h-3 w-3" />
+              </Link>
+            </div>
+
+            {/* Powered by — official partner marks, normalized to a monochrome strip */}
+            <div className="flex flex-col items-center gap-3 pt-5 md:items-start">
+              <span className="type-eyebrow text-[0.58rem] text-white/30">Powered by</span>
+              <div className="flex items-center gap-6 opacity-55 transition-opacity duration-300 hover:opacity-90">
+                <img src="/logos/solana-mark.svg" alt="Solana" className="h-4 w-auto shrink-0 brightness-0 invert" />
+                <span className="h-5 w-px bg-white/15" aria-hidden />
+                <img src="/logos/superteam.svg" alt="Superteam" className="h-6 w-auto shrink-0 brightness-0 invert" />
+                <span className="h-5 w-px bg-white/15" aria-hidden />
+                <img src="/logos/txodds.png" alt="TxOdds" className="h-3.5 w-auto shrink-0 brightness-0 invert" />
+              </div>
+            </div>
+          </motion.div>
         </div>
 
         {/* Scroll cue */}
