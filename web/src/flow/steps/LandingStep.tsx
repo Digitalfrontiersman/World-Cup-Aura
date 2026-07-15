@@ -109,34 +109,15 @@ export function LandingStep() {
     <div className="relative w-full">
       {/* ══════════════════════ HERO ══════════════════════ */}
       <section className="relative w-full overflow-hidden">
-        {/* Layered cinematic background */}
+        {/* Clean dark vignette — matches the archive hero (no stadium image, no grid) */}
         <div
           className="absolute inset-0 z-0"
-          style={{ background: "radial-gradient(125% 90% at 50% 0%, #10101c 0%, #08080e 54%, #050509 100%)" }}
+          style={{ background: "radial-gradient(120% 90% at 50% 8%, #0d0d16 0%, #08080e 55%, #050509 100%)" }}
         />
-        {/* Bespoke gold-lit stadium (AI-generated), dimmed + faded so it blends into the black */}
-        <div
-          className="absolute inset-0 z-0 pointer-events-none bg-cover bg-center opacity-30 [filter:saturate(0.85)_brightness(0.9)]"
-          style={{
-            backgroundImage: "url('/pitch-stadium.webp')",
-            maskImage: "linear-gradient(to top, #000 0%, #000 32%, transparent 86%)",
-            WebkitMaskImage: "linear-gradient(to top, #000 0%, #000 32%, transparent 86%)",
-          }}
-        />
+        {/* Subtle ambient gold, kept faint like the archive */}
         <div
           className="absolute inset-0 z-0 pointer-events-none"
-          style={{ background: "radial-gradient(52% 42% at 68% 32%, hsl(42 78% 55% / 0.13) 0%, transparent 66%)" }}
-        />
-        {/* Faint grid for texture */}
-        <div
-          className="absolute inset-0 z-0 pointer-events-none opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            maskImage: "radial-gradient(80% 60% at 50% 30%, #000 0%, transparent 80%)",
-            WebkitMaskImage: "radial-gradient(80% 60% at 50% 30%, #000 0%, transparent 80%)",
-          }}
+          style={{ background: "radial-gradient(52% 42% at 68% 32%, hsl(42 78% 55% / 0.10) 0%, transparent 66%)" }}
         />
         {/* Fade into the next section */}
         <div className="absolute inset-x-0 bottom-0 z-0 h-40 bg-gradient-to-b from-transparent to-background" />
