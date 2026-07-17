@@ -62,3 +62,9 @@ Thumbs.db
 
 # Claude Code personal settings (deploy keys, local perms) — do not commit
 .claude/settings.local.json
+
+# Superseded pre-reorg codebase (kept locally as reference only). The live
+# frontend is web/; the API builds on the server. Untracked so tooling and
+# agents can't mistake it for the app. Recover from history if ever needed:
+#   git checkout 2ed7ba0 -- archive
+archive/
